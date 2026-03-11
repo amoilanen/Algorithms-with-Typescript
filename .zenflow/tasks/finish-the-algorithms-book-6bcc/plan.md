@@ -145,7 +145,7 @@ Write the complete Chapter 1 based on the existing content. This chapter already
 - Verify chapter renders correctly in both PDF and website builds
 - Verification: `npm run build:pdf` and `npm run build:web` succeed; chapter content is complete
 
-### [ ] Step: Chapter 2 — Analyzing Algorithms
+### [x] Step: Chapter 2 — Analyzing Algorithms
 <!-- chat-id: 08242cdd-daa7-45b4-9c5a-f765c7790cca -->
 
 Write Chapter 2 (theory chapter, no new implementations).
