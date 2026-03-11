@@ -244,7 +244,8 @@ Write Chapter 6 and implement all new algorithms: counting sort, radix sort, buc
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 7 — Arrays, Linked Lists, Stacks, and Queues
+### [x] Step: Chapter 7 — Arrays, Linked Lists, Stacks, and Queues
+<!-- chat-id: 3c099a06-675d-4533-95ac-db9ad9886bbe -->
 
 Implement fundamental data structures and write Chapter 7.
 
