@@ -126,7 +126,8 @@ Set up the dual book build system: Pandoc for PDF, mdBook for the static website
 - Verify web build: `npm run build:web` produces static site in `dist/web/`
 - Verification: both `build:pdf` and `build:web` succeed; PDF has table of contents and numbered chapters; website has sidebar navigation and search
 
-### [ ] Step: Chapter 1 — Introduction to Algorithms
+### [x] Step: Chapter 1 — Introduction to Algorithms
+<!-- chat-id: 3a98cd3b-6a64-4b9e-b458-f35f9aa0dbac -->
 
 Write the complete Chapter 1 based on the existing content. This chapter already has substantial material; expand and update it.
 
