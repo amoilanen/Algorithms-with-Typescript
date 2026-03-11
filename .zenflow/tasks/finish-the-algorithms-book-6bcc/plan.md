@@ -104,7 +104,8 @@ Migrate all 11 existing JavaScript implementations and their 6 test files to Typ
 - Remove old `src/01-algorithms/`, `src/02-sorting/`, and `spec/` directories after porting
 - Verification: `npm test` passes all ported tests, `npx tsc --noEmit` passes, `npm run lint` passes
 
-### [ ] Step: Book Build Pipeline
+### [x] Step: Book Build Pipeline
+<!-- chat-id: f78baa5b-8824-48d1-bb1c-79f54201c32e -->
 
 Set up the dual book build system: Pandoc for PDF, mdBook for the static website.
 
