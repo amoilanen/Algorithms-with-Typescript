@@ -219,7 +219,8 @@ Write Chapter 5 and implement randomized quicksort.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 6 — Linear-Time Sorting and Selection
+### [x] Step: Chapter 6 — Linear-Time Sorting and Selection
+<!-- chat-id: a5d7b9e1-a543-4f8b-8895-bd464d3cccfa -->
 
 Write Chapter 6 and implement all new algorithms: counting sort, radix sort, bucket sort, quickselect, median of medians.
 
