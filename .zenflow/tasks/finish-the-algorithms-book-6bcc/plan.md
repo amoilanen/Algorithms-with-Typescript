@@ -57,7 +57,8 @@ If the feature is trivial and doesn't warrant full specification, update this wo
 
 Save to `{@artifacts_path}/plan.md`.
 
-### [ ] Step: Project Setup and Tooling Migration
+### [x] Step: Project Setup and Tooling Migration
+<!-- chat-id: 8a7eab3a-b84e-4ca4-9f3f-9d48ea12c027 -->
 
 Initialize the modern TypeScript project, replacing all legacy tooling. This is the foundation every subsequent step depends on.
 
