@@ -182,7 +182,8 @@ Write Chapter 3 and implement the remaining algorithms (closest pair of points).
   - Chapter summary
 - Verification: `npm test` passes (including closest-pair tests), builds succeed
 
-### [ ] Step: Chapter 4 — Elementary Sorting
+### [x] Step: Chapter 4 — Elementary Sorting
+<!-- chat-id: 71cb70f0-0656-4232-90cf-ea64bc725f29 -->
 
 Write Chapter 4 (implementations already ported in earlier step).
 
