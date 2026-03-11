@@ -296,7 +296,8 @@ Implement hash tables and write Chapter 8.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 9 — Trees and Binary Search Trees
+### [x] Step: Chapter 9 — Trees and Binary Search Trees
+<!-- chat-id: 86021c62-d90a-49cd-b0e6-45b5c7b6988e -->
 
 Implement binary tree and BST, write Chapter 9.
 
