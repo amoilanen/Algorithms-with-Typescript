@@ -273,7 +273,8 @@ Implement fundamental data structures and write Chapter 7.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 8 — Hash Tables
+### [x] Step: Chapter 8 — Hash Tables
+<!-- chat-id: a50592bf-45eb-420c-b3f6-2371e2d69bc9 -->
 
 Implement hash tables and write Chapter 8.
 
