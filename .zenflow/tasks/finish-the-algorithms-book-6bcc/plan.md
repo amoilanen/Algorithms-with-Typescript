@@ -200,7 +200,8 @@ Write Chapter 4 (implementations already ported in earlier step).
   - Chapter summary
 - Verification: builds succeed
 
-### [ ] Step: Chapter 5 — Efficient Sorting
+### [x] Step: Chapter 5 — Efficient Sorting
+<!-- chat-id: 38bac193-3880-4549-9f00-bdba2c78c281 -->
 
 Write Chapter 5 and implement randomized quicksort.
 
