@@ -162,7 +162,8 @@ Write Chapter 2 (theory chapter, no new implementations).
   - Chapter summary
 - Verification: `npm run build:pdf` and `npm run build:web` succeed; math formulas render correctly
 
-### [ ] Step: Chapter 3 — Recursion and Divide-and-Conquer
+### [x] Step: Chapter 3 — Recursion and Divide-and-Conquer
+<!-- chat-id: 2ebd7ba0-b5e0-4540-9ba8-3b66c45b9e9e -->
 
 Write Chapter 3 and implement the remaining algorithms (closest pair of points). Binary search, pow, and gcd are already ported.
 
