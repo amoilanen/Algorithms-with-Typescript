@@ -15,9 +15,7 @@ export default tseslint.config(
       'node_modules/',
       'book/',
       'scripts/',
-      // Legacy JS files (will be removed after porting to TypeScript)
       'src/**/*.js',
-      'spec/',
     ],
   },
   {
@@ -27,6 +25,10 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_' },
       ],
+      // Allow non-null assertions: noUncheckedIndexedAccess makes array
+      // element access return T | undefined, but algorithm code with
+      // known-valid indices needs `!` to assert definedness.
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
 );

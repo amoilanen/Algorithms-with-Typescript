@@ -76,7 +76,8 @@ Initialize the modern TypeScript project, replacing all legacy tooling. This is 
 - Run `npm run lint` and `npm run format:check` to verify tooling works
 - Verification: `npm install` succeeds, `npx tsc --noEmit` passes, `npm run lint` passes
 
-### [ ] Step: Port Existing Implementations to TypeScript
+### [x] Step: Port Existing Implementations to TypeScript
+<!-- chat-id: a20b0360-461f-4933-9d81-b420ccfb3f07 -->
 
 Migrate all 11 existing JavaScript implementations and their 6 test files to TypeScript with Vitest. Preserve all existing behavior and test coverage.
 
