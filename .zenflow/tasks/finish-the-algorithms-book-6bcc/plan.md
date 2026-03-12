@@ -505,7 +505,8 @@ Implement all DP algorithms, write Chapter 16.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 17 — Greedy Algorithms
+### [x] Step: Chapter 17 — Greedy Algorithms
+<!-- chat-id: 00da7a74-c9e2-4710-90fc-c702d301e2dd -->
 
 Implement greedy algorithms, write Chapter 17.
 
