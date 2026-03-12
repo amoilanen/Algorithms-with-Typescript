@@ -594,7 +594,8 @@ Implement string matching algorithms, write Chapter 20.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 21 — Complexity Classes and NP-Completeness
+### [x] Step: Chapter 21 — Complexity Classes and NP-Completeness
+<!-- chat-id: 97f13c9d-c4c0-4d95-9cb4-525f39bc6b3a -->
 
 Implement illustrative brute-force algorithms, write Chapter 21.
 
