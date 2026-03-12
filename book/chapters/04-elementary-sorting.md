@@ -8,7 +8,7 @@ Sorting is the problem of rearranging a collection of elements into a specified 
 
 ---
 
-> **Definition 4.1 — The sorting problem**
+> **Definition 4.1 --- The sorting problem**
 >
 > **Input:** A sequence of $n$ elements $\langle a_1, a_2, \ldots, a_n \rangle$ and a total ordering $\leq$ on the elements.
 >
@@ -36,7 +36,7 @@ When a sequence contains elements that compare as equal, there is a choice: shou
 
 ---
 
-> **Definition 4.2 — Stable sort**
+> **Definition 4.2 --- Stable sort**
 >
 > A sorting algorithm is **stable** if, whenever two elements $a_i$ and $a_j$ satisfy $a_i = a_j$ and $i < j$ in the input, then $a_i$ appears before $a_j$ in the output.
 
@@ -52,7 +52,7 @@ Of the three algorithms in this chapter, **bubble sort** and **insertion sort** 
 
 ---
 
-> **Definition 4.3 — In-place sort**
+> **Definition 4.3 --- In-place sort**
 >
 > A sorting algorithm is **in-place** if it uses $O(1)$ auxiliary space — that is, a constant amount of memory beyond the input array.
 
@@ -366,7 +366,7 @@ The performance of insertion sort is closely tied to the concept of _inversions_
 
 ---
 
-> **Definition 4.4 — Inversion**
+> **Definition 4.4 --- Inversion**
 >
 > An **inversion** in a sequence $\langle a_1, a_2, \ldots, a_n \rangle$ is a pair $(i, j)$ with $i < j$ and $a_i > a_j$.
 
@@ -415,7 +415,7 @@ All three elementary sorting algorithms are _comparison-based_: they access the 
 
 ---
 
-> **Theorem 4.1 — Comparison-based sorting lower bound**
+> **Theorem 4.1 --- Comparison-based sorting lower bound**
 >
 > Any comparison-based sorting algorithm must make at least $\lceil \log_2(n!) \rceil = \Omega(n \log n)$ comparisons in the worst case to sort $n$ elements.
 

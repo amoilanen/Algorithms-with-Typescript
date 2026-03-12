@@ -642,7 +642,8 @@ Implement approximation algorithms, write Chapter 22.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Front Matter, Back Matter, and Final Polish
+### [x] Step: Front Matter, Back Matter, and Final Polish
+<!-- chat-id: a93fe780-8361-4429-bcc1-71aba7053a34 -->
 
 Complete the book's supporting material and ensure everything is production-ready.
 
@@ -661,3 +662,47 @@ Complete the book's supporting material and ensure everything is production-read
   - `npm run build:pdf` — PDF builds with all chapters, TOC, page numbers
   - `npm run build:web` — website builds with all chapters, navigation, search working
 - Verification: full build pipeline succeeds end-to-end, all content is complete and reviewed
+
+### [ ] Step: Review contents chapter by chapter for typos and mistakes, improve the text
+<!-- agent: claude-code-sonnet-4-6 -->
+
+Make sure that the text is correct and also improve the language content, the text should not be too dry and heavy.
+
+Check a snippet from the Niclaus Wirth book as an example "ND Runs.
+We now return to the process of successive refinement of the process of natural merging. Procedure
+copyrun and the statement merge are now conveniently expressible as shown below. Note that we refer
+to the sequences (files) indirectly via the riders attached to them. In passing, we also note that the rider's
+field first represents the next key on a sequence being read, and the last key of a sequence being written.
+PROCEDURE copyrun (VAR x, y: Runs.Rider);
+BEGIN (*copy from x to y*)
+REPEAT Runs.copy(x, y) UNTIL x.eor
+END copyrun
+(*merge from r0 and r1 to r2*)
+REPEAT
+IF r0.first < r1.first THEN
+Runs.copy(r0, r2);
+IF r0.eor THEN copyrun(r1, r2) END
+ELSE Runs.copy(r1, r2);
+IF r1.eor THEN copyrun(r0, r2) END
+END
+UNTIL r0.eor OR r1.eor
+The comparison and selection process of keys in merging a run terminates as soon as one of the two
+runs is exhausted. After this, the other run (which is not exhausted yet) has to be transferred to the resulting
+run by merely copying its tail. This is done by a call of procedure copyrun.
+This should supposedly terminate the development of the natural merging sort procedure. Regrettably,
+the program is incorrect, as the very careful reader may have noticed. The program is incorrect in the sense
+that it does not sort properly in some cases. Consider, for example, the following sequence of input data:
+03 02 05 11 07 13 19 17 23 31 29 37 43 41 47 59 57 61 71 67
+By distributing consecutive runs alternately to a and b, we obtain
+a = 03 ' 07 13 19 ' 29 37 43 ' 57 61 71'
+b = 02 05 11 ' 17 23 31 ' 41 47 59 ' 67
+These sequences are readily merged into a single run, whereafter the sort terminates successfully. The
+example, although it does not lead to an erroneous behaviour of the program, makes us aware that mere
+distribution of runs to serveral files may result in a number of output runs that is less than the number of
+input runs. This is because the first item of the i+2nd run may be larger than the last item of the i-th run,
+thereby causing the two runs to merge automatically into a single run.
+Although procedure distribute supposedly outputs runs in equal numbers to the two files, the important
+consequence is that the actual number of resulting runs on a and b may differ significantly. Our merge
+procedure, however, only merges pairs of runs and terminates as soon as b is read, thereby losing the tail
+of one of the sequences. Consider the following input data that are sorted (and truncated) in two
+subsequent passes:"

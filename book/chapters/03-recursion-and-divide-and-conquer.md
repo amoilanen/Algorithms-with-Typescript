@@ -76,7 +76,7 @@ This parallel is not a coincidence — it is the foundation for proving recursiv
 
 ---
 
-> **Definition 3.1 — Correctness of a recursive algorithm**
+> **Definition 3.1 --- Correctness of a recursive algorithm**
 >
 > A recursive algorithm is **correct** if:
 >
