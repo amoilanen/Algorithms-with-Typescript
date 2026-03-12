@@ -48,9 +48,16 @@ The code is written in TypeScript 5 with strict mode enabled, uses ES modules, a
 
 We encourage you to read the code alongside the text. The implementations are designed to be clear and readable rather than maximally optimized. Where there is a tension between clarity and performance, we choose clarity and discuss the performance implications in the text.
 
-## Authors
+## Beta Version Notice
 
-This book was written by Anton Moilanen, with a substantial portion of the content created with the assistance of [Zenflow](https://zencoder.ai/zenflow) using Claude Code and Claude Opus 4.6.
+This book is currently in **beta**. The content is still under active review and may contain errors or incomplete sections. Your feedback helps improve it:
+
+- **Report errors or issues:** [GitHub Issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues)
+- **Contributions are welcome:** [GitHub Repository](https://github.com/amoilanen/Algorithms-with-Typescript)
+
+---
+
+*This book was built with [Zenflow](https://zencoder.ai/zenflow), a product of [Zencoder](https://zencoder.ai), using Claude Code and Claude Opus 4.6 — tools created by [Anthropic](https://www.anthropic.com). Claude Code and Claude are trademarks of Anthropic.*
 
 ## Acknowledgments
 
