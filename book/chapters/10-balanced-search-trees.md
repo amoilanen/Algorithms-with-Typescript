@@ -449,7 +449,7 @@ private insertFixup(z: RBNode<T>): void {
 
 Let us insert the same sequence 1, 2, 3, 4, 5 into a red-black tree.
 
-**Insert 1:** New node is red, but it's the root, so color it black.
+**Insert 1:** New node is red, but it is the root, so color it black.
 
 ```
   1(B)

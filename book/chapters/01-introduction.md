@@ -4,7 +4,7 @@ _In this chapter we discuss what an algorithm is, how algorithms can be expresse
 
 ## What is an algorithm?
 
-Let's start with a discussion of what an algorithm is. Intuitively the notion is more or less clear: we are talking about some formal way to describe a computational procedure. According to the Merriam-Webster dictionary, an algorithm is "a set of steps that are followed in order to solve a mathematical problem or to complete a computer process".
+Let us start with a discussion of what an algorithm is. Intuitively the notion is more or less clear: we are talking about some formal way to describe a computational procedure. According to the Merriam-Webster dictionary, an algorithm is "a set of steps that are followed in order to solve a mathematical problem or to complete a computer process".
 
 Still, this is probably not formal enough. How do we choose the next step from the set of steps? Should the procedure stop eventually? What is the result of executing an algorithm? Many formal definitions of what constitutes an algorithm can be given; however, at this point in the book, without introducing abstract models of computation, we will use the following working definition.
 
@@ -33,7 +33,7 @@ These four properties capture the essence of what makes a procedure an algorithm
 
 ## Expressing algorithms
 
-Algorithms can be expressed in a variety of ways. We can even specify the execution steps using ordinary human language. Let's provide a few simple examples. A trivial first example is multiplying two numbers.
+Algorithms can be expressed in a variety of ways. We can even specify the execution steps using ordinary human language. Let us provide a few simple examples. A trivial first example is multiplying two numbers.
 
 ---
 
@@ -57,7 +57,7 @@ So far, while talking about algorithms, we have encountered no TypeScript or any
 
 A careful reader might be puzzled by our confidence. How can we assert that _any_ algorithm can be expressed using TypeScript? Can this claim be proven, given our definition? Is TypeScript powerful enough to express every possible algorithm? It turns out that it is, but we will leave this statement without proof until the end of the book, where we discuss abstract models of computation and give a more rigorous definition of an algorithm (see Chapter 21).
 
-Let's look again at Definition 1.1. It states that we should be able to specify the computational procedure formally. It is now clear why we require this property: given a formal language such as TypeScript, we can specify the algorithm of interest and execute the specification on a machine such as a laptop or smartphone. For the multiplication algorithm we can write:
+Let us look again at Definition 1.1. It states that we should be able to specify the computational procedure formally. It is now clear why we require this property: given a formal language such as TypeScript, we can specify the algorithm of interest and execute the specification on a machine such as a laptop or smartphone. For the multiplication algorithm we can write:
 
 ```typescript
 function mult(x: number, y: number): number {
@@ -223,7 +223,7 @@ export function max(elements: number[]): number | undefined {
 }
 ```
 
-Let's trace through an example. Suppose $A = [2, 1, 4, 2, 3]$:
+Let us trace through an example. Suppose $A = [2, 1, 4, 2, 3]$:
 
 | Step | `element` | `result` before | Comparison | `result` after |
 |------|-----------|-----------------|------------|----------------|
@@ -330,7 +330,7 @@ export function primesUpTo(number: number): number[] {
 
 ### Tracing through an example
 
-Let's trace the sieve for $n = 20$. We start with all numbers from 2 to 20 marked as potentially prime:
+Let us trace the sieve for $n = 20$. We start with all numbers from 2 to 20 marked as potentially prime:
 
 ```
  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20

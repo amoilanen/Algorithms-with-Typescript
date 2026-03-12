@@ -663,7 +663,7 @@ Complete the book's supporting material and ensure everything is production-read
   - `npm run build:web` — website builds with all chapters, navigation, search working
 - Verification: full build pipeline succeeds end-to-end, all content is complete and reviewed
 
-### [x] Step: Review contents chapter by chapter for typos and mistakes, improve the text
+  ### [x] Step: Review contents chapter by chapter for typos and mistakes, improve the text
 <!-- chat-id: b0b7d9dd-cae6-4d0b-813b-02a6ef1e0ea5 -->
 <!-- agent: claude-code-sonnet-4-6 -->
 

@@ -257,7 +257,7 @@ The **probe sequence** for key $k$ is a permutation of the table indices:
 
 $$h(k, 0), \; h(k, 1), \; h(k, 2), \; \ldots, \; h(k, m-1)$$
 
-We try slot $h(k, 0)$ first; if it's occupied, we try $h(k, 1)$, and so on.
+We try slot $h(k, 0)$ first; if it is occupied, we try $h(k, 1)$, and so on.
 
 ### Linear probing
 
@@ -300,7 +300,7 @@ Open addressing is more sensitive to load factor than chaining. As the table fil
 
 $$\frac{1}{1 - \alpha}$$
 
-At $\alpha = 0.5$, this is 2 probes. At $\alpha = 0.75$, it's 4. At $\alpha = 0.9$, it's 10. For this reason, open-addressed tables typically resize at $\alpha \leq 0.5$ — more aggressively than chaining tables.
+At $\alpha = 0.5$, this is 2 probes. At $\alpha = 0.75$, it is 4. At $\alpha = 0.9$, it is 10. For this reason, open-addressed tables typically resize at $\alpha \leq 0.5$ — more aggressively than chaining tables.
 
 ### Implementation
 

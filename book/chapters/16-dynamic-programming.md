@@ -252,7 +252,7 @@ $$dp[i][j] = \begin{cases} dp[i-1][j-1] + 1 & \text{if } x_i = y_j \\ \max(dp[i-
 
 **Computation order.** Fill the table row by row, left to right.
 
-The intuition: if the last characters match, they must be part of an optimal alignment, so we include them and recurse on the remaining prefixes. If they don't match, we try dropping the last character from each sequence and take the better result.
+The intuition: if the last characters match, they must be part of an optimal alignment, so we include them and recurse on the remaining prefixes. If they do not match, we try dropping the last character from each sequence and take the better result.
 
 ```typescript
 export function lcs<T>(a: readonly T[], b: readonly T[]): LCSResult<T> {
@@ -673,7 +673,7 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 
 ## Chapter summary
 
-Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping subproblems**. The key insight is simple: don't recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to subproblems and builds toward the final answer.
+Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping subproblems**. The key insight is simple: do not recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to subproblems and builds toward the final answer.
 
 We saw this principle in action across seven problems: from the elementary Fibonacci sequence (which illustrates the core idea) to sophisticated optimization problems like matrix chain multiplication and the knapsack problem. Each problem followed the same five-step recipe: define subproblems, write the recurrence, identify base cases, determine computation order, and recover the solution.
 

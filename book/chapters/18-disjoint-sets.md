@@ -75,7 +75,7 @@ union(x, y):
 
 **Lemma.** With union by rank (and no path compression), a tree with root of rank $r$ contains at least $2^r$ nodes.
 
-_Proof._ By induction on the number of union operations. Initially every node has rank 0 and its tree has $2^0 = 1$ node. The rank of a root increases from $r$ to $r + 1$ only when two trees of rank $r$ are merged. By the inductive hypothesis, each contains at least $2^r$ nodes, so the merged tree contains at least $2 \cdot 2^r = 2^{r+1}$ nodes. $\square$
+_Proof._ By induction on the number of union operations. Initially, every node has rank 0 and its tree has $2^0 = 1$ node. The rank of a root increases from $r$ to $r + 1$ only when two trees of rank $r$ are merged. By the inductive hypothesis, each contains at least $2^r$ nodes, so the merged tree contains at least $2 \cdot 2^r = 2^{r+1}$ nodes. $\square$
 
 **Corollary.** The maximum rank of any node is $\lfloor \log_2 n \rfloor$, where $n$ is the total number of elements.
 
@@ -160,7 +160,7 @@ For any value of $n$ that could arise in practice — or indeed in any computati
 
 ### Intuition for the amortized bound
 
-The formal proof uses a sophisticated potential function argument (originally due to Tarjan). Here is the intuition:
+The formal proof uses a sophisticated potential function argument originally due to Tarjan. Here is the intuition:
 
 1. **Union by rank** ensures that tree heights are at most $O(\log n)$, so the "starting point" for find costs is logarithmic.
 

@@ -124,7 +124,7 @@ Let $G = \{g_1, g_2, \ldots, g_k\}$ be the activities selected by the greedy alg
 _Proof by induction on $i$:_
 
 - **Base case** ($i = 1$). The greedy algorithm picks the activity with the earliest finish time, so $f(g_1) \leq f(o_1)$.
-- **Inductive step.** Assume $f(g_i) \leq f(o_i)$. Since $o_{i+1}$ starts after $o_i$ finishes, we have $s(o_{i+1}) \geq f(o_i) \geq f(g_i)$. So $o_{i+1}$ is compatible with $g_i$, and the greedy algorithm considers it (or an activity that finishes even earlier). Therefore $f(g_{i+1}) \leq f(o_{i+1})$.
+- **Inductive step.** Assume $f(g_i) \leq f(o_i)$. Since $o_{i+1}$ starts after $o_i$ finishes, we have $s(o_{i+1}) \geq f(o_i) \geq f(g_i)$. Therefore $o_{i+1}$ is compatible with $g_i$, and the greedy algorithm considers it (or an activity that finishes even earlier). It follows that $f(g_{i+1}) \leq f(o_{i+1})$.
 
 **Theorem.** $k \geq m$. If $k < m$, then by the lemma, $f(g_k) \leq f(o_k) \leq s(o_{k+1})$, so $o_{k+1}$ is compatible with $g_k$ and the greedy algorithm would have selected it — contradicting the fact that greedy stopped at $k$ activities. Therefore $k = m$, and the greedy solution is optimal. $\square$
 

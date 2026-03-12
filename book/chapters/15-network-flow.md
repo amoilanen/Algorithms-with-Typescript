@@ -271,6 +271,11 @@ export function edmondsKarp<T>(
     maxFlow += bottleneck;
   }
 
+  // The min-cut is the set of vertices reachable from the source
+  // in the final residual graph (BFS from source with no path to sink).
+  const minCut = residual.reachableFrom(source);
+  const flowEdges = residual.getFlowEdges();
+
   return { maxFlow, flowEdges, minCut };
 }
 ```

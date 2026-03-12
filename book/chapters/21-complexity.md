@@ -63,7 +63,7 @@ Every problem in P is also in NP. If we can solve a problem in polynomial time, 
 
 **Definition.** $\mathbf{co\text{-}NP}$ is the class of decision problems whose **complement** is in NP. Equivalently, a problem is in co-NP if "no" answers can be verified in polynomial time.
 
-For example, "Is this formula unsatisfiable?" is in co-NP: if the formula is satisfiable, a satisfying assignment serves as a short certificate of "no" (to the unsatisfiability question). But proving unsatisfiability — providing a certificate that no satisfying assignment exists — appears to require exponential-length proofs in general.
+For example, "Is this formula unsatisfiable?" is in co-NP: if the formula is satisfiable, a satisfying assignment serves as a short certificate for a "no" answer to the unsatisfiability question. But proving unsatisfiability — providing a certificate that no satisfying assignment exists — appears to require exponential-length proofs in general.
 
 It is known that $\mathbf{P} \subseteq \mathbf{NP} \cap \mathbf{co\text{-}NP}$. Whether $\mathbf{NP} = \mathbf{co\text{-}NP}$ is another major open question in complexity theory.
 
@@ -283,7 +283,7 @@ export function subsetSum(
 - **Time:** $O(2^n \cdot n)$. There are $2^n$ subsets, and summing each takes $O(n)$.
 - **Space:** $O(n)$ for the current subset.
 
-Note that the dynamic programming approach from Chapter 16 (the 0/1 knapsack DP) can solve subset sum in $O(n \cdot t)$ time when $t$ is bounded. But $O(n \cdot t)$ is **pseudo-polynomial** — polynomial in the numeric value of $t$, not in the number of bits needed to encode $t$. The subset sum problem remains NP-complete because the target $t$ can be exponentially large relative to the input length.
+Note that the dynamic programming approach from Chapter 16 can solve subset sum in $O(n \cdot t)$ time when $t$ is bounded. However, $O(n \cdot t)$ is **pseudo-polynomial** — polynomial in the numeric value of $t$, not in the number of bits needed to encode $t$. The subset sum problem remains NP-complete because the target $t$ can be exponentially large relative to the input length.
 
 ### Traveling salesman (brute force)
 

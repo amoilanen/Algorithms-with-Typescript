@@ -19,7 +19,7 @@ fixed[9] = 99;
 // fixed[10] would be out of bounds in a true static array
 ```
 
-In languages like C or Java, going beyond the allocated size is either a compile-time error or a runtime crash. JavaScript's built-in arrays hide this complexity, but the cost of resizing is still there — it's just managed for us. Let us see how.
+In languages like C or Java, going beyond the allocated size is either a compile-time error or a runtime crash. JavaScript's built-in arrays hide this complexity, but the cost of resizing is still there — it is just managed for us. Let us see how.
 
 ## Dynamic arrays
 
@@ -629,7 +629,7 @@ A deque subsumes both stacks and queues:
 - **As a stack:** use `pushFront` / `popFront` (or `pushBack` / `popBack`).
 - **As a queue:** use `pushBack` / `popFront`.
 
-This flexibility makes the deque a useful building block when you're unsure which access pattern you need, or when you need both.
+This flexibility makes the deque a useful building block when the access pattern is uncertain, or when both ends are needed.
 
 #### Applications
 
@@ -673,6 +673,6 @@ This chapter introduced the foundational data structures upon which nearly every
 - **Queues** (FIFO) power breadth-first search, task scheduling, and buffering.
 - **Deques** generalize stacks and queues, supporting $O(1)$ operations at both ends.
 
-The choice between arrays and linked lists comes down to access patterns. If you need random access or sequential iteration (where cache locality matters), use an array. If insertions and deletions at the endpoints dominate, use a linked list. If you're unsure, the dynamic array is usually the right default — it is what most languages provide as their standard collection.
+The choice between arrays and linked lists comes down to access patterns. If you need random access or sequential iteration (where cache locality matters), use an array. If insertions and deletions at the endpoints dominate, use a linked list. When in doubt, the dynamic array is usually the right default — it is what most languages provide as their standard collection.
 
 In the next chapter, we will use these building blocks to construct **hash tables**, which achieve expected $O(1)$ lookup by combining arrays with a hash function.

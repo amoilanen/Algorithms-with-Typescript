@@ -266,7 +266,7 @@ Sometimes an operation is expensive _occasionally_ but cheap _most of the time_.
 
 Consider a dynamic array (like JavaScript's `Array` or `std::vector` in C++) that supports an `append` operation. The array maintains an internal buffer of some capacity. When the buffer is full and a new element is appended, the array allocates a new buffer of double the capacity and copies all existing elements over. This _resize_ operation costs $O(n)$, where $n$ is the current number of elements.
 
-At first glance, this seems concerning: a single `append` can cost $O(n)$. But resizes happen infrequently — only when the size reaches a power of 2. Let's analyze the cost of $n$ consecutive appends starting from an empty array.
+At first glance, this seems concerning: a single `append` can cost $O(n)$. But resizes happen infrequently — only when the size reaches a power of 2. Let us analyze the cost of $n$ consecutive appends starting from an empty array.
 
 The resize operations happen at sizes 1, 2, 4, 8, $\ldots$, $2^k$, where $2^k \leq n$. The total copying cost across all resizes is:
 
