@@ -31,4 +31,3 @@ editable = false
 enable = true
 
 [preprocessor.katex]
-after = ["links"]
