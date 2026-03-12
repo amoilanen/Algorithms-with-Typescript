@@ -4,7 +4,7 @@
 
 > **Beta:** This book is currently in beta and is still under active review. It may contain errors or incomplete sections. [Report errors or issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues) — contributions are welcome via the [GitHub repository](https://github.com/amoilanen/Algorithms-with-Typescript).
 
-<small>*Built with [Zenflow](https://zencoder.ai/zenflow) (a product of [Zencoder](https://zencoder.ai)) using Claude Code and Claude Opus 4.6 — tools created by [Anthropic](https://www.anthropic.com). Claude Code and Claude are trademarks of Anthropic.*</small>
+<small>*Built with [Zenflow](https://zencoder.ai/zenflow) by [Zencoder](https://zencoder.ai/) using [Claude Code](https://claude.com/product/claude-code) and [Claude Opus 4.6](https://www.anthropic.com/claude/opus) by [Anthropic](https://www.anthropic.com/)*</small>
 
 ---
 

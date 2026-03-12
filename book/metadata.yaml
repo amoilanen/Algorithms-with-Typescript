@@ -2,7 +2,7 @@
 title: "Algorithms with TypeScript"
 subtitle: "A Practical Guide to Data Structures and Algorithms"
 author:
-  - "Built with Zenflow (https://zencoder.ai/zenflow), a product of Zencoder, using Claude Code and Claude Opus 4.6 by Anthropic"
+  - "Zenflow (https://zencoder.ai/zenflow), Claude Opus 4.6 (https://www.anthropic.com/claude/opus)"
 date: \today
 lang: en
 documentclass: report
