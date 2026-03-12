@@ -339,7 +339,8 @@ Implement AVL and red-black trees, write Chapter 10.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 11 — Heaps and Priority Queues
+### [x] Step: Chapter 11 — Heaps and Priority Queues
+<!-- chat-id: f3152abf-8857-4196-abce-d4c055769849 -->
 
 Implement heaps and priority queue, write Chapter 11.
 
