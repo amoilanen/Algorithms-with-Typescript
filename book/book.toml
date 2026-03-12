@@ -15,9 +15,6 @@ git-repository-url = "https://github.com/amoilanen/Algorithms-with-Typescript"
 edit-url-template = "https://github.com/amoilanen/Algorithms-with-Typescript/edit/master/book/chapters/{path}"
 site-url = "/Algorithms-with-Typescript/"
 additional-css = []
-# Enable MathJax for rendering math formulas.
-# Use $...$ for inline math and $$...$$ for display math in chapter files.
-mathjax-support = true
 
 [output.html.search]
 enable = true
@@ -32,3 +29,5 @@ editable = false
 
 [output.html.print]
 enable = true
+
+[preprocessor.katex]

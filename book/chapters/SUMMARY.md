@@ -1,7 +1,7 @@
 # Summary
 
-[Preface](../front-matter/preface.md)
-[Notation](../front-matter/notation.md)
+[Preface](preface.md)
+[Notation](notation.md)
 
 ---
 
@@ -47,4 +47,4 @@
 
 ---
 
-[Bibliography](../back-matter/bibliography.md)
+[Bibliography](bibliography.md)

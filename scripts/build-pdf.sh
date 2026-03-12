@@ -68,10 +68,10 @@ pandoc \
   --to=pdf \
   --pdf-engine="$PDF_ENGINE" \
   "$BOOK_DIR/metadata.yaml" \
-  "$BOOK_DIR/front-matter/preface.md" \
-  "$BOOK_DIR/front-matter/notation.md" \
+  "$BOOK_DIR/chapters/preface.md" \
+  "$BOOK_DIR/chapters/notation.md" \
   "${CHAPTERS[@]}" \
-  "$BOOK_DIR/back-matter/bibliography.md" \
+  "$BOOK_DIR/chapters/bibliography.md" \
   --output "$OUTPUT_FILE" \
   --resource-path="$BOOK_DIR:$BOOK_DIR/assets:$PROJECT_ROOT" \
   --highlight-style=tango \
