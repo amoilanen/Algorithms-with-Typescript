@@ -361,7 +361,8 @@ Implement heaps and priority queue, write Chapter 11.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 12 — Graphs and Graph Traversal
+### [x] Step: Chapter 12 — Graphs and Graph Traversal
+<!-- chat-id: e0b8e3a0-f39e-4259-8348-1102eaac7cdd -->
 
 Implement graph representations and traversal algorithms, write Chapter 12.
 
