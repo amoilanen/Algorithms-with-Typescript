@@ -570,7 +570,8 @@ Implement tries, write Chapter 19.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 20 — String Matching
+### [x] Step: Chapter 20 — String Matching
+<!-- chat-id: 02bc9cd8-2492-4df3-95b0-378d6a56c40e -->
 
 Implement string matching algorithms, write Chapter 20.
 
