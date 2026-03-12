@@ -27,7 +27,6 @@ urlcolor: "blue"
 citecolor: "blue"
 highlight-style: tango
 header-includes:
-  - \usepackage{algorithm2e}
   - \usepackage{amsmath}
   - \usepackage{amssymb}
   - \usepackage{amsthm}
