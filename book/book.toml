@@ -1,0 +1,34 @@
+[book]
+title = "Algorithms with TypeScript"
+authors = ["Anton Moilanen", "Zenflow (Claude Code & Claude Opus 4.6, https://zencoder.ai/zenflow)"]
+description = "A practical guide to data structures and algorithms for software engineers and Computer Science students"
+src = "chapters"
+language = "en"
+
+[build]
+build-dir = "../dist/web"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/antivanov/Algorithms-with-JavaScript"
+edit-url-template = "https://github.com/antivanov/Algorithms-with-JavaScript/edit/master/book/chapters/{path}"
+site-url = "/"
+additional-css = []
+# Enable MathJax for rendering math formulas.
+# Use $...$ for inline math and $$...$$ for display math in chapter files.
+mathjax-support = true
+
+[output.html.search]
+enable = true
+limit-results = 30
+use-hierarchical-headings = true
+
+[output.html.fold]
+enable = false
+
+[output.html.playground]
+editable = false
+
+[output.html.print]
+enable = true

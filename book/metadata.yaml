@@ -1,0 +1,46 @@
+---
+title: "Algorithms with TypeScript"
+subtitle: "A Practical Guide to Data Structures and Algorithms"
+author:
+  - "Anton Moilanen"
+  - "Zenflow (Claude Code & Claude Opus 4.6, https://zencoder.ai/zenflow)"
+date: \today
+lang: en
+documentclass: report
+geometry:
+  - top=2.5cm
+  - bottom=2.5cm
+  - left=3cm
+  - right=3cm
+fontsize: 11pt
+mainfont: "DejaVu Serif"
+sansfont: "DejaVu Sans"
+monofont: "DejaVu Sans Mono"
+mathfont: "DejaVu Math TeX Gyre"
+linestretch: 1.15
+toc: true
+toc-depth: 3
+numbersections: true
+colorlinks: true
+linkcolor: "blue"
+urlcolor: "blue"
+citecolor: "blue"
+highlight-style: tango
+header-includes:
+  - \usepackage{algorithm2e}
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{amsthm}
+  - \usepackage{booktabs}
+  - \usepackage{fancyhdr}
+  - \usepackage{tikz}
+  - \pagestyle{fancy}
+  - \fancyhead[LE,RO]{\thepage}
+  - \fancyhead[RE]{\leftmark}
+  - \fancyhead[LO]{\rightmark}
+  - \fancyfoot{}
+  - \newtheorem{definition}{Definition}[chapter]
+  - \newtheorem{theorem}{Theorem}[chapter]
+  - \newtheorem{lemma}{Lemma}[chapter]
+  - \newtheorem{corollary}{Corollary}[chapter]
+---

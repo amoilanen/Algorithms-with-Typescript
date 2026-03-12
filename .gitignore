@@ -1,19 +1,44 @@
-.settings
-.git
-.project
+# Dependencies
+node_modules/
 
-lib-cov
-*.seed
+# Build output
+dist/
+build/
+
+# Cache
+.cache/
+
+# Coverage
+coverage/
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.settings
+.project
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Misc
+*.seed
 *.csv
 *.dat
 *.out
 *.pid
 *.gz
-
 pids
 logs
 results
+lib-cov
 
-npm-debug.log
-node_modules
+# Generated book output (legacy)
+book/html/
+book/pdf/

@@ -1,10 +1,12 @@
 {
-  "name": "Algorithms-with-JavaScript-Source-Code",
-  "version": "0.0.1",
+  "name": "algorithms-with-typescript",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Algorithms and data structures implemented in TypeScript, with an accompanying book",
   "homepage": "https://github.com/antivanov/Algorithms-with-JavaScript",
   "author": {
-    "name": "Anton Ivanov",
-    "url": "https://github.com/antivanov"
+    "name": "Anton Moilanen",
+    "email": "anton.a.moilanen@gmail.com"
   },
   "repository": {
     "type": "git",
@@ -13,34 +15,30 @@
   "bugs": {
     "url": "https://github.com/antivanov/Algorithms-with-JavaScript/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/antivanov/Algorithms-with-JavaScript/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "scripts": {
-    "lint": "eslint src/** spec/**",
-    "test": "karma start karma.conf.js",
-    "test:tdd": "karma start karma.conf.js --tdd",
-    "book": "node compile.book.js"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint --no-error-on-unmatched-pattern src/ tests/",
+    "lint:fix": "eslint --no-error-on-unmatched-pattern src/ tests/ --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" --ignore-unknown",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" --ignore-unknown",
+    "typecheck": "tsc --noEmit",
+    "build:pdf": "bash scripts/build-pdf.sh",
+    "build:web": "bash scripts/build-web.sh",
+    "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {
-    "babel-plugin-transform-es2015-modules-umd": "^6.8.*",
-    "babel-preset-es2015": "^6.9.*",
-    "chokidar": "^1.6.1",
-    "jasmine": "^2.4.1",
-    "jasmine-core": "^2.4.1",
-    "karma": "^1.1.1",
-    "karma-babel-preprocessor": "^6.0.1",
-    "karma-chrome-launcher": "^1.0.1",
-    "karma-jasmine": "^1.0.2",
-    "karma-phantomjs-launcher": "^1.0.1",
-    "karma-spec-reporter": "0.0.26",
-    "shelljs": "^0.7.5"
+    "@eslint/js": "^9.21.0",
+    "@vitest/coverage-v8": "^3.0.7",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.25.0",
+    "vitest": "^3.0.7"
   },
   "files": [
-    "spec",
     "src",
     "LICENSE"
   ]
