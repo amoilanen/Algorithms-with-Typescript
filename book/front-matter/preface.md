@@ -2,6 +2,12 @@
 
 > **[Download this book as PDF](algorithms-with-typescript.pdf)**
 
+> **Beta:** This book is currently in beta and is still under active review. It may contain errors or incomplete sections. [Report errors or issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues) — contributions are welcome via the [GitHub repository](https://github.com/amoilanen/Algorithms-with-Typescript).
+
+<small>*Built with [Zenflow](https://zencoder.ai/zenflow) (a product of [Zencoder](https://zencoder.ai)) using Claude Code and Claude Opus 4.6 — tools created by [Anthropic](https://www.anthropic.com). Claude Code and Claude are trademarks of Anthropic.*</small>
+
+---
+
 This book grew out of a simple observation: most software engineers use algorithms and data structures every day, yet many feel uncertain about the fundamentals. They may use a hash map or call a sorting function without fully understanding the guarantees those abstractions provide, or they may struggle when a problem requires designing a new algorithm from scratch. At the same time, Computer Science students often encounter algorithms in a highly theoretical setting that can feel disconnected from the code they write in practice.
 
 *Algorithms with TypeScript* bridges that gap. It presents the core algorithms and data structures from a typical undergraduate algorithms curriculum --- roughly equivalent to MIT's 6.006 and 6.046 --- but uses TypeScript as the language of expression. Every algorithm discussed in the text is implemented, tested, and available in the accompanying repository. The implementations are not pseudocode translated into TypeScript; they are idiomatic, type-safe, and tested with a modern toolchain.
@@ -47,17 +53,6 @@ npm test
 The code is written in TypeScript 5 with strict mode enabled, uses ES modules, and is tested with Vitest. See the project README for detailed setup instructions.
 
 We encourage you to read the code alongside the text. The implementations are designed to be clear and readable rather than maximally optimized. Where there is a tension between clarity and performance, we choose clarity and discuss the performance implications in the text.
-
-## Beta Version Notice
-
-This book is currently in **beta**. The content is still under active review and may contain errors or incomplete sections. Your feedback helps improve it:
-
-- **Report errors or issues:** [GitHub Issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues)
-- **Contributions are welcome:** [GitHub Repository](https://github.com/amoilanen/Algorithms-with-Typescript)
-
----
-
-*This book was built with [Zenflow](https://zencoder.ai/zenflow), a product of [Zencoder](https://zencoder.ai), using Claude Code and Claude Opus 4.6 — tools created by [Anthropic](https://www.anthropic.com). Claude Code and Claude are trademarks of Anthropic.*
 
 ## Acknowledgments
 
