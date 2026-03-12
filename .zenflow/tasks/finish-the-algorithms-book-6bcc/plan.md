@@ -448,7 +448,8 @@ Implement Union-Find (needed by Kruskal's), MST algorithms, and write Chapter 14
 - Note: Union-Find is implemented here (pulled forward from Chapter 18) because Kruskal's depends on it. The Chapter 18 write-up will reference and expand on this implementation.
 - Verification: `npm test` passes (including union-find tests), builds succeed
 
-### [ ] Step: Chapter 15 — Network Flow
+### [x] Step: Chapter 15 — Network Flow
+<!-- chat-id: eeb4c330-ac59-4dd4-b304-e1f587a3a4b6 -->
 
 Implement network flow algorithms, write Chapter 15.
 
