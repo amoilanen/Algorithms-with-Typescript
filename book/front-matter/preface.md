@@ -1,5 +1,7 @@
 # Preface
 
+> **[Download this book as PDF](algorithms-with-typescript.pdf)**
+
 This book grew out of a simple observation: most software engineers use algorithms and data structures every day, yet many feel uncertain about the fundamentals. They may use a hash map or call a sorting function without fully understanding the guarantees those abstractions provide, or they may struggle when a problem requires designing a new algorithm from scratch. At the same time, Computer Science students often encounter algorithms in a highly theoretical setting that can feel disconnected from the code they write in practice.
 
 *Algorithms with TypeScript* bridges that gap. It presents the core algorithms and data structures from a typical undergraduate algorithms curriculum --- roughly equivalent to MIT's 6.006 and 6.046 --- but uses TypeScript as the language of expression. Every algorithm discussed in the text is implemented, tested, and available in the accompanying repository. The implementations are not pseudocode translated into TypeScript; they are idiomatic, type-safe, and tested with a modern toolchain.

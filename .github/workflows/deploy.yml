@@ -25,8 +25,19 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      - name: Build book
+      - name: Install Pandoc and LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra texlive-fonts-recommended fonts-dejavu
+
+      - name: Build website
         run: mdbook build book
+
+      - name: Build PDF
+        run: bash scripts/build-pdf.sh
+
+      - name: Copy PDF into website
+        run: cp dist/pdf/algorithms-with-typescript.pdf dist/web/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
