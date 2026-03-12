@@ -28,9 +28,7 @@ jobs:
           mdbook-version: 'latest'
 
       - name: Install mdbook-katex
-        uses: magicgh/mdbook-katex-action@v1
-        with:
-          version: '0.9.4'
+        run: cargo install mdbook-katex --version 0.9.4 --locked
 
       - name: Install Pandoc and LaTeX
         run: |
