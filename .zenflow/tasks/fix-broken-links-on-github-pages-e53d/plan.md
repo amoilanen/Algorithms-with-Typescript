@@ -18,21 +18,25 @@ Do not make assumptions on important decisions — get clarification first.
 
 ## Workflow Steps
 
-### [ ] Step: Implementation
+### [x] Step: Implementation
+<!-- chat-id: a5161aab-05cb-4cab-ae5f-9c0470f9787d -->
 
-**Debug requests, questions, and investigations:** answer or investigate first. Do not create a plan upfront — the user needs an answer, not a plan. A plan may become relevant later once the investigation reveals what needs to change.
+Two issues fixed:
 
-**For all other tasks**, before writing any code, assess the scope of the actual change (not the prompt length — a one-sentence prompt can describe a large feature). Scale your approach:
+**1. Broken links (preface, notation, bibliography)**
+- Root cause: mdBook `src = "chapters"` but front-matter/back-matter files were outside that directory (`book/front-matter/`, `book/back-matter/`), so mdBook never included them in the build output.
+- Fix: Moved `preface.md`, `notation.md`, `bibliography.md` into `book/chapters/`. Updated `SUMMARY.md` paths from `../front-matter/X.md` to `X.md`. Updated `scripts/build-pdf.sh` to reference new locations. Updated `README.md` project structure.
 
-- **Trivial** (typo, config tweak, single obvious change): implement directly, no plan needed.
-- **Small** (a few files, clear what to do): write 2–3 sentences in `plan.md` describing what and why, then implement. No substeps.
-- **Medium** (multiple components, design decisions, edge cases): write a plan in `plan.md` with requirements, affected files, key decisions, verification. Break into 3–5 steps.
-- **Large** (new feature, cross-cutting, unclear scope): gather requirements and write a technical spec first (`requirements.md`, `spec.md` in `{@artifacts_path}/`). Then write `plan.md` with concrete steps referencing the spec.
+**2. LaTeX not rendering on GitHub Pages**
+- Root cause: mdBook's `mathjax-support = true` loads MathJax 2.7.1 with `TeX-AMS-MML_HTMLorMML` config, which does NOT support `$...$` delimiters by default. The book uses `$...$` throughout.
+- Fix: Replaced MathJax with `mdbook-katex` preprocessor which pre-renders LaTeX to HTML at build time and natively supports `$` delimiters. Removed `mathjax-support = true` from `book.toml`, added `[preprocessor.katex]` section. Added `mdbook-katex` install step to CI workflow (`deploy.yml`).
 
-**Skip planning and implement directly when** the task is trivial, or the user explicitly asks to "just do it" / gives a clear direct instruction.
-
-To reflect the actual purpose of the first step, you can rename it to something more relevant (e.g., Planning, Investigation). Do NOT remove meta information like comments for any step.
-
-Rule of thumb for step size: each step = a coherent unit of work (component, endpoint, test suite). Not too granular (single function), not too broad (entire feature). Unit tests are part of each step, not separate.
-
-Update `{@artifacts_path}/plan.md`.
+Files changed:
+- `book/chapters/SUMMARY.md` — updated link paths
+- `book/chapters/preface.md` — moved from `book/front-matter/`
+- `book/chapters/notation.md` — moved from `book/front-matter/`
+- `book/chapters/bibliography.md` — moved from `book/back-matter/`
+- `book/book.toml` — removed mathjax, added katex preprocessor
+- `scripts/build-pdf.sh` — updated file paths
+- `.github/workflows/deploy.yml` — added mdbook-katex install step
+- `README.md` — updated project structure description

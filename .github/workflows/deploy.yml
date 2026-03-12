@@ -27,6 +27,11 @@ jobs:
         with:
           mdbook-version: 'latest'
 
+      - name: Install mdbook-katex
+        uses: magicgh/mdbook-katex-action@v1
+        with:
+          version: 'v0.9.4'
+
       - name: Install Pandoc and LaTeX
         run: |
           sudo apt-get update
