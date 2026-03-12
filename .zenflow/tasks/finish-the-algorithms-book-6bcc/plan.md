@@ -470,7 +470,8 @@ Implement network flow algorithms, write Chapter 15.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 16 — Dynamic Programming
+### [x] Step: Chapter 16 — Dynamic Programming
+<!-- chat-id: 04a35e3a-c638-4639-ac0a-6dc4da932202 -->
 
 Implement all DP algorithms, write Chapter 16.
 
