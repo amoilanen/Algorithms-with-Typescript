@@ -3,17 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Algorithms and data structures implemented in TypeScript, with an accompanying book",
-  "homepage": "https://github.com/antivanov/Algorithms-with-JavaScript",
+  "homepage": "https://amoilanen.github.io/Algorithms-with-Typescript/",
   "author": {
     "name": "Anton Moilanen",
     "email": "anton.a.moilanen@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/antivanov/Algorithms-with-JavaScript.git"
+    "url": "git://github.com/amoilanen/Algorithms-with-Typescript.git"
   },
   "bugs": {
-    "url": "https://github.com/antivanov/Algorithms-with-JavaScript/issues"
+    "url": "https://github.com/amoilanen/Algorithms-with-Typescript/issues"
   },
   "license": "MIT",
   "scripts": {
@@ -25,8 +25,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" --ignore-unknown",
     "typecheck": "tsc --noEmit",
     "build:pdf": "bash scripts/build-pdf.sh",
-    "build:web": "bash scripts/build-web.sh",
-    "deploy": "bash scripts/deploy.sh"
+    "build:web": "bash scripts/build-web.sh"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
