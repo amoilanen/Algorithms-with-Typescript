@@ -530,7 +530,8 @@ Implement greedy algorithms, write Chapter 17.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 18 — Disjoint Sets (Union-Find)
+### [x] Step: Chapter 18 — Disjoint Sets (Union-Find)
+<!-- chat-id: 7ac07f38-9c93-4e4e-aa02-401c22d405cc -->
 
 Write Chapter 18. Union-Find was already implemented in the Chapter 14 step; this step writes the dedicated chapter.
 
