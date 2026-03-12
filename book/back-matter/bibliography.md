@@ -25,3 +25,13 @@
 - MIT OpenCourseWare. *6.006 Introduction to Algorithms*. <https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/>. Lecture videos, notes, and problem sets covering the material in Parts I--IV of this book.
 
 - MIT OpenCourseWare. *6.046J Design and Analysis of Algorithms*. <https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/>. The follow-on course covering advanced algorithm design techniques, network flow, and computational complexity.
+
+---
+
+## Note on authorship and licensing
+
+A substantial part of this book was created with the assistance of [Zenflow](https://zencoder.ai/zenflow), using Claude Code and Claude Opus 4.6.
+
+This book is available under the **MIT License** and is provided **as is**, without any explicit guarantees of fitness for a given purpose or correctness.
+
+Bugs and errors should be reported at <https://github.com/amoilanen/Algorithms-with-Typescript>.

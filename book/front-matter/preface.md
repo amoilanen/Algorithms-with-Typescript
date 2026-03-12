@@ -46,6 +46,10 @@ The code is written in TypeScript 5 with strict mode enabled, uses ES modules, a
 
 We encourage you to read the code alongside the text. The implementations are designed to be clear and readable rather than maximally optimized. Where there is a tension between clarity and performance, we choose clarity and discuss the performance implications in the text.
 
+## Authors
+
+This book was written by Anton Moilanen, with a substantial portion of the content created with the assistance of [Zenflow](https://zencoder.ai/zenflow) using Claude Code and Claude Opus 4.6.
+
 ## Acknowledgments
 
 This book draws inspiration from several excellent texts, most notably Cormen, Leiserson, Rivest, and Stein's *Introduction to Algorithms* (CLRS), Sedgewick and Wayne's *Algorithms*, Niklaus Wirth's *Algorithms + Data Structures = Programs*, and Kleinberg and Tardos's *Algorithm Design*. The MIT OpenCourseWare materials for 6.006 and 6.046 were invaluable in shaping the curriculum. Full references are in the Bibliography.
