@@ -317,7 +317,8 @@ Implement binary tree and BST, write Chapter 9.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 10 — Balanced Search Trees
+### [x] Step: Chapter 10 — Balanced Search Trees
+<!-- chat-id: 670e4b6e-0fca-4d5f-abe5-f81efc4f0a6c -->
 
 Implement AVL and red-black trees, write Chapter 10.
 

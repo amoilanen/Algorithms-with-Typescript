@@ -3,7 +3,7 @@
 ## 1. Overview
 
 **Project**: Algorithms with TypeScript
-**Author**: Anton Ivanov
+**Author**: Anton Moilanen
 **License**: MIT
 **Status**: Major rewrite and expansion of an existing "Algorithms with JavaScript" project started ~2016
 

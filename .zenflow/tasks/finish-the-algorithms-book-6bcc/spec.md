@@ -417,7 +417,7 @@ pandoc \
 ```yaml
 ---
 title: "Algorithms with TypeScript"
-author: "Anton Ivanov"
+author: "Anton Moilanen"
 date: 2025
 documentclass: report
 geometry: "margin=1in"
@@ -467,7 +467,7 @@ Code snippets are written directly in the chapter Markdown (not auto-included fr
 ```toml
 [book]
 title = "Algorithms with TypeScript"
-authors = ["Anton Ivanov"]
+authors = ["Anton Moilanen"]
 language = "en"
 src = "chapters"
 
@@ -676,7 +676,7 @@ The project's public interface consists of:
   "name": "algorithms-with-typescript",
   "version": "1.0.0",
   "type": "module",
-  "author": "Anton Ivanov",
+  "author": "Anton Moilanen",
   "license": "MIT",
   "scripts": {
     "test": "vitest run",
