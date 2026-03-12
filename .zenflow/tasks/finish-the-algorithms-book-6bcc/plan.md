@@ -394,7 +394,8 @@ Implement graph representations and traversal algorithms, write Chapter 12.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 13 — Shortest Paths
+### [x] Step: Chapter 13 — Shortest Paths
+<!-- chat-id: 47f0c2e7-84f0-4ba9-a5e5-292313d745ad -->
 
 Implement shortest path algorithms, write Chapter 13.
 
