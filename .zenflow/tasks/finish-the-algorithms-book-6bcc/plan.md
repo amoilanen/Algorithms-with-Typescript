@@ -549,7 +549,8 @@ Write Chapter 18. Union-Find was already implemented in the Chapter 14 step; thi
   - Chapter summary
 - Verification: builds succeed
 
-### [ ] Step: Chapter 19 — Tries and String Data Structures
+### [x] Step: Chapter 19 — Tries and String Data Structures
+<!-- chat-id: e2ea4077-2e97-48ab-b9ed-c5067922006d -->
 
 Implement tries, write Chapter 19.
 
