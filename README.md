@@ -86,7 +86,7 @@ The website is written to `dist/web/`.
 
 ## Deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for step-by-step instructions on deploying the website to Google Cloud with a custom domain and HTTPS.
+The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-Typescript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.
 
 ## Project structure
 
@@ -102,7 +102,6 @@ book/
 scripts/
   build-pdf.sh         PDF build script (Pandoc + XeLaTeX/Tectonic)
   build-web.sh         Website build script (mdBook)
-  deploy.sh            Google Cloud Storage deployment script
 ```
 
 ## npm scripts
@@ -118,7 +117,6 @@ scripts/
 | `npm run format:check` | Check formatting |
 | `npm run build:pdf` | Build the PDF |
 | `npm run build:web` | Build the website |
-| `npm run deploy` | Deploy the website to Google Cloud |
 
 ## License
 

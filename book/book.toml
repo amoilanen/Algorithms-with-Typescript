@@ -11,9 +11,9 @@ build-dir = "../dist/web"
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "navy"
-git-repository-url = "https://github.com/antivanov/Algorithms-with-JavaScript"
-edit-url-template = "https://github.com/antivanov/Algorithms-with-JavaScript/edit/master/book/chapters/{path}"
-site-url = "/"
+git-repository-url = "https://github.com/amoilanen/Algorithms-with-Typescript"
+edit-url-template = "https://github.com/amoilanen/Algorithms-with-Typescript/edit/master/book/chapters/{path}"
+site-url = "/Algorithms-with-Typescript/"
 additional-css = []
 # Enable MathJax for rendering math formulas.
 # Use $...$ for inline math and $$...$$ for display math in chapter files.
