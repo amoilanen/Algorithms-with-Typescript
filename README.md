@@ -94,9 +94,7 @@ The website is automatically deployed to [GitHub Pages](https://amoilanen.github
 src/                   TypeScript implementations, organized by chapter
 tests/                 Vitest test suite, mirroring src/ structure
 book/
-  chapters/            Markdown source for all 22 chapters
-  front-matter/        Preface and notation guide
-  back-matter/         Bibliography
+  chapters/            Markdown source for all 22 chapters, preface, notation, and bibliography
   metadata.yaml        Pandoc/LaTeX configuration for PDF
   book.toml            mdBook configuration for the website
 scripts/
