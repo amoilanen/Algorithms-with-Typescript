@@ -618,7 +618,8 @@ Implement illustrative brute-force algorithms, write Chapter 21.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 22 — Approximation Algorithms
+### [x] Step: Chapter 22 — Approximation Algorithms
+<!-- chat-id: c6d7dc95-3e49-4254-9f6e-1b89ce566def -->
 
 Implement approximation algorithms, write Chapter 22.
 
