@@ -422,7 +422,8 @@ Implement shortest path algorithms, write Chapter 13.
   - Chapter summary
 - Verification: `npm test` passes, builds succeed
 
-### [ ] Step: Chapter 14 — Minimum Spanning Trees
+### [x] Step: Chapter 14 — Minimum Spanning Trees
+<!-- chat-id: d3f7aeb1-e369-4636-9077-c836e81aa498 -->
 
 Implement Union-Find (needed by Kruskal's), MST algorithms, and write Chapter 14.
 
