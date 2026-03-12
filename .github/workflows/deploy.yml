@@ -30,7 +30,7 @@ jobs:
       - name: Install mdbook-katex
         uses: magicgh/mdbook-katex-action@v1
         with:
-          version: 'v0.9.4'
+          version: '0.9.4'
 
       - name: Install Pandoc and LaTeX
         run: |
