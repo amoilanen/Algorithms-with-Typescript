@@ -55,7 +55,7 @@ $$\text{mult}(x, y) = x \times y$$
 
 So far, while talking about algorithms, we have encountered no TypeScript or any other programming language notation. This is quite intentional: the notion of an algorithm is mathematical and abstract. Of course we can express any algorithm using TypeScript, but that will be just one of the possible formal representations --- in this case, one that is also executable by a computer.
 
-A careful reader might be puzzled by our confidence. How can we assert that _any_ algorithm can be expressed using TypeScript? Can this in fact be proven, given our definition? Is TypeScript powerful enough to express every possible algorithm? It turns out that it is, but we will leave this statement without proof until the end of the book, where we discuss abstract models of computation and give a more rigorous definition of an algorithm (see Chapter 21).
+A careful reader might be puzzled by our confidence. How can we assert that _any_ algorithm can be expressed using TypeScript? Can this claim be proven, given our definition? Is TypeScript powerful enough to express every possible algorithm? It turns out that it is, but we will leave this statement without proof until the end of the book, where we discuss abstract models of computation and give a more rigorous definition of an algorithm (see Chapter 21).
 
 Let's look again at Definition 1.1. It states that we should be able to specify the computational procedure formally. It is now clear why we require this property: given a formal language such as TypeScript, we can specify the algorithm of interest and execute the specification on a machine such as a laptop or smartphone. For the multiplication algorithm we can write:
 

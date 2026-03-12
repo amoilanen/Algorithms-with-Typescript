@@ -18,7 +18,7 @@ A **shortest path** from $s$ to $v$ is any path $p$ with $w(p) = \delta(s, v)$.
 
 ### Negative weights and negative cycles
 
-When all edge weights are non-negative, shortest paths are well-defined. When negative edges exist, a complication arises: a **negative-weight cycle** — a cycle whose total weight is negative — can be traversed repeatedly to make path weights arbitrarily negative. If such a cycle is reachable from the source, shortest-path distances are undefined for any vertex reachable from the cycle.
+When all edge weights are non-negative, shortest paths are well-defined. When negative-weight edges exist, a complication arises: a **negative-weight cycle** — a cycle whose total weight is negative — can be traversed repeatedly to make path weights arbitrarily negative. If such a cycle is reachable from the source, shortest-path distances are undefined for any vertex reachable from the cycle.
 
 We will carefully note which algorithms handle negative weights and which detect negative cycles.
 
@@ -69,7 +69,7 @@ export function reconstructPath<T>(
 }
 ```
 
-This is the same back-tracking technique we used for BFS path reconstruction in Chapter 12: we follow parent pointers from the target back to the source, then reverse the result.
+This is the same backtracking technique we used for BFS path reconstruction in Chapter 12: we follow parent pointers from the target back to the source, then reverse the result.
 
 ## Dijkstra's algorithm
 

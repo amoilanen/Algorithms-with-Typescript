@@ -418,7 +418,7 @@ Problems like subset sum and knapsack have algorithms running in $O(n \cdot W)$ 
 
 When provable guarantees are not needed, heuristic methods often find good solutions quickly:
 
-- **Local search:** Start with a random solution and iteratively improve it by making small changes (e.g., 2-opt for TSP swaps pairs of edges).
+- **Local search:** Start with a random solution and iteratively improve it by making small changes (e.g., 2-opt for TSP, which swaps pairs of edges).
 - **Simulated annealing:** Like local search, but occasionally accepts worse solutions to escape local optima, with the probability of acceptance decreasing over time.
 - **Genetic algorithms:** Maintain a population of solutions, combine them via crossover, and apply mutation to explore the search space.
 - **Branch and bound:** Systematically explore the solution space, pruning branches that provably cannot improve on the best solution found so far.

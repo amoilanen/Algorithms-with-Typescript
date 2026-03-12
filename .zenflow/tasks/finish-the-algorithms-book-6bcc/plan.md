@@ -663,12 +663,13 @@ Complete the book's supporting material and ensure everything is production-read
   - `npm run build:web` — website builds with all chapters, navigation, search working
 - Verification: full build pipeline succeeds end-to-end, all content is complete and reviewed
 
-### [ ] Step: Review contents chapter by chapter for typos and mistakes, improve the text
+### [x] Step: Review contents chapter by chapter for typos and mistakes, improve the text
+<!-- chat-id: b0b7d9dd-cae6-4d0b-813b-02a6ef1e0ea5 -->
 <!-- agent: claude-code-sonnet-4-6 -->
 
 Make sure that the text is correct and also improve the language content, the text should not be too dry and heavy.
 
-Check a snippet from the Niclaus Wirth book as an example "ND Runs.
+Check a snippet from the Niclaus Wirth book as an example of the language typically used in a technical book "
 We now return to the process of successive refinement of the process of natural merging. Procedure
 copyrun and the statement merge are now conveniently expressible as shown below. Note that we refer
 to the sequences (files) indirectly via the riders attached to them. In passing, we also note that the rider's

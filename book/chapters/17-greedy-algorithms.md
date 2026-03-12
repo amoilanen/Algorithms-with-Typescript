@@ -1,6 +1,6 @@
 # Greedy Algorithms
 
-_Dynamic programming (Chapter 16) achieves optimal solutions by methodically exploring all sub-problems and combining their answers. Greedy algorithms take a more aggressive approach: at each step they make the locally optimal choice and never look back. When a greedy strategy works, the result is typically a simpler and faster algorithm — often just a single pass over sorted data. The catch is that the locally optimal choice does not always lead to a globally optimal solution, so correctness requires proof. In this chapter we develop two proof techniques — the "greedy stays ahead" argument and the exchange argument — and apply them to three classic problems: interval scheduling, Huffman coding, and fractional knapsack._
+_Dynamic programming (Chapter 16) achieves optimal solutions by methodically exploring all subproblems and combining their answers. Greedy algorithms take a more aggressive approach: at each step they make the locally optimal choice and never look back. When a greedy strategy works, the result is typically a simpler and faster algorithm — often just a single pass over sorted data. The catch is that the locally optimal choice does not always lead to a globally optimal solution, so correctness requires proof. In this chapter we develop two proof techniques — the "greedy stays ahead" argument and the exchange argument — and apply them to three classic problems: interval scheduling, Huffman coding, and fractional knapsack._
 
 ## The greedy strategy
 
@@ -11,13 +11,13 @@ Contrast this with dynamic programming:
 | | Dynamic programming | Greedy |
 |---|---|---|
 | **Decisions** | Deferred — explores all combinations via table | Immediate — commits at each step |
-| **Sub-problems** | Many, overlapping | Typically none (single pass) |
-| **Correctness** | Optimal substructure + overlapping sub-problems | Requires a specific proof (exchange or stays-ahead) |
+| **Subproblems** | Many, overlapping | Typically none (single pass) |
+| **Correctness** | Optimal substructure + overlapping subproblems | Requires a specific proof (exchange or stays-ahead) |
 | **Efficiency** | Often $O(n^2)$ or $O(n^3)$ | Often $O(n \log n)$ or $O(n)$ |
 
 The greedy strategy works when a problem has:
 
-1. **Optimal substructure.** An optimal solution contains optimal solutions to sub-problems.
+1. **Optimal substructure.** An optimal solution contains optimal solutions to subproblems.
 2. **The greedy-choice property.** A locally optimal choice can always be extended to a globally optimal solution. In other words, we never need to reconsider a greedy choice.
 
 Property 1 is shared with DP. Property 2 is what distinguishes greedy problems: it asserts that committing to the local optimum is safe.
@@ -338,7 +338,7 @@ _Proof._ In $T$, $x$ and $y$ are one level deeper than $z$ is in $T'$. Each cont
 _Proof by induction on the number of characters $n$:_
 
 - **Base case** ($n = 1$ or $n = 2$). Trivially optimal.
-- **Inductive step.** By Lemma 1, there is an optimal tree where the two lowest-frequency characters $x, y$ are siblings at maximum depth. By Lemma 2, replacing them with a merged node $z$ gives a sub-problem with $n - 1$ characters. By the inductive hypothesis, Huffman solves the sub-problem optimally. Since the merge doesn't affect the relative costs of the remaining characters, the full tree is also optimal. $\square$
+- **Inductive step.** By Lemma 1, there is an optimal tree where the two lowest-frequency characters $x, y$ are siblings at maximum depth. By Lemma 2, replacing them with a merged node $z$ gives a subproblem with $n - 1$ characters. By the inductive hypothesis, Huffman solves the subproblem optimally. Since the merge doesn't affect the relative costs of the remaining characters, the full tree is also optimal. $\square$
 
 ### Complexity
 

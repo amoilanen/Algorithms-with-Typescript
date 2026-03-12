@@ -99,7 +99,7 @@ Divide and conquer is a specific recursion pattern that solves a problem by:
 2. **Conquer:** solve each subproblem recursively (or directly if it is small enough).
 3. **Combine:** merge the subproblem solutions into a solution for the original problem.
 
-Not every recursive algorithm is divide-and-conquer. The factorial function above reduces the problem by a constant (from $n$ to $n-1$), which is sometimes called _decrease and conquer_. True divide-and-conquer algorithms typically split the input by a constant _fraction_ (usually in half), leading to logarithmic recursion depth and often dramatically better performance.
+Not every recursive algorithm is divide-and-conquer. The factorial function above reduces the problem by a constant amount (from $n$ to $n-1$), which is sometimes called _decrease and conquer_. True divide-and-conquer algorithms typically split the input by a constant _fraction_ (usually in half), leading to logarithmic recursion depth and often dramatically better performance.
 
 The running time of a divide-and-conquer algorithm is typically expressed as a recurrence of the form
 

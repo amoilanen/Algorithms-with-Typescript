@@ -328,7 +328,7 @@ So the shortcutted tour costs at most $2 \cdot w(T)$.
 
 **Proof.**
 
-1. **MST $\leq$ OPT:** Removing one edge from the optimal tour yields a spanning tree. Since the MST is the minimum-weight spanning tree: $w(T) \leq \text{OPT}$.
+1. **MST $\leq$ OPT:** Removing any edge from the optimal tour yields a spanning tree. Since the MST is the minimum-weight spanning tree: $w(T) \leq \text{OPT}$.
 2. **Tour $\leq$ 2 $\cdot$ MST:** The full walk costs $2 \cdot w(T)$, and the shortcutted preorder tour costs at most this (by the triangle inequality).
 3. Combining: $\text{Tour} \leq 2 \cdot w(T) \leq 2 \cdot \text{OPT}$. $\square$
 

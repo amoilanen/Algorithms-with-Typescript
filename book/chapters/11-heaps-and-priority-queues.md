@@ -195,7 +195,7 @@ Like sift-up, sift-down performs at most $O(\log n)$ swaps.
 
 ### Insert
 
-Insertion appends the new element to the end of the array (maintaining the shape property) and then sift-ups to restore the heap property:
+Insertion appends the new element to the end of the array (maintaining the shape property) and then sifts up to restore the heap property:
 
 ```typescript
 insert(value: T): void {
@@ -208,7 +208,7 @@ Time: $O(\log n)$. The `push` is $O(1)$ amortized, and sift-up traverses at most
 
 ### Extract
 
-Extraction removes the root (the minimum element in a min-heap), replaces it with the last element, and sift-downs:
+Extraction removes the root (the minimum element in a min-heap), replaces it with the last element, and sifts down:
 
 ```typescript
 extract(): T | undefined {
@@ -226,7 +226,7 @@ Time: $O(\log n)$. Moving the last element to the root is $O(1)$, and sift-down 
 
 ### Decrease-key
 
-The **decrease-key** operation replaces an element's value with a smaller one (higher priority in a min-heap) and sift-ups to restore order. This operation is essential for algorithms like Dijkstra's, where we discover shorter paths and need to update a vertex's tentative distance.
+The **decrease-key** operation replaces an element's value with a smaller one (higher priority in a min-heap) and sifts up to restore order. This operation is essential for algorithms like Dijkstra's, where we discover shorter paths and need to update a vertex's tentative distance.
 
 ```typescript
 decreaseKey(index: number, newValue: T): void {

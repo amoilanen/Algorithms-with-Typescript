@@ -296,7 +296,7 @@ KMP-SEARCH(T, P):
 
 ### Step-by-step trace
 
-Let $T =$ `abababaababaca` and $P =$ `ababaca$. The failure function is $\pi = [0, 0, 1, 2, 3, 0, 1]$.
+Let $T =$ `abababaababaca` and $P =$ `ababaca`. The failure function is $\pi = [0, 0, 1, 2, 3, 0, 1]$.
 
 | $i$ | $T[i]$ | $q$ before | Action | $q$ after |
 |:---:|:------:|:----------:|--------|:---------:|

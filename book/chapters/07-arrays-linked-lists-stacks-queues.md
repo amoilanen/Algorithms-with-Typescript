@@ -652,7 +652,7 @@ This flexibility makes the deque a useful building block when you're unsure whic
 
 ## Exercises
 
-**Exercise 7.1.** Implement a function `isBalanced(expression: string): boolean` that uses a `Stack` to determine whether the parentheses `()`, brackets `[]`, and braces `{}` in an expression are properly balanced. For example, `isBalanced("((a+b)*[c-d])")` should return `false` (mismatched outer parenthesis), while `isBalanced("{a*(b+c)}")` should return `true`.
+**Exercise 7.1.** Implement a function `isBalanced(expression: string): boolean` that uses a `Stack` to determine whether the parentheses `()`, brackets `[]`, and braces `{}` in an expression are properly balanced. For example, `isBalanced("((a+b)*[c-d])")` should return `false` (mismatched outer parentheses), while `isBalanced("{a*(b+c)}")` should return `true`.
 
 **Exercise 7.2.** Implement a circular buffer–based queue. Use a fixed-size array and two indices (`front` and `back`) that wrap around using modular arithmetic. Compare its performance characteristics with our linked-list–based `Queue`.
 

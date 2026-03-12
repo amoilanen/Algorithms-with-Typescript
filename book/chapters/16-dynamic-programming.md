@@ -1,16 +1,16 @@
 # Dynamic Programming
 
-_In the preceding chapters we met two powerful algorithm design paradigms: divide-and-conquer (Chapter 3) breaks a problem into independent sub-problems, and greedy algorithms (Chapter 17) build solutions by making locally optimal choices. Dynamic programming (DP) occupies the territory between them. Like divide-and-conquer, it solves problems by combining solutions to sub-problems. But unlike divide-and-conquer, those sub-problems **overlap** — the same sub-problem is needed by many larger sub-problems. Instead of recomputing these answers, DP saves them in a table and reuses them, trading space for an often dramatic reduction in time. In this chapter we develop a systematic approach to dynamic programming and apply it to seven classic problems: Fibonacci numbers, coin change, longest common subsequence, edit distance, 0/1 knapsack, matrix chain multiplication, and the longest increasing subsequence._
+_In the preceding chapters we met two powerful algorithm design paradigms: divide-and-conquer (Chapter 3) breaks a problem into independent subproblems, and greedy algorithms (Chapter 17) build solutions by making locally optimal choices. Dynamic programming (DP) occupies the territory between them. Like divide-and-conquer, it solves problems by combining solutions to subproblems. But unlike divide-and-conquer, those subproblems **overlap** — the same subproblem is needed by many larger subproblems. Instead of recomputing these answers, DP saves them in a table and reuses them, trading space for an often dramatic reduction in time. In this chapter we develop a systematic approach to dynamic programming and apply it to seven classic problems: Fibonacci numbers, coin change, longest common subsequence, edit distance, 0/1 knapsack, matrix chain multiplication, and the longest increasing subsequence._
 
 ## When does dynamic programming apply?
 
 A problem is amenable to dynamic programming when it exhibits two properties:
 
-1. **Optimal substructure.** An optimal solution to the problem contains optimal solutions to its sub-problems. For example, if the shortest path from $A$ to $C$ passes through $B$, then the sub-path from $A$ to $B$ must itself be a shortest path from $A$ to $B$.
+1. **Optimal substructure.** An optimal solution to the problem contains optimal solutions to its subproblems. For example, if the shortest path from $A$ to $C$ passes through $B$, then the sub-path from $A$ to $B$ must itself be a shortest path from $A$ to $B$.
 
-2. **Overlapping sub-problems.** The recursive decomposition of the problem leads to the same sub-problems being solved many times. If every sub-problem were solved only once, there would be nothing to save — and a straightforward divide-and-conquer approach would suffice.
+2. **Overlapping subproblems.** The recursive decomposition of the problem leads to the same subproblems being solved many times. If every subproblem were solved only once, there would be nothing to save — and a straightforward divide-and-conquer approach would suffice.
 
-When both properties hold, we can avoid redundant computation by storing sub-problem solutions in a table and looking them up rather than recomputing them.
+When both properties hold, we can avoid redundant computation by storing subproblem solutions in a table and looking them up rather than recomputing them.
 
 ## Memoization vs tabulation
 
@@ -18,11 +18,11 @@ There are two standard ways to implement dynamic programming:
 
 ### Top-down with memoization
 
-Start from the original problem and recurse. Before computing a sub-problem, check whether its solution is already cached. If so, return the cached value; otherwise, compute it, cache it, and return it. This approach is sometimes called **memoization** (from "memo" — a note to oneself).
+Start from the original problem and recurse. Before computing a subproblem, check whether its solution is already cached. If so, return the cached value; otherwise, compute it, cache it, and return it. This approach is sometimes called **memoization** (from "memo" — a note to oneself).
 
 Advantages:
 
-- Only solves sub-problems that are actually needed.
+- Only solves subproblems that are actually needed.
 - The recursive structure mirrors the mathematical recurrence directly.
 
 Disadvantages:
@@ -32,18 +32,18 @@ Disadvantages:
 
 ### Bottom-up with tabulation
 
-Solve sub-problems in an order such that when we need a sub-problem's solution, it has already been computed. Typically this means solving sub-problems from "smallest" to "largest" using iterative loops and storing results in an array or table.
+Solve subproblems in an order such that when we need a subproblem's solution, it has already been computed. Typically this means solving subproblems from "smallest" to "largest" using iterative loops and storing results in an array or table.
 
 Advantages:
 
 - No recursion overhead.
-- Constant per-sub-problem overhead.
+- Constant per-subproblem overhead.
 - Often allows space optimization (keeping only the last row or two of the table).
 
 Disadvantages:
 
 - Must determine a valid computation order in advance.
-- May compute sub-problems that are not needed for the final answer.
+- May compute subproblems that are not needed for the final answer.
 
 In practice, bottom-up tabulation is more common because it avoids stack overhead and enables space optimizations. We use it for most examples in this chapter.
 
@@ -51,9 +51,9 @@ In practice, bottom-up tabulation is more common because it avoids stack overhea
 
 For each problem in this chapter, we follow a five-step recipe:
 
-1. **Define sub-problems.** Characterize the space of sub-problems in terms of one or more indices (or parameters).
-2. **Write the recurrence.** Express the solution to a sub-problem in terms of solutions to smaller sub-problems.
-3. **Identify base cases.** Determine the values of the smallest sub-problems directly.
+1. **Define subproblems.** Characterize the space of subproblems in terms of one or more indices (or parameters).
+2. **Write the recurrence.** Express the solution to a subproblem in terms of solutions to smaller subproblems.
+3. **Identify base cases.** Determine the values of the smallest subproblems directly.
 4. **Determine computation order.** Choose an order in which to fill the table so that dependencies are satisfied.
 5. **Recover the solution.** Extract the answer from the table, and optionally backtrack to find the actual solution (not just its value).
 
@@ -91,7 +91,7 @@ The recursion tree for $F(5)$ shows massive redundancy:
   F(1) F(0)
 ```
 
-$F(3)$ is computed twice, $F(2)$ three times, and so on. The total number of calls grows exponentially — $O(2^n)$ — because the same sub-problems are solved over and over.
+$F(3)$ is computed twice, $F(2)$ three times, and so on. The total number of calls grows exponentially — $O(2^n)$ — because the same subproblems are solved over and over.
 
 ### Top-down with memoization
 
@@ -116,7 +116,7 @@ export function fibMemo(n: number): number {
 }
 ```
 
-Now each sub-problem $F(k)$ is computed at most once and then looked up in $O(1)$ time, giving $O(n)$ total time and $O(n)$ space.
+Now each subproblem $F(k)$ is computed at most once and then looked up in $O(1)$ time, giving $O(n)$ total time and $O(n)$ space.
 
 ### Bottom-up with tabulation
 
@@ -203,7 +203,7 @@ export function minCoinChange(
 
 **Complexity.** Time $O(A \cdot k)$ where $A$ is the amount and $k$ is the number of denominations. Space $O(A)$.
 
-**Example.** Denominations $\{1, 5, 6\}$, amount 11. A greedy approach would pick $6 + 5 = 11$ (2 coins), which happens to be optimal. But for amount 12, greedy picks $6 + 6 = 12$ (2 coins), which is also optimal; for amount 10, greedy picks $6 + 1 + 1 + 1 + 1 = 10$ (5 coins), while the optimal is $5 + 5 = 10$ (2 coins). Dynamic programming always finds the minimum.
+**Example.** Denominations $\{1, 5, 6\}$, amount 11. A greedy approach would pick $6 + 5 = 11$ (2 coins), which happens to be optimal. For amount 10, however, greedy picks $6 + 1 + 1 + 1 + 1 = 10$ (5 coins), while the optimal is $5 + 5 = 10$ (2 coins). Dynamic programming always finds the minimum.
 
 ### Counting the number of ways
 
@@ -663,7 +663,7 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 
 1. **Rod cutting.** Given a rod of length $n$ and a price table $p[1..n]$ where $p[i]$ is the price of a rod of length $i$, find the maximum revenue obtainable by cutting the rod into pieces. Write the recurrence, implement both top-down and bottom-up solutions, and analyze their complexity.
 
-2. **Subset sum.** Given a set of positive integers $S$ and a target $T$, determine whether there exists a subset of $S$ that sums to $T$. Define the sub-problems, write the recurrence, and implement a tabulated solution. What is the relationship between this problem and 0/1 knapsack?
+2. **Subset sum.** Given a set of positive integers $S$ and a target $T$, determine whether there exists a subset of $S$ that sums to $T$. Define the subproblems, write the recurrence, and implement a tabulated solution. What is the relationship between this problem and 0/1 knapsack?
 
 3. **Counting LCS.** Modify the LCS algorithm to count the **number of distinct** longest common subsequences (not just find one). What changes are needed in the recurrence and the table?
 
@@ -673,8 +673,8 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 
 ## Chapter summary
 
-Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping sub-problems**. The key insight is simple: don't recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to sub-problems and builds toward the final answer.
+Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping subproblems**. The key insight is simple: don't recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to subproblems and builds toward the final answer.
 
-We saw this principle in action across seven problems: from the elementary Fibonacci sequence (which illustrates the core idea) to sophisticated optimization problems like matrix chain multiplication and the knapsack problem. Each problem followed the same five-step recipe: define sub-problems, write the recurrence, identify base cases, determine computation order, and recover the solution.
+We saw this principle in action across seven problems: from the elementary Fibonacci sequence (which illustrates the core idea) to sophisticated optimization problems like matrix chain multiplication and the knapsack problem. Each problem followed the same five-step recipe: define subproblems, write the recurrence, identify base cases, determine computation order, and recover the solution.
 
 In the next chapter, we turn to **greedy algorithms** — a complementary design paradigm that, when applicable, yields even simpler and more efficient solutions than DP. The key challenge with greedy algorithms is proving that the locally optimal choice at each step leads to a globally optimal solution — a property that holds for some problems but not others. Understanding when to use DP and when to use greedy is one of the most important skills in algorithm design.
