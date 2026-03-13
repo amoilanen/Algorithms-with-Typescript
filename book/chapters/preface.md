@@ -2,7 +2,7 @@
 
 > **[Download this book as PDF](algorithms-with-typescript.pdf)**
 
-> **Beta:** This book is currently in beta and is still under active review. It may contain errors or incomplete sections. [Report errors or issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues) — contributions are welcome via the [GitHub repository](https://github.com/amoilanen/Algorithms-with-Typescript).
+> **Beta:** This book is currently in beta and is still under active review. It may contain errors or incomplete sections. [Report errors or issues](https://github.com/amoilanen/Algorithms-with-TypeScript/issues) — contributions are welcome via the [GitHub repository](https://github.com/amoilanen/Algorithms-with-TypeScript).
 
 <small>*Built with [Zenflow](https://zencoder.ai/zenflow) by [Zencoder](https://zencoder.ai/) using [Claude Code](https://claude.com/product/claude-code) and [Claude Opus 4.6](https://www.anthropic.com/claude/opus) by [Anthropic](https://www.anthropic.com/)*</small>
 

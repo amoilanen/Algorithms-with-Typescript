@@ -11,9 +11,9 @@ build-dir = "../dist/web"
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "navy"
-git-repository-url = "https://github.com/amoilanen/Algorithms-with-Typescript"
-edit-url-template = "https://github.com/amoilanen/Algorithms-with-Typescript/edit/master/book/chapters/{path}"
-site-url = "/Algorithms-with-Typescript/"
+git-repository-url = "https://github.com/amoilanen/Algorithms-with-TypeScript"
+edit-url-template = "https://github.com/amoilanen/Algorithms-with-TypeScript/edit/master/book/chapters/{path}"
+site-url = "/Algorithms-with-TypeScript/"
 additional-css = []
 
 [output.html.search]

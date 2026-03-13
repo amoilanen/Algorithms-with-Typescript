@@ -86,7 +86,7 @@ The website is written to `dist/web/`.
 
 ## Deployment
 
-The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-Typescript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.
+The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-TypeScript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.
 
 ## Project structure
 
