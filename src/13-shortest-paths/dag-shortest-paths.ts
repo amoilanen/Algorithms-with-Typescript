@@ -1,6 +1,6 @@
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import { topologicalSortKahn } from '../12-graphs-and-traversal/topological-sort.js';
-import type { ShortestPathResult } from './dijkstra.js';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import { topologicalSortKahn } from '../12-graphs-and-traversal/topological-sort';
+import type { ShortestPathResult } from './dijkstra';
 
 /**
  * Single-source shortest paths in a **directed acyclic graph** (DAG).

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { countingSort } from '../../src/06-linear-time-sorting-and-selection/counting-sort.js';
-import { radixSort } from '../../src/06-linear-time-sorting-and-selection/radix-sort.js';
-import { bucketSort } from '../../src/06-linear-time-sorting-and-selection/bucket-sort.js';
+import { countingSort } from '../../src/06-linear-time-sorting-and-selection/counting-sort';
+import { radixSort } from '../../src/06-linear-time-sorting-and-selection/radix-sort';
+import { bucketSort } from '../../src/06-linear-time-sorting-and-selection/bucket-sort';
 
 describe('linear-time sorting', () => {
   for (const sortFunc of [countingSort, radixSort, bucketSort]) {

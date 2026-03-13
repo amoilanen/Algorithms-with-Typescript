@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { tspBruteForce } from '../../src/21-complexity/tsp-brute-force.js';
+import { tspBruteForce } from '../../src/21-complexity/tsp-brute-force';
 
 describe('tspBruteForce', () => {
   // ── Single city ───────────────────────────────────────────────────

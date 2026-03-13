@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { naiveMatch } from '../../src/20-string-matching/naive-matching.js';
+import { naiveMatch } from '../../src/20-string-matching/naive-matching';
 
 describe('naiveMatch', () => {
   // ── Basic matches ─────────────────────────────────────────────────

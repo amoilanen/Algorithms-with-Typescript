@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HashTableChaining } from '../../src/08-hash-tables/hash-table-chaining.js';
+import { HashTableChaining } from '../../src/08-hash-tables/hash-table-chaining';
 
 describe('HashTableChaining', () => {
   it('should start empty', () => {

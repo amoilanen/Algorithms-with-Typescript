@@ -1,6 +1,6 @@
-import type { Edge } from '../types.js';
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import { UnionFind } from '../18-disjoint-sets/union-find.js';
+import type { Edge } from '../types';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import { UnionFind } from '../18-disjoint-sets/union-find';
 
 /**
  * Result of a minimum spanning tree computation.

@@ -8,7 +8,7 @@
  * @module
  */
 
-import { BinaryHeap } from '../11-heaps-and-priority-queues/binary-heap.js';
+import { BinaryHeap } from '../11-heaps-and-priority-queues/binary-heap';
 
 // ── Types ────────────────────────────────────────────────────────
 

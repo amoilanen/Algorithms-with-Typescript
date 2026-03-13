@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BinaryHeap } from '../../src/11-heaps-and-priority-queues/binary-heap.js';
+import { BinaryHeap } from '../../src/11-heaps-and-priority-queues/binary-heap';
 
 /**
  * Verify the min-heap property: every parent is ≤ its children according to

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { randomizedQuickSort } from '../../src/05-efficient-sorting/randomized-quick-sort.js';
+import { randomizedQuickSort } from '../../src/05-efficient-sorting/randomized-quick-sort';
 
 describe('randomizedQuickSort', () => {
   it('should sort an array', () => {

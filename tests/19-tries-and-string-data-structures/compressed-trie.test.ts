@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CompressedTrie } from '../../src/19-tries-and-string-data-structures/compressed-trie.js';
+import { CompressedTrie } from '../../src/19-tries-and-string-data-structures/compressed-trie';
 
 describe('CompressedTrie', () => {
   // ── Construction and empty state ──────────────────────────────────

@@ -1,5 +1,5 @@
-import type { Comparator } from '../types.js';
-import { numberComparator } from '../types.js';
+import type { Comparator } from '../types';
+import { numberComparator } from '../types';
 
 function leftIndex(i: number): number {
   return 2 * i + 1;

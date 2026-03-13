@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { metricTSP } from '../../src/22-approximation-algorithms/metric-tsp.js';
-import { tspBruteForce } from '../../src/21-complexity/tsp-brute-force.js';
+import { metricTSP } from '../../src/22-approximation-algorithms/metric-tsp';
+import { tspBruteForce } from '../../src/21-complexity/tsp-brute-force';
 
 describe('metricTSP', () => {
   // ── Helper ─────────────────────────────────────────────────────────

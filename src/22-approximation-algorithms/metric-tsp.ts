@@ -22,9 +22,9 @@
  * @module
  */
 
-import type { DistanceMatrix } from '../21-complexity/tsp-brute-force.js';
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import { prim } from '../14-minimum-spanning-trees/prim.js';
+import type { DistanceMatrix } from '../21-complexity/tsp-brute-force';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import { prim } from '../14-minimum-spanning-trees/prim';
 
 /**
  * Result of the metric TSP approximation.

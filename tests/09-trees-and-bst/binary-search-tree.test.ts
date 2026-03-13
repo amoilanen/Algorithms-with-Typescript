@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BinarySearchTree } from '../../src/09-trees-and-bst/binary-search-tree.js';
+import { BinarySearchTree } from '../../src/09-trees-and-bst/binary-search-tree';
 
 describe('BinarySearchTree', () => {
   describe('empty tree', () => {

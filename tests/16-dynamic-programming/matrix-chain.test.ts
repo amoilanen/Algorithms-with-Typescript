@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matrixChainOrder } from '../../src/16-dynamic-programming/matrix-chain.js';
+import { matrixChainOrder } from '../../src/16-dynamic-programming/matrix-chain';
 
 describe('matrixChainOrder', () => {
   it('throws if dims has fewer than 2 elements', () => {

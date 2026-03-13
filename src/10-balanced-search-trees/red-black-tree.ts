@@ -1,5 +1,5 @@
-import type { Comparator } from '../types.js';
-import { numberComparator } from '../types.js';
+import type { Comparator } from '../types';
+import { numberComparator } from '../types';
 
 /** Node color in a red-black tree. */
 export enum Color {

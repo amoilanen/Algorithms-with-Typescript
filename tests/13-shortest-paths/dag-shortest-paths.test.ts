@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { dagShortestPaths } from '../../src/13-shortest-paths/dag-shortest-paths.js';
-import { reconstructPath } from '../../src/13-shortest-paths/dijkstra.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { dagShortestPaths } from '../../src/13-shortest-paths/dag-shortest-paths';
+import { reconstructPath } from '../../src/13-shortest-paths/dijkstra';
 
 describe('DAG Shortest Paths', () => {
   describe('basic DAG with positive weights', () => {

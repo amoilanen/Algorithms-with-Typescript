@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { edmondsKarp } from '../../src/15-network-flow/edmonds-karp.js';
+import { edmondsKarp } from '../../src/15-network-flow/edmonds-karp';
 
 /**
  * Helper: build a simple two-path flow network.

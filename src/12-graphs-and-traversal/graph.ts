@@ -1,4 +1,4 @@
-import type { Edge } from '../types.js';
+import type { Edge } from '../types';
 
 /**
  * A generic graph supporting directed/undirected and weighted/unweighted edges.

@@ -1,5 +1,5 @@
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import { PriorityQueue } from '../11-heaps-and-priority-queues/priority-queue.js';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import { PriorityQueue } from '../11-heaps-and-priority-queues/priority-queue';
 
 /**
  * Result of a single-source shortest-paths computation.

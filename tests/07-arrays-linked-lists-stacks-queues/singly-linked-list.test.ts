@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SinglyLinkedList } from '../../src/07-arrays-linked-lists-stacks-queues/singly-linked-list.js';
+import { SinglyLinkedList } from '../../src/07-arrays-linked-lists-stacks-queues/singly-linked-list';
 
 describe('SinglyLinkedList', () => {
   it('should start empty', () => {

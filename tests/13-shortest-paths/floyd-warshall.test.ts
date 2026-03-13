@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
 import {
   floydWarshall,
   reconstructPathFW,
   hasNegativeCycle,
-} from '../../src/13-shortest-paths/floyd-warshall.js';
+} from '../../src/13-shortest-paths/floyd-warshall';
 
 describe('Floyd-Warshall', () => {
   /** Helper: look up dist[from][to] using vertex labels. */

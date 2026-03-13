@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lcs, lcsString } from '../../src/16-dynamic-programming/lcs.js';
+import { lcs, lcsString } from '../../src/16-dynamic-programming/lcs';
 
 describe('lcs', () => {
   it('returns empty subsequence for empty arrays', () => {

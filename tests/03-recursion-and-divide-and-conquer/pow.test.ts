@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   pow,
   powSlow,
-} from '../../src/03-recursion-and-divide-and-conquer/pow.js';
+} from '../../src/03-recursion-and-divide-and-conquer/pow';
 
 describe('pow', () => {
   for (const func of [powSlow, pow]) {

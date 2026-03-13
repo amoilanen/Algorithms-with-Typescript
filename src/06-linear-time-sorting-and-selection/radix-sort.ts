@@ -1,4 +1,4 @@
-import { countingSortByDigit } from './counting-sort.js';
+import { countingSortByDigit } from './counting-sort';
 
 /**
  * LSD (Least Significant Digit) radix sort for non-negative integers.

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   closestPair,
   distance,
-} from '../../src/03-recursion-and-divide-and-conquer/closest-pair.js';
-import type { Point } from '../../src/03-recursion-and-divide-and-conquer/closest-pair.js';
+} from '../../src/03-recursion-and-divide-and-conquer/closest-pair';
+import type { Point } from '../../src/03-recursion-and-divide-and-conquer/closest-pair';
 
 describe('distance', () => {
   it('should return 0 for the same point', () => {

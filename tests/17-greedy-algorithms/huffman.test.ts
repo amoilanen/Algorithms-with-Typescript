@@ -5,7 +5,7 @@ import {
   huffmanEncode,
   huffmanDecode,
   type HuffmanNode,
-} from '../../src/17-greedy-algorithms/huffman.js';
+} from '../../src/17-greedy-algorithms/huffman';
 
 // ── Helpers ──────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { max } from '../../src/01-foundations/max.js';
+import { max } from '../../src/01-foundations/max';
 
 describe('max', () => {
   it('should return maximum among several elements', () => {

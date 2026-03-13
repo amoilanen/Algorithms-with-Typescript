@@ -1,5 +1,5 @@
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import type { ShortestPathResult } from './dijkstra.js';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import type { ShortestPathResult } from './dijkstra';
 
 /**
  * Result of the Bellman-Ford algorithm.

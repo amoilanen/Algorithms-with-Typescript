@@ -1,4 +1,4 @@
-import { Graph } from './graph.js';
+import { Graph } from './graph';
 
 /**
  * Detect whether a **directed** graph contains a cycle.

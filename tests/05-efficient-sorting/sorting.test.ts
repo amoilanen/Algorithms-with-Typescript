@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest';
 import {
   mergeSort,
   merge,
-} from '../../src/05-efficient-sorting/merge-sort.js';
+} from '../../src/05-efficient-sorting/merge-sort';
 import {
   quickSort,
   partition,
-} from '../../src/05-efficient-sorting/quick-sort.js';
-import { heapSort } from '../../src/05-efficient-sorting/heap-sort.js';
+} from '../../src/05-efficient-sorting/quick-sort';
+import { heapSort } from '../../src/05-efficient-sorting/heap-sort';
 
 describe('efficient sorting', () => {
   for (const sortFunc of [mergeSort, heapSort, quickSort]) {

@@ -1,5 +1,5 @@
-import type { Comparator } from '../types.js';
-import { numberComparator } from '../types.js';
+import type { Comparator } from '../types';
+import { numberComparator } from '../types';
 
 /**
  * Partitions arr[start..end] around the middle element as pivot.

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   gcd,
   gcdSlow,
-} from '../../src/03-recursion-and-divide-and-conquer/gcd.js';
+} from '../../src/03-recursion-and-divide-and-conquer/gcd';
 
 describe('gcd', () => {
   for (const func of [gcd, gcdSlow]) {

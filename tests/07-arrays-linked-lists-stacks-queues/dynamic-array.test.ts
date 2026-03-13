@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DynamicArray } from '../../src/07-arrays-linked-lists-stacks-queues/dynamic-array.js';
+import { DynamicArray } from '../../src/07-arrays-linked-lists-stacks-queues/dynamic-array';
 
 describe('DynamicArray', () => {
   it('should start empty', () => {

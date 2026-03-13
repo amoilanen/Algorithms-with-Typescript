@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
 import {
   hasDirectedCycle,
   hasUndirectedCycle,
   hasCycle,
-} from '../../src/12-graphs-and-traversal/cycle-detection.js';
+} from '../../src/12-graphs-and-traversal/cycle-detection';
 
 describe('hasDirectedCycle', () => {
   it('should detect a simple cycle', () => {

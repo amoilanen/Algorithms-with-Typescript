@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { bfs, reconstructPath } from '../../src/12-graphs-and-traversal/bfs.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { bfs, reconstructPath } from '../../src/12-graphs-and-traversal/bfs';
 
 /**
  * Build a small undirected graph:

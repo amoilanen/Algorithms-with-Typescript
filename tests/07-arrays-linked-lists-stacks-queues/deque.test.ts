@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Deque } from '../../src/07-arrays-linked-lists-stacks-queues/deque.js';
+import { Deque } from '../../src/07-arrays-linked-lists-stacks-queues/deque';
 
 describe('Deque', () => {
   it('should start empty', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { setCover } from '../../src/22-approximation-algorithms/set-cover.js';
+import { setCover } from '../../src/22-approximation-algorithms/set-cover';
 
 describe('setCover', () => {
   // ── Basic cases ────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { subsetSum } from '../../src/21-complexity/subset-sum.js';
+import { subsetSum } from '../../src/21-complexity/subset-sum';
 
 describe('subsetSum', () => {
   // ── Basic solvable instances ──────────────────────────────────────

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   fractionalKnapsack,
   type FractionalKnapsackItem,
-} from '../../src/17-greedy-algorithms/fractional-knapsack.js';
+} from '../../src/17-greedy-algorithms/fractional-knapsack';
 
 describe('fractionalKnapsack', () => {
   // ── Input validation ──────────────────────────────────────────

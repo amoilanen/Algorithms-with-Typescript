@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { quickselect } from '../../src/06-linear-time-sorting-and-selection/quickselect.js';
-import { medianOfMedians } from '../../src/06-linear-time-sorting-and-selection/median-of-medians.js';
+import { quickselect } from '../../src/06-linear-time-sorting-and-selection/quickselect';
+import { medianOfMedians } from '../../src/06-linear-time-sorting-and-selection/median-of-medians';
 
 describe('selection algorithms', () => {
   for (const selectFunc of [quickselect, medianOfMedians]) {

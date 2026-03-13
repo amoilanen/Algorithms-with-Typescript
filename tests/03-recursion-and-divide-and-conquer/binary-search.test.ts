@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   linearSearch,
   binarySearch,
-} from '../../src/03-recursion-and-divide-and-conquer/binary-search.js';
+} from '../../src/03-recursion-and-divide-and-conquer/binary-search';
 
 describe('linearSearch', () => {
   it('should return -1 if no such element', () => {

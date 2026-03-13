@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   HashTableOpenAddressing,
   type ProbingStrategy,
-} from '../../src/08-hash-tables/hash-table-open-addressing.js';
+} from '../../src/08-hash-tables/hash-table-open-addressing';
 
 const strategies: ProbingStrategy[] = ['linear', 'double-hashing'];
 

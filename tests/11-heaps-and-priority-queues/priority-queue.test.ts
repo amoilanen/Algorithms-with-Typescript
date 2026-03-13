@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PriorityQueue } from '../../src/11-heaps-and-priority-queues/priority-queue.js';
+import { PriorityQueue } from '../../src/11-heaps-and-priority-queues/priority-queue';
 
 describe('PriorityQueue', () => {
   // ── Empty queue ───────────────────────────────────────────────

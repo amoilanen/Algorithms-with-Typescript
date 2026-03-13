@@ -1,7 +1,7 @@
-import type { Edge } from '../types.js';
-import { Graph } from '../12-graphs-and-traversal/graph.js';
-import { BinaryHeap } from '../11-heaps-and-priority-queues/binary-heap.js';
-import type { MSTResult } from './kruskal.js';
+import type { Edge } from '../types';
+import { Graph } from '../12-graphs-and-traversal/graph';
+import { BinaryHeap } from '../11-heaps-and-priority-queues/binary-heap';
+import type { MSTResult } from './kruskal';
 
 /** An entry in Prim's priority queue: the candidate edge and its weight. */
 interface HeapEntry<T> {

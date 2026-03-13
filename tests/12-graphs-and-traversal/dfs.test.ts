@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { dfs } from '../../src/12-graphs-and-traversal/dfs.js';
-import type { EdgeType } from '../../src/12-graphs-and-traversal/dfs.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { dfs } from '../../src/12-graphs-and-traversal/dfs';
+import type { EdgeType } from '../../src/12-graphs-and-traversal/dfs';
 
 /**
  * Build a directed graph for DFS edge classification:

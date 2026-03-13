@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BinaryTree, BinaryTreeNode } from '../../src/09-trees-and-bst/binary-tree.js';
+import { BinaryTree, BinaryTreeNode } from '../../src/09-trees-and-bst/binary-tree';
 
 describe('BinaryTreeNode', () => {
   it('should create a node with a value and null children', () => {

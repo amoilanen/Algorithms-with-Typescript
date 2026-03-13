@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { prim } from '../../src/14-minimum-spanning-trees/prim.js';
-import { kruskal } from '../../src/14-minimum-spanning-trees/kruskal.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { prim } from '../../src/14-minimum-spanning-trees/prim';
+import { kruskal } from '../../src/14-minimum-spanning-trees/kruskal';
 
 /**
  * Build a simple triangle:

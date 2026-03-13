@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   lisDP,
   lisBinarySearch,
-} from '../../src/16-dynamic-programming/lis.js';
+} from '../../src/16-dynamic-programming/lis';
 
 describe('longest increasing subsequence', () => {
   for (const lis of [lisDP, lisBinarySearch]) {

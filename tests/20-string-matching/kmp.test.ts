@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { kmpSearch, computeFailure } from '../../src/20-string-matching/kmp.js';
+import { kmpSearch, computeFailure } from '../../src/20-string-matching/kmp';
 
 describe('computeFailure', () => {
   it('returns empty array for empty pattern', () => {

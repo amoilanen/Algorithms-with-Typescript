@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   primesUpTo,
   primesUpToSlow,
-} from '../../src/01-foundations/sieve-of-eratosthenes.js';
+} from '../../src/01-foundations/sieve-of-eratosthenes';
 
 describe('sieve of eratosthenes', () => {
   for (const func of [primesUpToSlow, primesUpTo]) {

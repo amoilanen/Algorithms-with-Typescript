@@ -1,4 +1,4 @@
-import { Graph } from '../12-graphs-and-traversal/graph.js';
+import { Graph } from '../12-graphs-and-traversal/graph';
 
 /**
  * Result of the Floyd-Warshall all-pairs shortest-paths computation.

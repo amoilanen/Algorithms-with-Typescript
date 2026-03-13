@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { vertexCover } from '../../src/22-approximation-algorithms/vertex-cover.js';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
+import { vertexCover } from '../../src/22-approximation-algorithms/vertex-cover';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
 
 describe('vertexCover', () => {
   // ── Helper ─────────────────────────────────────────────────────────

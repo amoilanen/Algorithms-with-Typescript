@@ -1,4 +1,4 @@
-import { Graph } from './graph.js';
+import { Graph } from './graph';
 
 /**
  * Topological sort of a directed acyclic graph (DAG) using **Kahn's

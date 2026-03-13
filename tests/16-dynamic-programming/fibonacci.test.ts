@@ -3,7 +3,7 @@ import {
   fibNaive,
   fibMemo,
   fibTabulated,
-} from '../../src/16-dynamic-programming/fibonacci.js';
+} from '../../src/16-dynamic-programming/fibonacci';
 
 const KNOWN_FIB = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610];
 

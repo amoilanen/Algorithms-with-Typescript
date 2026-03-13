@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { selectionSort } from '../../src/04-elementary-sorting/selection-sort.js';
-import { bubbleSort } from '../../src/04-elementary-sorting/bubble-sort.js';
-import { insertionSort } from '../../src/04-elementary-sorting/insertion-sort.js';
+import { selectionSort } from '../../src/04-elementary-sorting/selection-sort';
+import { bubbleSort } from '../../src/04-elementary-sorting/bubble-sort';
+import { insertionSort } from '../../src/04-elementary-sorting/insertion-sort';
 
 describe('elementary sorting', () => {
   for (const sortFunc of [selectionSort, insertionSort, bubbleSort]) {

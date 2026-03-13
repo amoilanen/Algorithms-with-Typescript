@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { dijkstra, reconstructPath } from '../../src/13-shortest-paths/dijkstra.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { dijkstra, reconstructPath } from '../../src/13-shortest-paths/dijkstra';
 
 describe('Dijkstra', () => {
   describe('basic directed graph', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { knapsack } from '../../src/16-dynamic-programming/knapsack.js';
-import type { KnapsackItem } from '../../src/16-dynamic-programming/knapsack.js';
+import { knapsack } from '../../src/16-dynamic-programming/knapsack';
+import type { KnapsackItem } from '../../src/16-dynamic-programming/knapsack';
 
 describe('knapsack', () => {
   it('throws on negative capacity', () => {

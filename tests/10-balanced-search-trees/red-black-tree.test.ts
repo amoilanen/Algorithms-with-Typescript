@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   RedBlackTree,
   Color,
-} from '../../src/10-balanced-search-trees/red-black-tree.js';
+} from '../../src/10-balanced-search-trees/red-black-tree';
 
 /**
  * Verify all five red-black properties:

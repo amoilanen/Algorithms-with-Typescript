@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   minCoinChange,
   countCoinChange,
-} from '../../src/16-dynamic-programming/coin-change.js';
+} from '../../src/16-dynamic-programming/coin-change';
 
 describe('minCoinChange', () => {
   it('throws on negative amount', () => {

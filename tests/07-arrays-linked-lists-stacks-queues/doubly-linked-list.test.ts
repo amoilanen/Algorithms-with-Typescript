@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DoublyLinkedList } from '../../src/07-arrays-linked-lists-stacks-queues/doubly-linked-list.js';
+import { DoublyLinkedList } from '../../src/07-arrays-linked-lists-stacks-queues/doubly-linked-list';
 
 describe('DoublyLinkedList', () => {
   it('should start empty', () => {

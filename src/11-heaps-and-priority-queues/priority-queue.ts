@@ -1,4 +1,4 @@
-import { BinaryHeap } from './binary-heap.js';
+import { BinaryHeap } from './binary-heap';
 
 /**
  * An entry stored inside the priority queue, pairing a value with its

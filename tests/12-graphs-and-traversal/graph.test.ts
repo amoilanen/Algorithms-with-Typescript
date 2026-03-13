@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Graph, GraphMatrix } from '../../src/12-graphs-and-traversal/graph.js';
+import { Graph, GraphMatrix } from '../../src/12-graphs-and-traversal/graph';
 
 // ── Graph (adjacency list) ────────────────────────────────────────
 

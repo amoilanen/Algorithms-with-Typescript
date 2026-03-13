@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { bipartiteMatching } from '../../src/15-network-flow/bipartite-matching.js';
+import { bipartiteMatching } from '../../src/15-network-flow/bipartite-matching';
 
 describe('bipartiteMatching', () => {
   it('finds a perfect matching in a simple bipartite graph', () => {

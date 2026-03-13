@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rabinKarp } from '../../src/20-string-matching/rabin-karp.js';
+import { rabinKarp } from '../../src/20-string-matching/rabin-karp';
 
 describe('rabinKarp', () => {
   // ── Basic matches ─────────────────────────────────────────────────

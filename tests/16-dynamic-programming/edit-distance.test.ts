@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { editDistance } from '../../src/16-dynamic-programming/edit-distance.js';
+import { editDistance } from '../../src/16-dynamic-programming/edit-distance';
 
 describe('editDistance', () => {
   it('returns 0 for identical strings', () => {

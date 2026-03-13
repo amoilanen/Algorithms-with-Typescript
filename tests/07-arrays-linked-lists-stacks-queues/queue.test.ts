@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Queue } from '../../src/07-arrays-linked-lists-stacks-queues/queue.js';
+import { Queue } from '../../src/07-arrays-linked-lists-stacks-queues/queue';
 
 describe('Queue', () => {
   it('should start empty', () => {

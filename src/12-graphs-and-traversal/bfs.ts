@@ -1,4 +1,4 @@
-import { Graph } from './graph.js';
+import { Graph } from './graph';
 
 /**
  * Result of a breadth-first search from a source vertex `s`.

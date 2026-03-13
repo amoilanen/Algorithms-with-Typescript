@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { bellmanFord } from '../../src/13-shortest-paths/bellman-ford.js';
-import { reconstructPath } from '../../src/13-shortest-paths/dijkstra.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { bellmanFord } from '../../src/13-shortest-paths/bellman-ford';
+import { reconstructPath } from '../../src/13-shortest-paths/dijkstra';
 
 describe('Bellman-Ford', () => {
   describe('positive weights', () => {

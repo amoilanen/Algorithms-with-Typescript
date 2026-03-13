@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   intervalScheduling,
   type Interval,
-} from '../../src/17-greedy-algorithms/interval-scheduling.js';
+} from '../../src/17-greedy-algorithms/interval-scheduling';
 
 describe('intervalScheduling', () => {
   // ── Edge cases ────────────────────────────────────────────────

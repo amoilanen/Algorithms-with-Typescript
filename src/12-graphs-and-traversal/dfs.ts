@@ -1,4 +1,4 @@
-import { Graph } from './graph.js';
+import { Graph } from './graph';
 
 /**
  * Classification of an edge discovered during DFS.

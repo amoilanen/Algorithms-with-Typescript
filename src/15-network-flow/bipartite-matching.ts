@@ -22,7 +22,7 @@
  * @module
  */
 
-import { edmondsKarp } from './edmonds-karp.js';
+import { edmondsKarp } from './edmonds-karp';
 
 /**
  * Result of the maximum bipartite matching computation.

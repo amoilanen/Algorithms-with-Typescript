@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
 import {
   topologicalSortKahn,
   topologicalSortDFS,
-} from '../../src/12-graphs-and-traversal/topological-sort.js';
+} from '../../src/12-graphs-and-traversal/topological-sort';
 
 /**
  * Build a classic DAG (dressing order from CLRS):

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Graph } from '../../src/12-graphs-and-traversal/graph.js';
-import { kruskal } from '../../src/14-minimum-spanning-trees/kruskal.js';
+import { Graph } from '../../src/12-graphs-and-traversal/graph';
+import { kruskal } from '../../src/14-minimum-spanning-trees/kruskal';
 
 /**
  * Helper: build the classic CLRS-style example graph.

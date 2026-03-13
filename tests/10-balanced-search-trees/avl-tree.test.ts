@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AVLTree } from '../../src/10-balanced-search-trees/avl-tree.js';
+import { AVLTree } from '../../src/10-balanced-search-trees/avl-tree';
 
 /**
  * Verify the AVL invariant: for every node, |height(left) − height(right)| ≤ 1.

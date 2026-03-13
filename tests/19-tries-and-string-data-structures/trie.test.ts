@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Trie } from '../../src/19-tries-and-string-data-structures/trie.js';
+import { Trie } from '../../src/19-tries-and-string-data-structures/trie';
 
 describe('Trie', () => {
   // ── Construction and empty state ──────────────────────────────────

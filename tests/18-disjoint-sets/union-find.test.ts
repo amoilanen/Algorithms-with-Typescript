@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { UnionFind } from '../../src/18-disjoint-sets/union-find.js';
+import { UnionFind } from '../../src/18-disjoint-sets/union-find';
 
 describe('UnionFind', () => {
   // ── makeSet & basic properties ──────────────────────────────────
