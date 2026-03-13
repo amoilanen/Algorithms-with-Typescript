@@ -1,6 +1,9 @@
 # Algorithms with TypeScript
 
-A comprehensive book on data structures and algorithms, with tested TypeScript implementations. Covers the core curriculum of an undergraduate algorithms course --- from sorting and searching through graph algorithms, dynamic programming, and computational complexity.
+A comprehensive book on data structures and algorithms, with tested TypeScript implementations. Covers the core curriculum of an undergraduate algorithms course - from sorting and searching through graph algorithms, dynamic programming, and computational complexity.
+
+Read online at http://amoilanen.github.io/Algorithms-with-Typescript/
+PDF http://amoilanen.github.io/Algorithms-with-Typescript/algorithms-with-typescript.pdf
 
 ## Contents
 

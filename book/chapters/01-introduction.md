@@ -6,11 +6,11 @@ _In this chapter we discuss what an algorithm is, how algorithms can be expresse
 
 Let us start with a discussion of what an algorithm is. Intuitively the notion is more or less clear: we are talking about some formal way to describe a computational procedure. According to the Merriam-Webster dictionary, an algorithm is "a set of steps that are followed in order to solve a mathematical problem or to complete a computer process".
 
-Still, this is probably not formal enough. How do we choose the next step from the set of steps? Should the procedure stop eventually? What is the result of executing an algorithm? Many formal definitions of what constitutes an algorithm can be given; however, at this point in the book, without introducing abstract models of computation, we will use the following working definition.
+Still, this is probably not formal enough. How do we choose the next step from the set of steps? Should the procedure stop eventually? What is the result of executing an algorithm? Many formal definitions of what constitutes an algorithm can be given; however, we will use the following working definition.
 
 ---
 
-> **Definition 1.1 --- Algorithm**
+> **Definition 1.1 - Algorithm**
 >
 > A set of computational steps that specifies a formal computational procedure and has the following properties:
 >
@@ -26,7 +26,7 @@ Still, this is probably not formal enough. How do we choose the next step from t
 
 These four properties capture the essence of what makes a procedure an algorithm. Let us look at each one briefly:
 
-- **Determinism** (property 1): at every point during execution, there is exactly one thing to do next, or the algorithm is done. There is no ambiguity or choice involved.
+- **Determinism** (property 1): at every point during execution, there is exactly one thing to do next, or the algorithm is done. The next step is always uniquely determined by the current state.
 - **Termination** (property 2): for every valid input, the algorithm eventually finishes. It does not run forever.
 - **Output** (property 3): when the algorithm finishes, it produces a well-defined result.
 - **Formal specification** (property 4): the algorithm can be written down precisely enough that it could, in principle, be carried out mechanically.
@@ -53,11 +53,11 @@ and we can specify the algorithm more concisely as
 
 $$\text{mult}(x, y) = x \times y$$
 
-So far, while talking about algorithms, we have encountered no TypeScript or any other programming language notation. This is quite intentional: the notion of an algorithm is mathematical and abstract. Of course we can express any algorithm using TypeScript, but that will be just one of the possible formal representations --- in this case, one that is also executable by a computer.
+So far, while talking about algorithms, we have encountered no TypeScript or any other programming language notation. This is quite intentional: the notion of an algorithm is mathematical and abstract. Of course we can express any algorithm using TypeScript, but that will be just one of the possible formal representations - in this case, one that is also executable by a computer.
 
-A careful reader might be puzzled by our confidence. How can we assert that _any_ algorithm can be expressed using TypeScript? Can this claim be proven, given our definition? Is TypeScript powerful enough to express every possible algorithm? It turns out that it is, but we will leave this statement without proof until the end of the book, where we discuss abstract models of computation and give a more rigorous definition of an algorithm (see Chapter 21).
+A careful reader might be puzzled by our confidence. How can we assert that _any_ algorithm can be expressed using TypeScript? Can this claim be proven, given our definition? Is TypeScript powerful enough to express every possible algorithm? It turns out that it is. This can be proven rigorously: TypeScript (like most general-purpose programming languages) is _Turing complete_, meaning it can simulate any computation that a Turing machine can perform. Since Turing machines capture the full power of algorithmic computation, any algorithm can be expressed in TypeScript.
 
-Let us look again at Definition 1.1. It states that we should be able to specify the computational procedure formally. It is now clear why we require this property: given a formal language such as TypeScript, we can specify the algorithm of interest and execute the specification on a machine such as a laptop or smartphone. For the multiplication algorithm we can write:
+Let us look again at Definition 1.1. It states that we should be able to specify the computational procedure formally. It is now clear why we require this property: given a formal language such as TypeScript, we can specify the algorithm of interest and execute the specification on a computer. For the multiplication algorithm we can write:
 
 ```typescript
 function mult(x: number, y: number): number {
@@ -65,7 +65,7 @@ function mult(x: number, y: number): number {
 }
 ```
 
-The TypeScript specification is more concise and unambiguous than the natural-language version. Throughout the book we will primarily use TypeScript, but keep in mind that the algorithms we discuss can be expressed in other formal notations as well. Many Computer Science textbooks go as far as inventing their own pseudocode to avoid being tied to a particular programming language. We will not go that far and will happily use TypeScript --- hence the name of the book, _Algorithms with TypeScript_.
+The TypeScript specification is more concise and unambiguous than the natural-language version. Throughout the book we will primarily use TypeScript, but keep in mind that the algorithms we discuss can be expressed in other formal notations as well. Many Computer Science textbooks go as far as inventing their own pseudocode to avoid being tied to a particular programming language. We will not go that far and will happily use TypeScript - hence the name of the book, _Algorithms with TypeScript_.
 
 ## Computational procedures that are not algorithms
 
@@ -81,7 +81,7 @@ function getMaximumNumber(): number {
 }
 ```
 
-This function never terminates: the `while (true)` loop runs forever, so the `return` statement is never reached. Property 2 of Definition 1.1 is violated --- the procedure does not stop after a finite number of steps. This is therefore not an algorithm.
+This function never terminates: the `while (true)` loop runs forever, so the `return` statement is never reached. Property 2 of Definition 1.1 is violated - the procedure does not stop after a finite number of steps. This is therefore not an algorithm.
 
 Another example of a non-algorithm is a division function defined on all pairs of numbers:
 
@@ -94,7 +94,7 @@ function divide(x: number, y: number): number {
 }
 ```
 
-This is not an algorithm according to our definition because the result is not defined for all inputs --- when $y = 0$ the procedure throws an error instead of producing an output (property 3 is violated). However, it is easy to fix this:
+This is not an algorithm according to our definition because the result is not defined for all inputs - when $y = 0$ the procedure throws an error instead of producing an output (property 3 is violated). However, it is easy to fix this:
 
 ```typescript
 function divide(x: number, y: number): number {
@@ -110,7 +110,7 @@ function divide(x: number, y: number): number {
 }
 ```
 
-This _is_ an algorithm --- but only because of JavaScript's particular treatment of division by zero.
+This _is_ an algorithm - but only because of JavaScript's particular treatment of division by zero.
 
 From these examples we see that not every computational procedure that can be formally expressed is an algorithm. The properties in Definition 1.1 are genuine constraints.
 
@@ -118,13 +118,13 @@ From these examples we see that not every computational procedure that can be fo
 
 Before we proceed to our first nontrivial examples, let's briefly discuss why studying algorithms is worthwhile.
 
-**Correctness.** Real-world software often needs to solve well-defined computational problems: sort a list, find the shortest route, compress data, search a database. An algorithm gives us a _proven_ solution to such a problem. Understanding the classic algorithms means you can recognize when a problem you face has already been solved --- and solved well.
+**Correctness.** Real-world software often needs to solve well-defined computational problems: sort a list, find the shortest route, compress data, search a database. An algorithm gives us a _proven_ solution to such a problem. Understanding the classic algorithms means you can recognize when a problem you face has already been solved - and solved well.
 
-**Efficiency.** Two algorithms that solve the same problem can differ enormously in how long they take or how much memory they use. Later in this book we will see sorting algorithms that take time proportional to $n^2$ (where $n$ is the number of elements) and others that take time proportional to $n \log n$. For a million elements, that is the difference between a trillion operations and roughly twenty million --- a factor of 50,000. Choosing the right algorithm can be the difference between a program that finishes in seconds and one that takes hours.
+**Efficiency.** Two algorithms that solve the same problem can differ enormously in how long they take or how much memory they use. Later in this book we will see sorting algorithms that take time proportional to $n^2$ (where $n$ is the number of elements) and others that take time proportional to $n \log n$. For a million elements, that is the difference between a trillion operations and roughly twenty million - a factor of 50,000. Choosing the right algorithm can be the difference between a program that finishes in seconds and one that takes hours.
 
-**Foundation for deeper topics.** Algorithms and data structures form the backbone of computer science. Topics like databases, compilers, operating systems, machine learning, and cryptography all build on the ideas we will develop in this book.
+**Foundation for deeper topics.** Algorithms and data structures form the backbone of Computer Science. Topics like databases, compilers, operating systems, machine learning, and cryptography all build on the ideas we will develop in this book.
 
-**Problem-solving skills.** Even when you are not directly implementing a classic algorithm, the techniques you learn --- divide and conquer, dynamic programming, greedy strategies, graph modeling --- give you a powerful toolkit for approaching new problems.
+**Problem-solving skills.** Even when you are not directly implementing a classic algorithm, the techniques you learn - divide and conquer, dynamic programming, greedy strategies, graph modeling - give you a powerful toolkit for approaching new problems.
 
 ## Introduction to TypeScript
 
@@ -164,8 +164,8 @@ To follow along with the code in this book, you will need:
 Once Node.js is installed, clone the book's repository and install the dependencies:
 
 ```bash
-git clone https://github.com/antivanov/Algorithms-with-JavaScript.git
-cd Algorithms-with-JavaScript
+git clone https://github.com/amoilanen/Algorithms-with-TypeScript.git
+cd Algorithms-with-TypeScript
 npm install
 ```
 
@@ -248,7 +248,7 @@ We can argue correctness using a _loop invariant_: at the start of each iteratio
 The function performs one comparison per element and visits each element exactly once.
 
 - **Time complexity:** $O(n)$, where $n$ is the length of the array.
-- **Space complexity:** $O(1)$ --- we use only a single variable `result` beyond the input.
+- **Space complexity:** $O(1)$ - we use only a single variable `result` beyond the input.
 
 Can we do better than $O(n)$? No. Any algorithm that finds the maximum must examine every element at least once: if it skipped an element, that element could have been the maximum. Therefore $O(n)$ is optimal for this problem.
 
@@ -260,7 +260,7 @@ Our second algorithm is more substantial and has a rich history dating back over
 
 **Input:** A positive integer $n$.
 
-**Output:** A list of all prime numbers $p$ with $2 \leq p \leq n$.
+**Output:** A list of all prime numbers $p$ such that $2 \leq p \leq n$.
 
 Recall that a prime number is an integer greater than 1 whose only positive divisors are 1 and itself. The first few primes are 2, 3, 5, 7, 11, 13, 17, 19, 23, ...
 
@@ -353,9 +353,38 @@ Let us trace the sieve for $n = 20$. We start with all numbers from 2 to 20 mark
 
 **$p = 4$:** 4 is marked `false` (not prime). Skip it.
 
-**$p = 5$:** 5 is marked `true`, so it is prime. Cross out multiples of 5: 10, 15, 20 (all already crossed out).
+**$p = 5$:** 5 is marked `true`, so it is prime. Cross out multiples of 5: 10, 15, 20 (all already crossed out). The array is unchanged.
 
-For $p \geq 5$, all multiples up to 20 have already been marked, so no further changes occur. The numbers that remain `true` are:
+**$p = 6$:** 6 is marked `false` (not prime). Skip it.
+
+**$p = 7$:** 7 is marked `true`, so it is prime. Its first multiple is 14, which is already crossed out. The array is unchanged.
+
+**$p = 8, 9, 10$:** All marked `false`. Skip.
+
+**$p = 11$:** 11 is marked `true`, so it is prime. Its first multiple within range would be 22, which exceeds $n = 20$. No crossings.
+
+**$p = 12$:** Marked `false`. Skip.
+
+**$p = 13$:** 13 is marked `true`, so it is prime. Its first multiple within range would be 26, which exceeds $n = 20$. No crossings.
+
+**$p = 14, 15, 16$:** All marked `false`. Skip.
+
+**$p = 17$:** 17 is marked `true`, so it is prime. Its first multiple within range would be 34, which exceeds $n = 20$. No crossings.
+
+**$p = 18$:** Marked `false`. Skip.
+
+**$p = 19$:** 19 is marked `true`, so it is prime. Its first multiple within range would be 38, which exceeds $n = 20$. No crossings.
+
+**$p = 20$:** Marked `false`. Skip.
+
+The final state of the array is:
+
+```
+ 2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+ T  T  F  T  F  T  F  F  F  T  F  T  F  F  F  T  F  T  F
+```
+
+The numbers that remain `true` are:
 
 $$2, 3, 5, 7, 11, 13, 17, 19$$
 
@@ -375,8 +404,10 @@ $$\sum_{p \text{ prime}, p \leq n} \frac{n}{p} = n \sum_{p \text{ prime}, p \leq
 
 A classical result in number theory states that the sum of the reciprocals of the primes up to $n$ grows as $\ln(\ln(n))$. Therefore:
 
-- **Time complexity:** $O(n \log \log n)$.
+- **Time complexity:** $O(n \ln(\ln n))$.
 - **Space complexity:** $O(n)$ for the boolean array.
+
+Note: since $\ln n$ and $\log_2 n$ differ only by a constant factor ($\log_2 n = \ln n / \ln 2$), it does not matter which logarithm base we use inside big-$O$ notation. You may see this complexity written equivalently as $O(n \log \log n)$ in other sources.
 
 Compare this with the naive trial-division approach at $O(n\sqrt{n})$. For $n = 1{,}000{,}000$:
 
@@ -385,7 +416,7 @@ Compare this with the naive trial-division approach at $O(n\sqrt{n})$. For $n = 
 | Trial division | $10^6 \times 10^3 = 10^9$ |
 | Sieve of Eratosthenes | $10^6 \times \log\log(10^6) \approx 10^6 \times 2.9 \approx 3 \times 10^6$ |
 
-The sieve is roughly 300 times faster --- an enormous difference for large inputs.
+The sieve is roughly 300 times faster - an enormous difference for large inputs.
 
 ### Comparing the two approaches
 
@@ -401,7 +432,7 @@ In this chapter we defined what an algorithm is, introduced TypeScript as our im
 - Algorithms can be expressed in many notations; we use TypeScript because it combines readability, type safety, and executability.
 - Even for simple problems, the choice of algorithm can dramatically affect performance: the Sieve of Eratosthenes outperforms trial division by orders of magnitude.
 
-In the next chapter, we develop the mathematical framework --- asymptotic notation and complexity analysis --- that lets us reason precisely about algorithm efficiency. These tools will be essential throughout the rest of the book.
+In the next chapter, we develop the mathematical framework - asymptotic notation and complexity analysis - that lets us reason precisely about algorithm efficiency. These tools will be essential throughout the rest of the book.
 
 ## Exercises
 
@@ -411,7 +442,7 @@ In the next chapter, we develop the mathematical framework --- asymptotic notati
 
 **Exercise 1.3.** The Sieve of Eratosthenes as presented starts crossing out multiples of $p$ from $2p$. Show that it is sufficient to start from $p^2$ instead. Why does this not change the asymptotic time complexity?
 
-**Exercise 1.4.** A _perfect number_ is a positive integer that equals the sum of its proper divisors (e.g., $6 = 1 + 2 + 3$). Write a function `isPerfect(n: number): boolean` and use it to find all perfect numbers up to 10,000. What is the time complexity of your approach?
+**Exercise 1.4.** The _proper divisors_ of a positive integer $n$ are all positive divisors of $n$ other than $n$ itself. For example, the proper divisors of 12 are 1, 2, 3, 4, and 6. A _perfect number_ is a positive integer that equals the sum of its proper divisors (e.g., $6 = 1 + 2 + 3$). Write a function `isPerfect(n: number): boolean` and use it to find all perfect numbers up to 10,000. What is the time complexity of your approach?
 
 **Exercise 1.5.** Consider the following function:
 
