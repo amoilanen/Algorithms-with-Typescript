@@ -1,6 +1,6 @@
 [book]
 title = "Algorithms with TypeScript"
-authors = [Anton Moilanen, Zenflow (https://zencoder.ai/zenflow), Claude Opus 4.6 (https://www.anthropic.com/claude/opus)"]
+authors = ["Anton Moilanen", "Zenflow (https://zencoder.ai/zenflow)", "Claude Opus 4.6 (https://www.anthropic.com/claude/opus)"]
 description = "A practical guide to data structures and algorithms for software engineers and Computer Science students"
 src = "chapters"
 language = "en"
