@@ -15,6 +15,7 @@ git-repository-url = "https://github.com/amoilanen/Algorithms-with-TypeScript"
 edit-url-template = "https://github.com/amoilanen/Algorithms-with-TypeScript/edit/master/book/chapters/{path}"
 site-url = "/Algorithms-with-TypeScript/"
 additional-css = []
+additional-js = ["theme/fix-title.js"]
 
 [output.html.search]
 enable = true

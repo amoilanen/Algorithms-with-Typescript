@@ -28,7 +28,7 @@ Before we can analyze an algorithm, we need to agree on two things: what counts 
 
 ---
 
-> **Definition 2.1 --- Running time**
+> **Definition 2.1 - Running time**
 >
 > The **running time** of an algorithm on a given input is the number of basic operations it performs when executed on that input.
 
@@ -63,7 +63,7 @@ Rather than stating that an algorithm takes exactly $3n^2 + 7n + 4$ operations, 
 
 ---
 
-> **Definition 2.2 --- Big-O notation**
+> **Definition 2.2 - Big-O notation**
 >
 > Let $f(n)$ and $g(n)$ be functions from the non-negative integers to the non-negative reals. We write
 >
@@ -85,13 +85,13 @@ $$f(n) = 3n^2 + 7n + 4 \leq 3n^2 + 7n^2 + 4n^2 = 14n^2.$$
 
 Choosing $c = 14$ and $n_0 = 1$ satisfies Definition 2.2. $\square$
 
-Note that $f(n) = O(n^3)$ is also technically true — $n^2$ is bounded above by $n^3$ — but it is less informative. By convention, we always state the tightest bound we can prove.
+Note that $f(n) = O(n^3)$ is also technically true — $n^2$ is bounded above by $n^3$ — but it is less informative. By convention, we try to state the tightest bound we can prove.
 
 ### Big-Omega: lower bounds
 
 ---
 
-> **Definition 2.3 --- Big-Omega notation**
+> **Definition 2.3 - Big-Omega notation**
 >
 > We write $f(n) = \Omega(g(n))$ if there exist constants $c > 0$ and $n_0 \geq 0$ such that
 >
@@ -111,7 +111,7 @@ Big-Omega is especially useful for expressing _lower bounds_ on problems: "any a
 
 ---
 
-> **Definition 2.4 --- Big-Theta notation**
+> **Definition 2.4 - Big-Theta notation**
 >
 > We write $f(n) = \Theta(g(n))$ if $f(n) = O(g(n))$ and $f(n) = \Omega(g(n))$.
 >
@@ -158,9 +158,9 @@ To appreciate the practical impact, consider an algorithm that performs $T(n)$ o
 |-----|-----|-------------|-------|-------|-------|
 | 10 | 10 ns | 33 ns | 100 ns | 1 μs | 1 μs |
 | 100 | 100 ns | 664 ns | 10 μs | 1 ms | $4 \times 10^{13}$ years |
-| 1,000 | 1 μs | 10 μs | 1 ms | 1 s | — |
-| $10^6$ | 1 ms | 20 ms | 17 min | 31.7 years | — |
-| $10^9$ | 1 s | 30 s | 31.7 years | — | — |
+| 1,000 | 1 μs | 10 μs | 1 ms | 1 s | $3 \times 10^{284}$ years |
+| $10^6$ | 1 ms | 20 ms | 17 min | 31.7 years | $10^{301{,}013}$ years |
+| $10^9$ | 1 s | 30 s | 31.7 years | $3.17 \times 10^{10}$ years | $10^{3 \times 10^8}$ years |
 
 The table makes a powerful point: the gap between $O(n \log n)$ and $O(n^2)$ is large for a million elements, and the jump to $O(2^n)$ is catastrophic even for modest inputs.
 
@@ -170,7 +170,7 @@ The running time of an algorithm usually depends on the _specific input_, not ju
 
 ### Insertion sort as a running example
 
-Recall the insertion sort implementation from Chapter 4 (we discuss it fully there, but introduce it here as an analysis example):
+The following is an implementation of insertion sort, which we will study fully in Chapter 4. For now, we use it as an analysis example:
 
 ```typescript
 export function insertionSort<T>(
@@ -200,7 +200,7 @@ The outer loop runs $n - 1$ iterations (for $i = 1, 2, \ldots, n - 1$). For each
 
 ---
 
-> **Definition 2.5 --- Worst-case running time**
+> **Definition 2.5 - Worst-case running time**
 >
 > The **worst-case running time** $T_{\text{worst}}(n)$ is the maximum running time over all inputs of size $n$:
 >
@@ -216,7 +216,7 @@ $$\sum_{i=1}^{n-1} i = \frac{n(n-1)}{2} = \Theta(n^2).$$
 
 ---
 
-> **Definition 2.6 --- Best-case running time**
+> **Definition 2.6 - Best-case running time**
 >
 > The **best-case running time** $T_{\text{best}}(n)$ is the minimum running time over all inputs of size $n$:
 >
@@ -234,7 +234,7 @@ This is remarkable: insertion sort runs in _linear_ time on already-sorted input
 
 ---
 
-> **Definition 2.7 --- Average-case running time**
+> **Definition 2.7 - Average-case running time**
 >
 > The **average-case running time** is the expected running time over some distribution of inputs. For a uniform distribution over all permutations of $n$ elements:
 >
@@ -272,7 +272,7 @@ The resize operations happen at sizes 1, 2, 4, 8, $\ldots$, $2^k$, where $2^k \l
 
 $$1 + 2 + 4 + 8 + \cdots + 2^k = 2^{k+1} - 1 < 2n.$$
 
-Adding the $n$ non-resize operations (cost 1 each), the total cost of $n$ appends is less than $3n$. Therefore the **amortized cost** per append is:
+Adding the $n$ operations that simply write the new element into the array (cost 1 each), the total cost of $n$ appends is less than $3n$. Therefore the **amortized cost** per append is:
 
 $$\frac{3n}{n} = O(1).$$
 
@@ -291,7 +291,7 @@ We will see amortized analysis again in Chapter 7 (dynamic arrays), Chapter 11 (
 
 ## Recurrence relations
 
-When an algorithm calls itself recursively, its running time is naturally expressed as a _recurrence relation_: a formula that expresses $T(n)$ in terms of $T$ applied to smaller values.
+When an algorithm solves a problem by breaking it into smaller instances of the same problem, its running time is naturally expressed as a _recurrence relation_: a formula that expresses $T(n)$ in terms of $T$ applied to smaller values.
 
 ### Setting up a recurrence
 
@@ -357,7 +357,7 @@ Level 1:        cn/2      cn/2              → cost cn
                 / \       / \
 Level 2:    cn/4  cn/4  cn/4  cn/4          → cost cn
               ...         ...
-Level k:   c  c  c  ...  c  c  c           → cost cn
+Level k:   c  c  c  ...  c  c  c            → cost cn
            (n leaves)
 ```
 
@@ -369,7 +369,7 @@ The Master Theorem provides a general solution for recurrences of a common form.
 
 ---
 
-> **Definition 2.8 --- The Master Theorem**
+> **Definition 2.8 - The Master Theorem**
 >
 > Let $a \geq 1$ and $b > 1$ be constants, let $f(n)$ be a function, and let $T(n)$ be defined by the recurrence
 >
@@ -385,11 +385,119 @@ The Master Theorem provides a general solution for recurrences of a common form.
 
 ---
 
-The three cases correspond to three scenarios:
+The three cases correspond to three scenarios, and the intuition comes directly from examining the recursion tree for the general recurrence $T(n) = aT(n/b) + f(n)$.
 
-- **Case 1:** The cost is dominated by the leaves of the recursion tree. The recursive calls do most of the work.
-- **Case 2:** The cost is evenly distributed across all levels of the tree. Each level contributes roughly equally.
-- **Case 3:** The cost is dominated by the root. The non-recursive work $f(n)$ dominates.
+> **A note to the reader.** Understanding _why_ the Master Theorem works is not required for the rest of this book — only knowing _how to apply_ it (which we cover in the examples that follow). The proof sketch below is provided for the sake of completeness. If the math feels a bit daunting, feel free to skip ahead to Example 2.9 and return to this section later.
+
+### The general recursion tree
+
+At each level of the recursion, one problem of size $m$ spawns $a$ subproblems of size $m/b$ and performs $f(m)$ non-recursive work. The following table summarizes the tree level by level:
+
+| Level | Nodes | Subproblem size | Work per node | Total work at level |
+|-------|-------|-----------------|---------------|---------------------|
+| $0$ | $1$ | $n$ | $f(n)$ | $f(n)$ |
+| $1$ | $a$ | $n/b$ | $f(n/b)$ | $a \cdot f(n/b)$ |
+| $2$ | $a^2$ | $n/b^2$ | $f(n/b^2)$ | $a^2 \cdot f(n/b^2)$ |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\vdots$ | $\vdots$ |
+| $k$ | $a^k$ | $n/b^k$ | $f(n/b^k)$ | $a^k \cdot f(n/b^k)$ |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\vdots$ | $\vdots$ |
+| $\log_b n$ | $n^{\log_b a}$ | $1$ | $\Theta(1)$ | $\Theta(n^{\log_b a})$ |
+
+The tree has $\log_b n$ levels (since we divide by $b$ at each step until we reach size 1). The number of leaves is $a^{\log_b n} = n^{\log_b a}$ — this quantity is central to all three cases.
+
+> **Why does $a^{\log_b n} = n^{\log_b a}$?**
+>
+> This identity can look like a magic trick the first time you see it. Here is a concrete way to understand it, followed by the general argument.
+>
+> *Concrete example.* Take $a = 3$, $b = 2$, $n = 16$. Then $\log_2 16 = 4$, so the left side is $3^4 = 81$. For the right side, $\log_2 3 \approx 1.585$, so $16^{1.585} = 16^{\log_2 3} \approx 81$. They match — but why?
+>
+> *Step-by-step derivation.* The key idea is to rewrite $a$ as a power of $b$. Since logarithms and exponents are inverses, we can always write $a = b^{\log_b a}$. Now substitute this into $a^{\log_b n}$:
+>
+> $$a^{\log_b n} = \left(b^{\log_b a}\right)^{\log_b n} = b^{(\log_b a)(\log_b n)}.$$
+>
+> Meanwhile, we can do the same thing with $n = b^{\log_b n}$ and compute:
+>
+> $$n^{\log_b a} = \left(b^{\log_b n}\right)^{\log_b a} = b^{(\log_b n)(\log_b a)}.$$
+>
+> The two exponents are identical — just multiplication in different order — so $a^{\log_b n} = n^{\log_b a}$. The trick is nothing more than $(x^p)^q = (x^q)^p$.
+>
+> *Why it matters here.* The left form, $a^{\log_b n}$, is easy to read off the tree: $a$ children per node, $\log_b n$ levels deep, so $a^{\log_b n}$ leaves. The right form, $n^{\log_b a}$, is more useful for asymptotic analysis because it expresses the leaf count as a _polynomial in $n$_, making it easy to compare with $f(n)$.
+
+The total cost is the sum across all levels:
+
+$$T(n) = \sum_{k=0}^{\log_b n} a^k \cdot f\!\left(\frac{n}{b^k}\right).$$
+
+The Master Theorem's three cases arise from comparing the non-recursive work $f(n)$ to the leaf count $n^{\log_b a}$, which determines the _shape_ of how work is distributed across levels.
+
+### Case 1: Leaf-dominated — $f(n) = O(n^{\log_b a - \epsilon})$
+
+When $f(n)$ is polynomially smaller than $n^{\log_b a}$, the work _increases geometrically_ as you move down the tree. Each level does more work than the one above it, so the leaves dominate:
+
+| Level | Total work at level | |
+|-------|--------------------:|---|
+| $0$ | $f(n)$ | ▎ |
+| $1$ | $a \cdot f(n/b)$ | ▍ |
+| $2$ | $a^2 \cdot f(n/b^2)$ | ▌ |
+| $\vdots$ | $\vdots$ | ▊ |
+| $\log_b n$ | $\Theta(n^{\log_b a})$ | ████ ← dominates |
+
+Since the bottom level dominates a geometric series, the total is $T(n) = \Theta(n^{\log_b a})$.
+
+*Intuition:* The function $f(n)$ shrinks so fast that the proliferation of subproblems ($a$ new ones per level) outpaces the reduction in per-node work. The cost is essentially the number of leaves times $\Theta(1)$ per leaf.
+
+*Example:* Strassen's algorithm, $T(n) = 7T(n/2) + O(n^2)$. Here $n^{\log_2 7} \approx n^{2.81}$, which dominates $f(n) = O(n^2)$.
+
+### Case 2: Evenly distributed — $f(n) = \Theta(n^{\log_b a})$
+
+When $f(n)$ is proportional to $n^{\log_b a}$, a remarkable cancellation occurs: every level of the tree contributes roughly the same amount of work. The increase in the number of nodes at each level is exactly offset by the decrease in per-node work:
+
+| Level | Total work at level | |
+|-------|--------------------:|---|
+| $0$ | $\Theta(n^{\log_b a})$ | ████ |
+| $1$ | $\Theta(n^{\log_b a})$ | ████ |
+| $2$ | $\Theta(n^{\log_b a})$ | ████ |
+| $\vdots$ | $\vdots$ | ████ |
+| $\log_b n$ | $\Theta(n^{\log_b a})$ | ████ |
+
+There are $\log_b n$ levels, each contributing $\Theta(n^{\log_b a})$, so $T(n) = \Theta(n^{\log_b a} \log n)$.
+
+*Intuition:* To see why each level contributes the same work, note that at level $k$, the work is $a^k \cdot f(n/b^k)$. If $f(n) = \Theta(n^{\log_b a})$, then $f(n/b^k) = \Theta(n^{\log_b a} / b^{k \log_b a}) = \Theta(n^{\log_b a} / a^k)$. Multiplying by $a^k$ gives $\Theta(n^{\log_b a})$ — the $a^k$ factors cancel exactly.
+
+*Example:* Merge sort, $T(n) = 2T(n/2) + O(n)$. Here $n^{\log_2 2} = n = f(n)$, so every level costs $\Theta(n)$, and the total is $\Theta(n \log n)$.
+
+### Case 3: Root-dominated — $f(n) = \Omega(n^{\log_b a + \epsilon})$
+
+When $f(n)$ is polynomially larger than $n^{\log_b a}$, the work _decreases geometrically_ as you move down the tree. The root does the most work, and each subsequent level does less:
+
+| Level | Total work at level | |
+|-------|--------------------:|---|
+| $0$ | $f(n)$ | ████ ← dominates |
+| $1$ | $a \cdot f(n/b)$ | ▊ |
+| $2$ | $a^2 \cdot f(n/b^2)$ | ▌ |
+| $\vdots$ | $\vdots$ | ▍ |
+| $\log_b n$ | $\Theta(n^{\log_b a})$ | ▎ |
+
+The total is a decreasing geometric series dominated by its first term, so $T(n) = \Theta(f(n))$.
+
+*Intuition:* The non-recursive work $f(n)$ is so large relative to the number of subproblems that the recursive calls barely contribute. The extra "regularity condition" $af(n/b) \leq cf(n)$ for some $c < 1$ guarantees that the per-level costs truly form a decreasing geometric series (i.e., that $f$ doesn't have pathological oscillations that could break the argument).
+
+*Example:* $T(n) = T(n/2) + n$. Here $n^{\log_2 1} = 1$, but $f(n) = n$. The root does $n$ work, the next level does $n/2$, then $n/4$, and so on. The total is $n + n/2 + n/4 + \cdots < 2n = \Theta(n) = \Theta(f(n))$.
+
+### Proof intuition: why these are the only three cases
+
+The key insight is that the per-level work at level $k$ is:
+
+$$W(k) = a^k \cdot f\!\left(\frac{n}{b^k}\right).$$
+
+As $k$ increases from $0$ to $\log_b n$, the factor $a^k$ grows exponentially (more subproblems) while $f(n/b^k)$ shrinks (smaller subproblem sizes). The total cost is $\sum_k W(k)$, which is a sum of $\log_b n$ terms. The behavior of this sum depends on whether $W(k)$ is _increasing_, _constant_, or _decreasing_ in $k$:
+
+- If $f$ shrinks faster than $a^k$ grows → $W(k)$ increases → **geometric sum dominated by the last term** (leaves) → Case 1.
+- If $f$ shrinks at exactly the rate $a^k$ grows → $W(k)$ is constant → **$\log_b n$ equal terms** → Case 2.
+- If $f$ shrinks slower than $a^k$ grows → $W(k)$ decreases → **geometric sum dominated by the first term** (root) → Case 3.
+
+The critical exponent $\log_b a$ is the dividing line: it is the rate at which the number of subproblems grows across levels. When $f(n)$ grows faster than $n^{\log_b a}$, the root dominates; when it grows slower, the leaves dominate; when it grows at the same rate, all levels are balanced.
+
+---
 
 Let us apply the Master Theorem to our earlier examples.
 
@@ -423,7 +531,7 @@ So far we have focused on time complexity, but algorithms also consume _memory_.
 
 ---
 
-> **Definition 2.9 --- Space complexity**
+> **Definition 2.9 - Space complexity**
 >
 > The **space complexity** of an algorithm is the maximum amount of memory it uses at any point during execution, measured as a function of the input size.
 
@@ -452,7 +560,7 @@ Our insertion sort implementation copies the input array (space $O(n)$). An in-p
 
 Often there is a trade-off between time and space. An algorithm can sometimes be made faster by using more memory, or made more memory-efficient at the cost of additional computation. A classic example:
 
-- **Hash table** lookup: $O(1)$ average time, $O(n)$ space.
+- **Hash table** lookup (Chapter 8): $O(1)$ average time, $O(n)$ space.
 - **Linear search** through an unsorted array: $O(n)$ time, $O(1)$ space.
 
 Both solve the problem of finding an element in a collection, but they make different trade-offs. Recognizing and navigating these trade-offs is a recurring theme in algorithm design.
@@ -463,7 +571,7 @@ Asymptotic analysis is a powerful framework, but it has limitations that a pract
 
 ### Constant factors matter for moderate $n$
 
-Asymptotic notation hides constant factors. An algorithm with running time $100n$ is $O(n)$, and an algorithm with running time $2n \log n$ is $O(n \log n)$. For $n < 2^{50}$, the "slower" $O(n \log n)$ algorithm is actually faster. In practice, constant factors depend on:
+Asymptotic notation hides constant factors. As an example, an algorithm with running time $100n$ is $O(n)$, and an algorithm with running time $2n \log n$ is $O(n \log n)$. For $n < 2^{50}$, the "slower" $O(n \log n)$ algorithm is actually faster. In practice, constant factors depend on:
 
 - The number of operations per step.
 - Cache behavior — algorithms with good spatial locality are faster in practice.

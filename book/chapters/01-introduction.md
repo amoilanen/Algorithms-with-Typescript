@@ -414,7 +414,7 @@ Compare this with the naive trial-division approach at $O(n\sqrt{n})$. For $n = 
 | Algorithm | Approximate operations |
 |-----------|----------------------|
 | Trial division | $10^6 \times 10^3 = 10^9$ |
-| Sieve of Eratosthenes | $10^6 \times \log\log(10^6) \approx 10^6 \times 2.9 \approx 3 \times 10^6$ |
+| Sieve of Eratosthenes | $10^6 \times \ln\ln(10^6) \approx 10^6 \times 2.9 \approx 3 \times 10^6$ |
 
 The sieve is roughly 300 times faster - an enormous difference for large inputs.
 
