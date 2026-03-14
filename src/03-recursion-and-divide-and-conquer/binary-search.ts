@@ -20,7 +20,34 @@ export function linearSearch<T>(arr: T[], element: T): number {
 }
 
 /**
- * Binary search: finds the index of an element in a sorted array.
+ * Recursive binary search: finds the index of an element in a sorted array.
+ * Returns -1 if the element is not found.
+ *
+ * Time complexity: O(log n)
+ * Space complexity: O(log n) due to recursive call stack
+ */
+export function binarySearchRecursive(
+  arr: number[],
+  element: number,
+  low: number = 0,
+  high: number = arr.length - 1,
+): number {
+  if (low > high) return -1; // base case: empty range
+
+  const mid = Math.floor((low + high) / 2);
+  const midVal = arr[mid]!;
+
+  if (midVal === element) {
+    return mid; // base case: found
+  } else if (midVal < element) {
+    return binarySearchRecursive(arr, element, mid + 1, high); // search right half
+  } else {
+    return binarySearchRecursive(arr, element, low, mid - 1); // search left half
+  }
+}
+
+/**
+ * Iterative binary search: finds the index of an element in a sorted array.
  * Returns -1 if the element is not found.
  *
  * Time complexity: O(log n)

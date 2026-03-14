@@ -24,12 +24,10 @@ export function gcdSlow(x: number, y: number): number {
  * Space complexity: O(1)
  */
 export function gcd(x: number, y: number): number {
-  let r = x % y;
-
-  while (r > 0) {
+  while (y > 0) {
+    const r = x % y;
     x = y;
     y = r;
-    r = x % y;
   }
-  return y;
+  return x;
 }

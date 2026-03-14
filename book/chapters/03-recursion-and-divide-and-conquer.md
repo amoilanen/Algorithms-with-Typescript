@@ -103,7 +103,9 @@ This parallel is not a coincidence — it is the foundation for proving recursiv
 
 ---
 
-When we implement a recursive algorithm as a function in code, these two conditions translate directly: the base case corresponds to the `if` branch that returns a value without recursing, and the recursive case corresponds to the branch that calls the function on a smaller input and combines the result. Condition 2 becomes: if every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer. Not every function is an algorithm — a function might not terminate, or might not solve a well-defined problem — but when a recursive function _does_ implement an algorithm, proving it correct means verifying exactly these two conditions.
+When we implement a recursive algorithm as a function in code, these two conditions translate directly: the base case corresponds to the `if` branch that returns a value without recursing, and the recursive case corresponds to the branch that calls the function on a smaller input and combines the result. Condition 2 becomes: if every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer.
+
+Not every function is an algorithm — a function might not terminate, or might not solve a well-defined problem — but when a recursive function _does_ implement an algorithm, proving it correct means verifying exactly these two conditions.
 
 **Example 3.1: Correctness of `factorial`.**
 
@@ -125,7 +127,9 @@ The running time of a divide-and-conquer algorithm is typically expressed as a r
 
 $$T(n) = aT(n/b) + f(n),$$
 
-where $a$ is the number of subproblems, $n/b$ is their size, and $f(n)$ is the cost of dividing and combining. Note that $a$ and $b$ need not be equal: $b$ describes how the input is _partitioned_ (a structural choice), while $a$ describes how many of those parts the algorithm _actually recurses on_ (an algorithmic choice). For example, binary search splits the array in two ($b = 2$) but recurses on only one half ($a = 1$); merge sort also splits in two ($b = 2$) but must recurse on both halves ($a = 2$). An algorithm can even have $a > b$: Karatsuba multiplication splits each number into two halves ($b = 2$) but produces three recursive subproblems ($a = 3$) from clever algebraic rearrangement. The relationship between $a$ and $b$ is what ultimately determines the algorithm's growth rate. As we saw in Chapter 2, the Master Theorem often gives us the asymptotic estimate for $T(n)$ directly.
+where $a$ is the number of subproblems, $n/b$ is their size, and $f(n)$ is the cost of dividing and combining.
+
+Note that $a$ and $b$ need not be equal: $b$ describes how the input is _partitioned_ (a structural choice), while $a$ describes how many of those parts the algorithm _actually recurses on_ (an algorithmic choice). For example, binary search splits the array in two ($b = 2$) but recurses on only one half ($a = 1$); merge sort also splits in two ($b = 2$) but must recurse on both halves ($a = 2$). An algorithm can even have $a > b$: Karatsuba multiplication splits each number into two halves ($b = 2$) but produces three recursive subproblems ($a = 3$) from clever algebraic rearrangement. The relationship between $a$ and $b$ is what ultimately determines the algorithm's growth rate. As we saw in Chapter 2, the Master Theorem often gives us the asymptotic estimate for $T(n)$ directly.
 
 ## Binary search
 
@@ -145,9 +149,67 @@ The idea is simple: compare $x$ with the middle element of the array.
 - If $x$ is smaller, recurse on the left half.
 - If $x$ is larger, recurse on the right half.
 
-Each step eliminates half the remaining elements.
+Each step eliminates half of the remaining elements.
 
-Here is our iterative implementation (an iterative approach avoids the overhead of recursive calls and is standard for binary search):
+### Recursive implementation
+
+Since binary search is a divide-and-conquer algorithm, it is most natural to express it recursively. The function takes an array, a target, and the current search range (`low` and `high`). The two base cases are: (1) the range is empty — the element is not present; (2) the middle element matches — we return its index. The recursive cases narrow the range to one half:
+
+```typescript
+export function binarySearchRecursive(
+  arr: number[],
+  element: number,
+  low: number = 0,
+  high: number = arr.length - 1,
+): number {
+  if (low > high) return -1; // base case: empty range
+
+  const mid = Math.floor((low + high) / 2);
+  const midVal = arr[mid]!;
+
+  if (midVal === element) {
+    return mid; // base case: found
+  } else if (midVal < element) {
+    return binarySearchRecursive(arr, element, mid + 1, high); // search right half
+  } else {
+    return binarySearchRecursive(arr, element, low, mid - 1); // search left half
+  }
+}
+```
+
+This implementation directly mirrors the divide-and-conquer description: each call either solves the problem immediately (base case) or delegates to a single subproblem of half the size.
+
+### Tracing through an example
+
+Let $A = [1, 3, 5, 7, 9, 11, 13]$ and $x = 9$.
+
+| Call | `low` | `high` | `mid` | `arr[mid]` | Action |
+|------|-------|--------|-------|------------|--------|
+| 1 | 0 | 6 | 3 | 7 | $9 > 7$: recurse on right half |
+| 2 | 4 | 6 | 5 | 11 | $9 < 11$: recurse on left half |
+| 3 | 4 | 4 | 4 | 9 | $9 = 9$: found, return 4 |
+
+After only 3 comparisons (and 3 recursive calls), we have found the element in a 7-element array. A linear scan might have taken up to 7 comparisons.
+
+### Correctness
+
+We prove correctness by induction on the size of the search range $h = \text{high} - \text{low} + 1$.
+
+**Base case.** When $\text{low} > \text{high}$ (empty range, $h \leq 0$), the element cannot be present, and the function correctly returns $-1$.
+
+**Inductive step.** Assume the function returns the correct result for all ranges smaller than $h$. For a range of size $h$, the function computes $\text{mid}$ and compares $A[\text{mid}]$ with $x$:
+
+- If $A[\text{mid}] = x$, we return $\text{mid}$. Correct.
+- If $A[\text{mid}] < x$, then since $A$ is sorted, $x$ cannot be in $A[\text{low}..\text{mid}]$. The recursive call searches $A[\text{mid}+1..\text{high}]$, a strictly smaller range, so by the inductive hypothesis it returns the correct answer.
+- The case $A[\text{mid}] > x$ is symmetric. $\square$
+
+### From recursion to iteration
+
+Notice that the recursive binary search is _tail-recursive_: the recursive call is the very last operation in each branch — the function returns whatever the recursive call returns, without doing any further computation. Tail-recursive functions can always be transformed into a simple loop: we replace the recursive calls with assignments to the parameters and repeat.
+
+Of course, even without this manual transformation, the computer already executes the recursion iteratively at the hardware level — using the call stack we discussed earlier in this chapter. Each recursive call pushes a new frame, and each return pops one off. But that mechanical translation is wasteful: it allocates a stack frame for every call, even though the caller does nothing with the result except pass it through. Transforming a tail-recursive function into a loop eliminates the stack entirely — the parameters are simply updated in place and control jumps back to the top of the function. The reason we can eliminate the stack is precisely that the function is tail-recursive: since nothing remains to be done after the recursive call returns, the caller's frame holds no state that is still needed, so there is nothing to save and no need for a stack frame at all. This is a general property — any tail-recursive function can be mechanically rewritten as a loop without a stack.
+
+Let us apply this transformation to our recursive binary search:
 
 ```typescript
 export function binarySearch(arr: number[], element: number): number {
@@ -170,38 +232,16 @@ export function binarySearch(arr: number[], element: number): number {
 }
 ```
 
-Although this implementation is iterative, it mirrors the recursive divide-and-conquer structure exactly: the variables `low` and `high` define the current subproblem, and each iteration halves the range.
-
-### Tracing through an example
-
-Let $A = [1, 3, 5, 7, 9, 11, 13]$ and $x = 9$.
-
-| Step | `low` | `high` | `mid` | `arr[mid]` | Action |
-|------|-------|--------|-------|------------|--------|
-| 1 | 0 | 6 | 3 | 7 | $9 > 7$: search right half |
-| 2 | 4 | 6 | 5 | 11 | $9 < 11$: search left half |
-| 3 | 4 | 4 | 4 | 9 | $9 = 9$: found, return 4 |
-
-After only 3 comparisons, we have found the element in a 7-element array. A linear scan might have taken up to 7 comparisons.
-
-### Correctness
-
-We prove correctness using a loop invariant.
-
-**Invariant:** If $x$ is in $A$, then $x$ is in $A[\text{low}..\text{high}]$.
-
-- **Initialization:** Before the loop, $\text{low} = 0$ and $\text{high} = n - 1$, so the invariant holds trivially.
-- **Maintenance:** If $A[\text{mid}] < x$, then $x$ cannot be in $A[\text{low}..\text{mid}]$ (since $A$ is sorted), so setting $\text{low} = \text{mid} + 1$ preserves the invariant. The case $A[\text{mid}] > x$ is symmetric.
-- **Termination:** The loop terminates either when $x$ is found or when $\text{low} > \text{high}$, meaning the search range is empty. In the latter case, $x$ is not in $A$, and returning $-1$ is correct.
+The variables `low` and `high` play exactly the same role as the parameters of the recursive version — they define the current subproblem. Each iteration halves the range, just as each recursive call did. The iterative version has the advantage of using $O(1)$ space instead of $O(\log n)$, because it avoids the overhead of the call stack. In practice, both versions are fine for binary search (the recursion depth is at most about 60 even for $n = 10^{18}$), but the iterative form is conventional and marginally faster.
 
 ### Complexity analysis
 
-Each iteration halves the search range. Starting from $n$ elements, after $k$ iterations we have at most $n / 2^k$ elements. The loop terminates when $n / 2^k < 1$, i.e., after $k = \lceil \log_2 n \rceil$ iterations.
+Each step halves the search range. Starting from $n$ elements, after $k$ steps we have at most $n / 2^k$ elements. When $n / 2^k = 1$ there is still one element left to compare, so the search has not yet terminated. The range becomes empty — and the process terminates — when $n / 2^k < 1$, i.e., after at most $k = \lfloor \log_2 n \rfloor + 1$ steps.
 
-- **Time complexity:** $O(\log n)$.
-- **Space complexity:** $O(1)$ (the iterative version uses only a few variables).
+- **Time complexity:** $O(\log n)$ (both versions).
+- **Space complexity:** $O(\log n)$ for the recursive version (call stack depth); $O(1)$ for the iterative version.
 
-Using the Master Theorem on the recursive form: $T(n) = T(n/2) + O(1)$. Here $a = 1$, $b = 2$, $n^{\log_b a} = n^0 = 1$. Since $f(n) = O(1) = \Theta(n^{\log_b a})$, Case 2 gives $T(n) = \Theta(\log n)$.
+Using the Master Theorem on the recurrence: $T(n) = T(n/2) + O(1)$. Here $a = 1$, $b = 2$, $n^{\log_b a} = n^0 = 1$. Since $f(n) = O(1) = \Theta(n^{\log_b a})$, Case 2 gives $T(n) = \Theta(\log n)$.
 
 ### Comparison with linear search
 
@@ -231,7 +271,7 @@ Linear search works on _any_ array (not just sorted ones) but takes $O(n)$ time.
 | 1,000,000 | 1,000,000 comparisons | 20 comparisons |
 | $10^9$ | $10^9$ comparisons | 30 comparisons |
 
-This dramatic improvement — from linear to logarithmic — is the hallmark of the divide-and-conquer approach. The key insight is that each comparison does not eliminate a single element but _half the remaining elements_.
+This dramatic improvement — from linear to logarithmic — is the hallmark of the divide-and-conquer approach. The key insight is that each comparison does not eliminate just a single element but _half of the remaining elements_.
 
 ## Fast exponentiation (exponentiation by squaring)
 
@@ -274,7 +314,7 @@ $$
 
 When $n$ is even, we compute $b^{n/2}$ once and square the result — a single multiplication instead of $n/2$ multiplications. When $n$ is odd, we reduce to an even exponent by extracting one factor of $b$.
 
-Here is the iterative implementation:
+The recurrence above translates directly into a recursive function — just as with binary search. Writing that recursive version is straightforward (see Exercise 3.3). Here, we skip the intermediate steps we took for binary search and jump straight to the optimized iterative version. As before, the recursive version is tail-recursive, so the same transformation applies: we replace recursive calls with assignments to the parameters and loop:
 
 ```typescript
 export function pow(base: number, power: number): number {
@@ -324,7 +364,7 @@ At each "odd" step, the exponent decreases by 1 (making it even). At each "even"
 - **Time complexity:** $O(\log n)$.
 - **Space complexity:** $O(1)$.
 
-The recurrence for the recursive view is $T(n) = T(n/2) + O(1)$, the same as binary search, giving $\Theta(\log n)$ by the Master Theorem.
+Alternatively, we can obtain a more precise asymptotic estimate directly from the Master Theorem. The recurrence for the recursive view is $T(n) = T(n/2) + O(1)$, the same as binary search, giving $\Theta(\log n)$.
 
 ## The Euclidean algorithm for GCD
 
@@ -361,7 +401,13 @@ The Euclidean algorithm is based on a key observation:
 
 $$\gcd(x, y) = \gcd(y, x \bmod y)$$
 
-This holds because any common divisor of $x$ and $y$ also divides $x \bmod y$ (since $x \bmod y = x - \lfloor x/y \rfloor \cdot y$), and conversely. Since $x \bmod y < y$, the arguments strictly decrease, and the process terminates when the remainder is 0:
+---
+
+> **The modulo operation.** The expression $x \bmod y$ (pronounced "x mod y") denotes the **remainder** when $x$ is divided by $y$: for instance, $10 \bmod 3 = 1$ because $10 = 3 \times 3 + 1$, and $15 \bmod 5 = 0$ because $5$ divides $15$ evenly. In TypeScript this is written `x % y` — we already used it in the naive GCD function above (`x % i === 0`). Formally, $x \bmod y = x - \lfloor x/y \rfloor \cdot y$, and the result always satisfies $0 \leq (x \bmod y) < y$.
+
+---
+
+This identity holds because the pairs $(x, y)$ and $(y, x \bmod y)$ have exactly the same set of common divisors — any integer that divides both $x$ and $y$ also divides $x \bmod y = x - \lfloor x/y \rfloor \cdot y$ (a linear combination of $x$ and $y$), and conversely. Since the two pairs share the same divisors, they share the same _greatest_ common divisor. Since $x \bmod y < y$, the arguments strictly decrease, and the process terminates when the remainder is 0:
 
 $$\gcd(x, 0) = x.$$
 
@@ -369,20 +415,18 @@ Here is the implementation:
 
 ```typescript
 export function gcd(x: number, y: number): number {
-  let r = x % y;
-
-  while (r > 0) {
+  while (y > 0) {
+    const r = x % y;
     x = y;
     y = r;
-    r = x % y;
   }
-  return y;
+  return x;
 }
 ```
 
 ### Tracing through an example
 
-Let us compute $\gcd(210, 2618)$:
+Let us compute $\gcd(210, 2618)$. Each row shows $x$ and $y$ at the start of the iteration. After computing $r = x \bmod y$, the algorithm sets $x \leftarrow y$ and $y \leftarrow r$, producing the values shown in the next row:
 
 | Step | $x$ | $y$ | $r = x \bmod y$ |
 |------|-----|-----|-----------------|
@@ -390,27 +434,30 @@ Let us compute $\gcd(210, 2618)$:
 | 2 | 2618 | 210 | 98 |
 | 3 | 210 | 98 | 14 |
 | 4 | 98 | 14 | 0 |
+| 5 | 14 | 0 | loop exits, return $x = 14$ |
 
 Result: $\gcd(210, 2618) = 14$.
 
-The naive approach would have tested candidates from 2618 down to 14 — over 2600 iterations. The Euclidean algorithm needed only 4.
+The naive approach would have tested candidates from 2618 down to 14 — over 2600 iterations. The Euclidean algorithm needed only 5.
 
 ### Correctness
 
 We prove correctness by induction on the number of iterations.
 
-**Base case.** If $x \bmod y = 0$, then $y$ divides $x$, so $\gcd(x, y) = y$. The algorithm returns $y$. Correct.
+**Base case.** When $y = 0$, the loop does not execute, and the algorithm returns $x$. This is correct because $\gcd(x, 0) = x$.
 
 **Inductive step.** Assume the algorithm correctly computes $\gcd(y, r)$ where $r = x \bmod y$. Since $\gcd(x, y) = \gcd(y, x \bmod y)$, the result is correct. $\square$
 
 ### Complexity analysis
 
-The key insight is that after two consecutive iterations, the value of $y$ is reduced by at least half. Formally: if $r = x \bmod y$, then $r < y$, and one can show that $x \bmod y < x / 2$ whenever $y \leq x$. By the Fibonacci-like worst case analysis (due to Gabriel Lamé, 1844):
+The key insight is that each iteration at least halves $x$: whenever $y \leq x$, we have $x \bmod y < x / 2$. Since the algorithm swaps $x$ and $y$ at each step, after every two consecutive iterations the values have shrunk by at least a factor of 2. Starting from $\min(x, y)$, we can halve at most $\log_2(\min(x, y))$ times before reaching 0, so the total number of iterations is $O(\log(\min(x, y)))$.
 
 - **Time complexity:** $O(\log(\min(x, y)))$.
 - **Space complexity:** $O(1)$.
 
 This is an exponential improvement over the naive $O(\max(x, y))$ approach.
+
+**Why $x \bmod y < x/2$.** There are two cases. **Case 1: $y \leq x/2$.** The remainder is always strictly less than the divisor, so $x \bmod y < y \leq x/2$. **Case 2: $y > x/2$.** Since $y > x/2$ but $y \leq x$, dividing $x$ by $y$ gives a quotient of exactly 1, so $x \bmod y = x - y < x - x/2 = x/2$. In both cases, $x \bmod y < x/2$. $\square$
 
 ## The closest pair of points
 
@@ -675,7 +722,7 @@ In the next chapter, we turn to the sorting problem. We begin with three element
 
 ## Exercises
 
-**Exercise 3.1.** Write a recursive version of binary search. What is its space complexity? Compare it with the iterative version presented in this chapter.
+**Exercise 3.1.** In this chapter we presented both a recursive and an iterative version of binary search. Explain why the recursive version is tail-recursive and how that property enables the transformation to the iterative version. Can every recursive function be transformed this way? Give an example of a recursive function that is _not_ tail-recursive and explain what makes the transformation harder.
 
 **Exercise 3.2.** The _Tower of Hanoi_ puzzle has $n$ disks of decreasing size stacked on one of three pegs. The goal is to move all disks to another peg, moving one disk at a time, never placing a larger disk on a smaller one. Write a recursive function `hanoi(n: number, from: string, to: string, via: string): void` that prints the moves. What is the time complexity? Prove that $2^n - 1$ moves are both necessary and sufficient.
 
