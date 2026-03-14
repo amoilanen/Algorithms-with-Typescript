@@ -1,15 +1,15 @@
 # Recursion and Divide-and-Conquer
 
-_Recursion is one of the most powerful techniques in algorithm design: a function solving a problem by solving smaller instances of itself. In this chapter we study recursion from the ground up, connect it to mathematical induction, and then develop the divide-and-conquer strategy — splitting a problem into independent subproblems, solving each recursively, and combining the results. We illustrate these ideas with four algorithms: binary search, fast exponentiation, the Euclidean algorithm for greatest common divisors, and the closest pair of points._
+_Recursion is one of the most powerful techniques in algorithm design: solving a problem by breaking it into smaller instances of the same problem. In this chapter we study recursion from the ground up, connect it to mathematical induction, and then develop the divide-and-conquer strategy — splitting a problem into independent subproblems, solving each recursively, and combining the results. We illustrate these ideas with four algorithms: binary search, fast exponentiation, the Euclidean algorithm for greatest common divisors, and the closest pair of points._
 
 ## Recursion
 
-A function is _recursive_ if it calls itself. This is not mere circularity — each call works on a smaller instance of the problem, and eventually the instances become small enough to solve directly. Every recursive function has two essential ingredients:
+Some problems have a natural recursive structure: the solution depends on solving one or more smaller instances of the same problem. When we translate this structure into code, we get a _recursive function_ — a function that calls itself. This is not mere circularity: each call works on a smaller instance of the problem, and eventually the instances become small enough to solve directly. Every recursive function has two essential ingredients:
 
 1. **Base case.** One or more input sizes for which the answer is immediate, without further recursion.
 2. **Recursive case.** For larger inputs, the function reduces the problem to one or more smaller instances and combines the results.
 
-Consider a simple example: computing the factorial $n! = 1 \cdot 2 \cdots n$.
+Consider a simple example: computing the factorial $n! = 1 \cdot 2 \cdot \ldots \cdot n$.
 
 ```typescript
 function factorial(n: number): number {
@@ -24,7 +24,11 @@ $$\text{factorial}(4) = 4 \cdot \text{factorial}(3) = 4 \cdot 3 \cdot \text{fact
 
 ### The call stack
 
-When a function calls itself, the runtime maintains a _call stack_ — a stack of _frames_, each recording the local variables and return address for one invocation. For `factorial(4)`, the stack grows to depth 4 before the base case is reached:
+To understand how recursion works at runtime, we need to understand how computers handle function calls in general. Whenever any function is called — recursive or not — the runtime needs to remember where to return after the call finishes, and what values the local variables had. It stores this information in a _frame_: a block of memory holding the function's arguments, local variables, and the return address (the point in the calling code to resume after the call completes).
+
+These frames are organized in a _call stack_ — a stack data structure where each new call pushes a frame on top, and each return pops one off. For ordinary (non-recursive) code, the stack is typically shallow — for example, if `main` calls `f`, which calls `g`, the stack is only three frames deep. But with recursion, the same function can appear many times on the stack simultaneously, each frame representing a different invocation with different argument values.
+
+For `factorial(4)`, the stack grows to depth 4 before the base case is reached:
 
 ```
 factorial(4)  — waiting for factorial(3)
@@ -36,7 +40,19 @@ factorial(4)  — waiting for factorial(3)
 factorial(4)  — returns 4 × 6 = 24
 ```
 
-Each frame occupies memory, so a recursion of depth $d$ uses $O(d)$ stack space. For `factorial(n)`, the depth is $n$, so the space complexity is $O(n)$. This overhead can be a concern for very deep recursions, but for many problems the clarity and elegance of the recursive solution outweigh the cost.
+Each frame occupies memory, so a recursion of depth $d$ uses $O(d)$ stack space. For `factorial(n)`, the depth is $n$, so the space complexity is $O(n)$.
+
+### Stack overflow
+
+The call stack has a fixed maximum size, set by the operating system or the language runtime. When a recursion goes too deep, the stack runs out of space, and the program crashes with a _stack overflow_ error. This is not an abstract concern — it happens easily in practice. For example, our `factorial` function works fine for small inputs, but calling `factorial(100000)` will likely crash:
+
+```typescript
+factorial(100000); // RangeError: Maximum call stack size exceeded
+```
+
+In JavaScript and TypeScript, the default stack size typically allows around 10,000–15,000 frames (the exact limit depends on the runtime and the size of each frame). Other languages have similar limits.
+
+This is an important practical consideration when choosing between a recursive and an iterative solution. Any recursion can be rewritten as a loop with an explicit stack, trading the elegance of recursion for safety against overflow. But for some problems the clarity and elegance of the recursive solution outweigh the cost. For algorithms where the recursion depth is logarithmic (like binary search, with depth $O(\log n)$), stack overflow is never a concern — even for $n = 10^{18}$, the depth is only about 60. But for algorithms where the depth is linear in the input (like our factorial), an iterative version may be preferable for large inputs.
 
 ### Common pitfalls
 
@@ -65,14 +81,16 @@ Two mistakes arise frequently when writing recursive functions:
 
 ## Recursion and mathematical induction
 
-There is a deep connection between recursion and mathematical induction. Induction proves that a property holds for all natural numbers; recursion computes a value for all valid inputs. The structures are parallel:
+_Mathematical induction_ is a proof technique for showing that a statement is true for every element of a well-ordered sequence — most commonly the natural numbers, but the idea applies whenever instances can be ranked by size (array lengths, tree depths, and so on). It works in two steps. First, you show the statement is true for the smallest case (usually $n = 0$ or $n = 1$) — this is the **base case**. Second, you show that _if_ the statement is true for some number $k$, _then_ it must also be true for $k + 1$ — this is the **inductive step**. Together, these two steps create a chain of reasoning: the base case establishes the first domino, and the inductive step guarantees that each domino knocks over the next, so the statement holds for all natural numbers.
+
+There is a deep connection between this technique and recursion. Induction proves that a property holds for all natural numbers; recursion computes a value for all valid inputs. The structures are parallel:
 
 | Induction | Recursion |
 |-----------|-----------|
 | Base case: prove $P(0)$ (or $P(1)$) | Base case: return a value directly |
 | Inductive step: assuming $P(k)$, prove $P(k+1)$ | Recursive case: assuming the recursive call returns the correct result, compute the current result |
 
-This parallel is not a coincidence — it is the foundation for proving recursive algorithms correct. To prove that a recursive function computes the right answer, we use _strong induction_ (also called _complete induction_): assume the function works correctly for all inputs smaller than $n$, and show it works correctly for input $n$.
+This parallel is not a coincidence — it is the foundation for proving recursive algorithms correctness. To prove that a recursive function computes the right answer, we use _strong induction_ (also called _complete induction_): assume the function works correctly for all inputs smaller than $n$, and show it works correctly for input $n$.
 
 ---
 
@@ -81,9 +99,11 @@ This parallel is not a coincidence — it is the foundation for proving recursiv
 > A recursive algorithm is **correct** if:
 >
 > 1. It produces the correct answer on all base cases.
-> 2. If every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer.
+> 2. If the algorithm produces the correct answer on every strictly smaller subproblem, then it also produces the correct answer on the current problem.
 
 ---
+
+When we implement a recursive algorithm as a function in code, these two conditions translate directly: the base case corresponds to the `if` branch that returns a value without recursing, and the recursive case corresponds to the branch that calls the function on a smaller input and combines the result. Condition 2 becomes: if every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer. Not every function is an algorithm — a function might not terminate, or might not solve a well-defined problem — but when a recursive function _does_ implement an algorithm, proving it correct means verifying exactly these two conditions.
 
 **Example 3.1: Correctness of `factorial`.**
 
@@ -105,11 +125,11 @@ The running time of a divide-and-conquer algorithm is typically expressed as a r
 
 $$T(n) = aT(n/b) + f(n),$$
 
-where $a$ is the number of subproblems, $n/b$ is their size, and $f(n)$ is the cost of dividing and combining. As we saw in Chapter 2, the Master Theorem often gives us the solution directly.
+where $a$ is the number of subproblems, $n/b$ is their size, and $f(n)$ is the cost of dividing and combining. Note that $a$ and $b$ need not be equal: $b$ describes how the input is _partitioned_ (a structural choice), while $a$ describes how many of those parts the algorithm _actually recurses on_ (an algorithmic choice). For example, binary search splits the array in two ($b = 2$) but recurses on only one half ($a = 1$); merge sort also splits in two ($b = 2$) but must recurse on both halves ($a = 2$). An algorithm can even have $a > b$: Karatsuba multiplication splits each number into two halves ($b = 2$) but produces three recursive subproblems ($a = 3$) from clever algebraic rearrangement. The relationship between $a$ and $b$ is what ultimately determines the algorithm's growth rate. As we saw in Chapter 2, the Master Theorem often gives us the asymptotic estimate for $T(n)$ directly.
 
 ## Binary search
 
-Our first divide-and-conquer algorithm is one of the most important: binary search. It finds the position of a target value in a _sorted_ array by repeatedly halving the search space.
+Our first divide-and-conquer algorithm is one of the most important ones: binary search. It finds the position of a target value in a _sorted_ array by repeatedly halving the search space.
 
 ### The problem
 
@@ -627,6 +647,18 @@ Looking back at our four algorithms, we can identify a common recipe:
 
 This recipe is a powerful tool for designing new algorithms. When you face a problem, ask: can I split it into smaller instances of the same problem? If so, the divide-and-conquer approach may yield an efficient solution.
 
+## A note on memoization
+
+There is one more important idea connected to recursion that we should mention here: _memoization_.
+
+Many recursive algorithms solve the same subproblems repeatedly. Consider computing the Fibonacci numbers recursively: $F(n) = F(n-1) + F(n-2)$. A direct recursive implementation calls itself twice at each level, and the subproblems overlap heavily — $F(3)$ is computed many times when computing $F(5)$, $F(4)$ is computed many times when computing $F(6)$, and so on. The resulting recursion tree grows exponentially, even though there are only $O(n)$ _distinct_ subproblems.
+
+Memoization is a technique that eliminates this redundancy: when a recursive function is about to compute a subproblem, it first checks whether the result has already been computed and stored (in a cache, hash map, or array). If so, it returns the cached value immediately; if not, it computes the result, stores it, and then returns it. The name comes from "memo" — a note to oneself — and the effect can be dramatic: for Fibonacci, memoization reduces the time from exponential $O(2^n)$ to linear $O(n)$, because each of the $n$ subproblems is solved at most once.
+
+Memoization is valuable whenever a recursive decomposition produces **overlapping subproblems** — the same smaller instance appears in multiple branches of the recursion. The divide-and-conquer algorithms in this chapter (binary search, fast exponentiation, GCD, closest pair) do _not_ have this property: each recursive call works on a distinct portion of the input, so no subproblem is ever solved twice. But many important recursive algorithms _do_ have overlapping subproblems, and for those, memoization is the difference between a practical algorithm and an unusably slow one.
+
+This idea is at the heart of _dynamic programming_, a powerful algorithm design paradigm that we study in detail in Chapter 16. There we will see memoization in action on problems such as Fibonacci numbers, coin change, longest common subsequence, and the knapsack problem, and we will also explore _tabulation_ — a bottom-up alternative that avoids recursion entirely.
+
 ## Looking ahead
 
 In this chapter we developed recursion and the divide-and-conquer paradigm:
@@ -637,6 +669,7 @@ In this chapter we developed recursion and the divide-and-conquer paradigm:
 - **Exponentiation by squaring** computes $b^n$ in $O(\log n)$ multiplications instead of $O(n)$.
 - **The Euclidean algorithm** computes GCD in $O(\log(\min(x,y)))$ time, an ancient and elegant application of the divide-and-conquer idea.
 - **The closest pair of points** demonstrates a nontrivial combine step, achieving $O(n \log n)$ (or $O(n \log^2 n)$ in the simpler variant) versus $O(n^2)$ brute force.
+- **Memoization** caches the results of recursive calls to avoid redundant computation when subproblems overlap — an idea we will develop fully in Chapter 16 on dynamic programming.
 
 In the next chapter, we turn to the sorting problem. We begin with three elementary sorting algorithms — bubble sort, selection sort, and insertion sort — all of which run in $O(n^2)$ time. In Chapter 5, we study efficient sorting algorithms — merge sort, quicksort, and heapsort — that use divide-and-conquer to achieve $O(n \log n)$ time.
 
