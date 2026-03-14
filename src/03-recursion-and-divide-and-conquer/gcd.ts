@@ -1,14 +1,14 @@
 /**
  * Computes the greatest common divisor of two positive integers
- * by brute-force search from the larger number downward.
+ * by brute-force search from the smaller number downward.
  *
- * Time complexity: O(max(x, y))
+ * Time complexity: O(min(x, y))
  * Space complexity: O(1)
  */
 export function gcdSlow(x: number, y: number): number {
-  const max = Math.max(x, y);
+  const min = Math.min(x, y);
 
-  for (let i = max; i >= 2; i--) {
+  for (let i = min; i >= 2; i--) {
     if (x % i === 0 && y % i === 0) {
       return i;
     }

@@ -4,7 +4,7 @@
  * Given a set of points in the plane, finds two points with the smallest
  * Euclidean distance between them.
  *
- * Time complexity:  O(n log n)
+ * Time complexity:  O(n log² n)
  * Space complexity: O(n)
  */
 
@@ -29,7 +29,7 @@ export function distance(a: Point, b: Point): number {
 }
 
 /**
- * Finds the closest pair of points using the O(n log n) divide-and-conquer
+ * Finds the closest pair of points using the O(n log² n) divide-and-conquer
  * algorithm.
  *
  * The algorithm:
@@ -62,18 +62,18 @@ export function closestPair(points: readonly Point[]): ClosestPairResult {
 /**
  * Brute-force closest pair for small inputs (≤ 3 points).
  */
-function bruteForce(pts: readonly Point[]): ClosestPairResult {
+export function bruteForce(points: readonly Point[]): ClosestPairResult {
   let best: ClosestPairResult = {
-    p1: pts[0]!,
-    p2: pts[1]!,
-    distance: distance(pts[0]!, pts[1]!),
+    p1: points[0]!,
+    p2: points[1]!,
+    distance: distance(points[0]!, points[1]!),
   };
 
-  for (let i = 0; i < pts.length; i++) {
-    for (let j = i + 1; j < pts.length; j++) {
-      const d = distance(pts[i]!, pts[j]!);
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const d = distance(points[i]!, points[j]!);
       if (d < best.distance) {
-        best = { p1: pts[i]!, p2: pts[j]!, distance: d };
+        best = { p1: points[i]!, p2: points[j]!, distance: d };
       }
     }
   }
@@ -84,17 +84,17 @@ function bruteForce(pts: readonly Point[]): ClosestPairResult {
  * Recursive divide-and-conquer implementation.
  * Assumes `pts` is sorted by x-coordinate.
  */
-function closestPairRec(pts: readonly Point[]): ClosestPairResult {
+function closestPairRec(points: readonly Point[]): ClosestPairResult {
   // Base case: use brute force for small inputs
-  if (pts.length <= 3) {
-    return bruteForce(pts);
+  if (points.length <= 3) {
+    return bruteForce(points);
   }
 
-  const mid = Math.floor(pts.length / 2);
-  const midPoint = pts[mid]!;
+  const mid = Math.floor(points.length / 2);
+  const midPoint = points[mid]!;
 
-  const left = pts.slice(0, mid);
-  const right = pts.slice(mid);
+  const left = points.slice(0, mid);
+  const right = points.slice(mid);
 
   const leftResult = closestPairRec(left);
   const rightResult = closestPairRec(right);
@@ -105,7 +105,7 @@ function closestPairRec(pts: readonly Point[]): ClosestPairResult {
 
   // Build the strip: points within delta of the dividing x-coordinate
   const strip: Point[] = [];
-  for (const p of pts) {
+  for (const p of points) {
     if (Math.abs(p.x - midPoint.x) < delta) {
       strip.push(p);
     }

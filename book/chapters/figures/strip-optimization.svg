@@ -155,13 +155,13 @@
     <text x="180" y="260" text-anchor="middle" font-size="13" fill="#1e293b" font-weight="bold">Why at most 7 neighbors?</text>
 
     <text x="180" y="282" text-anchor="middle" font-size="11.5" fill="#475569">
-      For a point p, all points within distance δ lie in this 2δ × δ box.
+      We only look above p (points below were checked in earlier iterations),
     </text>
     <text x="180" y="300" text-anchor="middle" font-size="11.5" fill="#475569">
-      Each δ × δ half-square can hold at most 4 points
+      so the relevant region is a 2δ × δ box (not 2δ × 2δ).
     </text>
     <text x="180" y="318" text-anchor="middle" font-size="11.5" fill="#475569">
-      (since within each half, every pair is ≥ δ apart).
+      Each δ × δ half can hold at most 4 points (any two ≥ δ apart).
     </text>
     <text x="180" y="342" text-anchor="middle" font-size="12" fill="#16a34a" font-weight="bold">
       Total ≤ 4 + 4 = 8 points in box → at most 7 others besides p.
@@ -187,6 +187,6 @@
   <!-- Bottom note spanning full width -->
   <rect x="20" y="545" width="780" height="28" fill="#f1f5f9" rx="4" />
   <text x="410" y="564" text-anchor="middle" font-size="12" fill="#475569">
-    Points sorted by y-coordinate in the strip — each point only needs to be checked against the next ≤ 7 points in sorted order.
+    Strip sorted by y — inner loop only scans upward from each point (points below were already paired), so ≤ 7 neighbors to check.
   </text>
 </svg>

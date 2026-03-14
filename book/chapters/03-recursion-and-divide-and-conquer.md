@@ -92,16 +92,16 @@ There is a deep connection between this technique and recursion. Induction prove
 
 This parallel is not a coincidence — it is the foundation for proving recursive algorithms correctness. To prove that a recursive function computes the right answer, we use _strong induction_ (also called _complete induction_): assume the function works correctly for all inputs smaller than $n$, and show it works correctly for input $n$.
 
----
+-
 
-> **Definition 3.1 --- Correctness of a recursive algorithm**
+> **Definition 3.1 - Correctness of a recursive algorithm**
 >
 > A recursive algorithm is **correct** if:
 >
 > 1. It produces the correct answer on all base cases.
 > 2. If the algorithm produces the correct answer on every strictly smaller subproblem, then it also produces the correct answer on the current problem.
 
----
+-
 
 When we implement a recursive algorithm as a function in code, these two conditions translate directly: the base case corresponds to the `if` branch that returns a value without recursing, and the recursive case corresponds to the branch that calls the function on a smaller input and combines the result. Condition 2 becomes: if every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer.
 
@@ -378,13 +378,13 @@ The greatest common divisor (GCD) of two positive integers $x$ and $y$ is the la
 
 ### Naive approach
 
-The brute-force approach tries every candidate from the larger number downward:
+The brute-force approach tries every candidate from the smaller number downward. The GCD of $x$ and $y$ cannot exceed $\min(x, y)$, because no number larger than $x$ can divide $x$ (and likewise for $y$). So there is no point starting the search above the smaller of the two inputs:
 
 ```typescript
 export function gcdSlow(x: number, y: number): number {
-  const max = Math.max(x, y);
+  const min = Math.min(x, y);
 
-  for (let i = max; i >= 2; i--) {
+  for (let i = min; i >= 2; i--) {
     if (x % i === 0 && y % i === 0) {
       return i;
     }
@@ -393,7 +393,7 @@ export function gcdSlow(x: number, y: number): number {
 }
 ```
 
-This checks up to $\max(x, y)$ candidates, so its time complexity is $O(\max(x, y))$.
+This checks up to $\min(x, y)$ candidates, so its time complexity is $O(\min(x, y))$.
 
 ### The Euclidean algorithm
 
@@ -401,11 +401,11 @@ The Euclidean algorithm is based on a key observation:
 
 $$\gcd(x, y) = \gcd(y, x \bmod y)$$
 
----
+-
 
 > **The modulo operation.** The expression $x \bmod y$ (pronounced "x mod y") denotes the **remainder** when $x$ is divided by $y$: for instance, $10 \bmod 3 = 1$ because $10 = 3 \times 3 + 1$, and $15 \bmod 5 = 0$ because $5$ divides $15$ evenly. In TypeScript this is written `x % y` — we already used it in the naive GCD function above (`x % i === 0`). Formally, $x \bmod y = x - \lfloor x/y \rfloor \cdot y$, and the result always satisfies $0 \leq (x \bmod y) < y$.
 
----
+-
 
 This identity holds because the pairs $(x, y)$ and $(y, x \bmod y)$ have exactly the same set of common divisors — any integer that divides both $x$ and $y$ also divides $x \bmod y = x - \lfloor x/y \rfloor \cdot y$ (a linear combination of $x$ and $y$), and conversely. Since the two pairs share the same divisors, they share the same _greatest_ common divisor. Since $x \bmod y < y$, the arguments strictly decrease, and the process terminates when the remainder is 0:
 
@@ -474,18 +474,18 @@ Our final example is the most challenging one, because it requires all three sta
 The obvious approach checks all $\binom{n}{2} = \frac{n(n-1)}{2}$ pairs — the number of ways to choose 2 points from $n$, written in the _binomial coefficient_ notation $\binom{n}{k} = \frac{n!}{k!(n-k)!}$:
 
 ```typescript
-function bruteForce(pts: readonly Point[]): ClosestPairResult {
+function bruteForce(points: readonly Point[]): ClosestPairResult {
   let best: ClosestPairResult = {
-    p1: pts[0]!,
-    p2: pts[1]!,
-    distance: distance(pts[0]!, pts[1]!),
+    p1: points[0]!,
+    p2: points[1]!,
+    distance: distance(points[0]!, points[1]!),
   };
 
-  for (let i = 0; i < pts.length; i++) {
-    for (let j = i + 1; j < pts.length; j++) {
-      const d = distance(pts[i]!, pts[j]!);
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const d = distance(points[i]!, points[j]!);
       if (d < best.distance) {
-        best = { p1: pts[i]!, p2: pts[j]!, distance: d };
+        best = { p1: points[i]!, p2: points[j]!, distance: d };
       }
     }
   }
@@ -511,11 +511,13 @@ The crux of the algorithm is the combine step: can we check split pairs efficien
 
 Consider the vertical strip of width $2\delta$ centered on the dividing line (at the median $x$-coordinate). Any split pair with distance less than $\delta$ must have both points in this strip, because otherwise the horizontal distance alone exceeds $\delta$.
 
-Now comes the key geometric insight. Sort the points in the strip by $y$-coordinate. For any point $p$ in the strip, how many other strip points can be within distance $\delta$ of $p$? Since all such points lie in a $2\delta \times \delta$ rectangle, and any two points in the same half (left or right) are at least $\delta$ apart, a packing argument shows that at most **7** other points in the strip need to be checked (see the figure for the proof).
+Now comes the key geometric insight. Sort the points in the strip by $y$-coordinate. For any point $p$ in the strip, how many other strip points can lie within distance $\delta$ of $p$? Geometrically, such points could be anywhere in a $2\delta \times 2\delta$ box centered on $p$ (width $2\delta$ from the strip, height $2\delta$ because points could be above or below). But notice how the algorithm's inner loop works: it iterates through consecutive strip points in ascending $y$-order, starting from the point _after_ $p$ (index $j = i + 1, i + 2, \ldots$). This means we only check points whose $y$-coordinate is greater than or equal to $p$'s — that is, points _above_ $p$. We never look _below_ $p$, because any pair $(q, p)$ where $q$ is below $p$ was already examined in an earlier outer-loop iteration, when $q$ was the current point and $p$ was above it. This way, every pair in the strip is considered exactly once.
 
-This means the combine step checks each strip point against at most 7 neighbors — a constant number — so it takes $O(n)$ time (after sorting the strip by $y$).
+Because we only look upward from $p$, the relevant region is not the full $2\delta \times 2\delta$ box but only its upper half: a $2\delta \times \delta$ rectangle extending from $p.y$ to $p.y + \delta$ (see the figure). We can divide each $\delta \times \delta$ half of this rectangle into four $\delta/2 \times \delta/2$ cells. Each cell has diagonal $\delta\sqrt{2}/2 < \delta$, so no two points from the same half can share a cell (they are at least $\delta$ apart). That gives at most 4 points per half, 8 total in the rectangle, so at most **7** other points besides $p$.
 
-![The strip optimization: the left panel shows the vertical strip of width 2δ centered on the dividing line — only points inside the strip are candidates for a closer split pair. The right panel shows the packing argument: for any point p, all points within distance δ lie in a 2δ × δ rectangle. Each half-square can contain at most 4 points (since points in the same half are at least δ apart), so at most 7 other points need to be checked.](figures/strip-optimization.svg)
+This bound directly controls the cost of the nested loop in the code. Because at most 7 points above $p$ can lie within $y$-distance $\delta$, the inner loop executes at most 8 times per outer iteration: at most 7 points within range, plus 1 check that triggers the `break`. Summing over all strip points, the total number of inner-loop iterations is at most $8n = O(n)$. The nested loop is linear, not quadratic, despite its two-loop appearance.
+
+![The strip optimization: the left panel shows the vertical strip of width 2δ centered on the dividing line — only points inside the strip are candidates for a closer split pair. The right panel shows the packing argument: because the inner loop only scans upward (points below p were already handled in earlier iterations), we only need to consider a 2δ × δ rectangle above p, not the full 2δ × 2δ box. Each δ × δ half-square can contain at most 4 points (since points in the same half are at least δ apart), so at most 7 other points need to be checked.](figures/strip-optimization.svg)
 
 ### Implementation
 
@@ -562,16 +564,16 @@ export function closestPair(points: readonly Point[]): ClosestPairResult {
 The recursive function implements the three steps:
 
 ```typescript
-function closestPairRec(pts: readonly Point[]): ClosestPairResult {
-  if (pts.length <= 3) {
-    return bruteForce(pts);
+function closestPairRec(points: readonly Point[]): ClosestPairResult {
+  if (points.length <= 3) {
+    return bruteForce(points);
   }
 
-  const mid = Math.floor(pts.length / 2);
-  const midPoint = pts[mid]!;
+  const mid = Math.floor(points.length / 2);
+  const midPoint = points[mid]!;
 
-  const left = pts.slice(0, mid);
-  const right = pts.slice(mid);
+  const left = points.slice(0, mid);
+  const right = points.slice(mid);
 
   const leftResult = closestPairRec(left);
   const rightResult = closestPairRec(right);
@@ -584,7 +586,7 @@ function closestPairRec(pts: readonly Point[]): ClosestPairResult {
 
   // Build the strip
   const strip: Point[] = [];
-  for (const p of pts) {
+  for (const p of points) {
     if (Math.abs(p.x - midPoint.x) < delta) {
       strip.push(p);
     }
@@ -656,7 +658,7 @@ Let $T(n)$ be the running time. The algorithm:
 - Divides the points in half: $O(1)$ (the array is already sorted by $x$).
 - Recursively solves two subproblems: $2T(n/2)$.
 - Builds and sorts the strip: $O(n \log n)$ in the worst case (the strip could contain all $n$ points).
-- Checks strip pairs: $O(n)$. The packing argument shows that for each point, the Euclidean distance is computed at most 7 times (against at most 7 $y$-neighbors). The `dy` guard check that precedes each distance computation executes at most once more per point (the final check that triggers the break), so it adds at most $n$ comparisons total and does not affect the asymptotic bound.
+- Checks strip pairs: $O(n)$. The nested loop looks quadratic, but the inner loop is tightly bounded by the geometry. Because the strip is sorted by $y$-coordinate, the inner loop visits only points _above_ the current point (earlier points were already handled). The packing argument guarantees that at most 7 such points can have $y$-distance less than $\delta$ (they all lie in a $2\delta \times \delta$ rectangle above the current point, which fits at most 8 points total). Once the $y$-distance reaches $\delta$, the `break` fires. So the inner loop runs at most 8 times per outer iteration ($\leq 7$ valid neighbors + 1 break), giving at most $8n$ inner-loop iterations in total — including all `dy` comparisons and all distance computations.
 
 The combine step is dominated by the strip sort at $O(n \log n)$. The recurrence is:
 

@@ -2,7 +2,7 @@
 title: "Algorithms with TypeScript"
 subtitle: "A Practical Guide to Data Structures and Algorithms"
 author:
-  - "Zenflow (https://zencoder.ai/zenflow), Claude Opus 4.6"
+  - "Anton Moilanen"
 date: \today
 lang: en
 documentclass: report

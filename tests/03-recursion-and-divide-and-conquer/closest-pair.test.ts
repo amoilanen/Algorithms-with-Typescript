@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  bruteForce,
   closestPair,
   distance,
 } from '../../src/03-recursion-and-divide-and-conquer/closest-pair';
@@ -146,19 +147,9 @@ describe('closestPair', () => {
     }));
 
     const result = closestPair(points);
+    const expected = bruteForce(points);
 
-    // Brute force check
-    let minDist = Infinity;
-    for (let i = 0; i < points.length; i++) {
-      for (let j = i + 1; j < points.length; j++) {
-        const d = distance(points[i]!, points[j]!);
-        if (d < minDist) {
-          minDist = d;
-        }
-      }
-    }
-
-    expect(result.distance).toBeCloseTo(minDist);
+    expect(result.distance).toBeCloseTo(expected.distance);
   });
 
   it('should handle points in a grid pattern', () => {
@@ -188,6 +179,7 @@ describe('closestPair', () => {
 
 /**
  * Simple seeded PRNG (Mulberry32) for reproducible random tests.
+ * @see https://gist.github.com/tommyettinger/46a874533244883189143505d203312c
  */
 function mulberry32(seed: number): () => number {
   let t = seed;
