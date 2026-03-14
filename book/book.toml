@@ -1,6 +1,6 @@
 [book]
 title = "Algorithms with TypeScript"
-authors = ["Anton Moilanen"]
+authors = []
 description = "A practical guide to data structures and algorithms for software engineers and Computer Science students"
 src = "chapters"
 language = "en"
