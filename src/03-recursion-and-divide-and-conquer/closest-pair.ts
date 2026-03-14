@@ -50,7 +50,8 @@ export function closestPair(points: readonly Point[]): ClosestPairResult {
     throw new Error('At least 2 points are required');
   }
 
-  // Sort by x-coordinate (tie-break on y)
+  // Sort by x-coordinate; tie-break on y for a deterministic order
+  // among points with equal x (not required for correctness)
   const sortedByX = [...points].sort(
     (a, b) => a.x - b.x || a.y - b.y,
   );

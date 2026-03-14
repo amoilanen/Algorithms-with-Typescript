@@ -32,6 +32,7 @@ header-includes:
   - \usepackage{booktabs}
   - \usepackage{fancyhdr}
   - \usepackage{tikz}
+  - \usepackage{float}
   - \pagestyle{fancy}
   - \fancyhead[LE,RO]{\thepage}
   - \fancyhead[RE]{\leftmark}

@@ -42,3 +42,6 @@ lib-cov
 # Generated book output (legacy)
 book/html/
 book/pdf/
+
+# Generated PDF figures (converted from SVG by build-pdf.sh)
+book/chapters/figures/*.pdf

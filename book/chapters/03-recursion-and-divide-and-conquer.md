@@ -461,7 +461,7 @@ This is an exponential improvement over the naive $O(\max(x, y))$ approach.
 
 ## The closest pair of points
 
-Our most substantial example brings together all the divide-and-conquer ideas. Given a set of points in the plane, we want to find two points that are closest to each other.
+Our final example is the most challenging one, because it requires all three stages of the divide-and-conquer recipe — a nontrivial divide step, two recursive subproblems, and a combine step whose efficiency depends on a subtle geometric argument. The problem itself is easy to state: given a set of points in the plane, find the two that are closest to each other.
 
 ### The problem
 
@@ -471,7 +471,7 @@ Our most substantial example brings together all the divide-and-conquer ideas. G
 
 ### Brute-force approach
 
-The obvious approach checks all $\binom{n}{2}$ pairs:
+The obvious approach checks all $\binom{n}{2} = \frac{n(n-1)}{2}$ pairs — the number of ways to choose 2 points from $n$, written in the _binomial coefficient_ notation $\binom{n}{k} = \frac{n!}{k!(n-k)!}$:
 
 ```typescript
 function bruteForce(pts: readonly Point[]): ClosestPairResult {
@@ -511,9 +511,11 @@ The crux of the algorithm is the combine step: can we check split pairs efficien
 
 Consider the vertical strip of width $2\delta$ centered on the dividing line (at the median $x$-coordinate). Any split pair with distance less than $\delta$ must have both points in this strip, because otherwise the horizontal distance alone exceeds $\delta$.
 
-Now comes the key geometric insight. Sort the points in the strip by $y$-coordinate. For any point $p$ in the strip, how many other strip points can be within distance $\delta$ of $p$? Since all such points lie in a $2\delta \times \delta$ rectangle, and any two points in the same half (left or right) are at least $\delta$ apart, a packing argument shows that at most **7** other points in the strip need to be checked.
+Now comes the key geometric insight. Sort the points in the strip by $y$-coordinate. For any point $p$ in the strip, how many other strip points can be within distance $\delta$ of $p$? Since all such points lie in a $2\delta \times \delta$ rectangle, and any two points in the same half (left or right) are at least $\delta$ apart, a packing argument shows that at most **7** other points in the strip need to be checked (see the figure for the proof).
 
 This means the combine step checks each strip point against at most 7 neighbors — a constant number — so it takes $O(n)$ time (after sorting the strip by $y$).
+
+![The strip optimization: the left panel shows the vertical strip of width 2δ centered on the dividing line — only points inside the strip are candidates for a closer split pair. The right panel shows the packing argument: for any point p, all points within distance δ lie in a 2δ × δ rectangle. Each half-square can contain at most 4 points (since points in the same half are at least δ apart), so at most 7 other points need to be checked.](figures/strip-optimization.svg)
 
 ### Implementation
 
@@ -549,6 +551,7 @@ export function closestPair(points: readonly Point[]): ClosestPairResult {
   if (points.length < 2) {
     throw new Error('At least 2 points are required');
   }
+  // Tie-break on y for a deterministic order among points with equal x
   const sortedByX = [...points].sort(
     (a, b) => a.x - b.x || a.y - b.y,
   );
@@ -640,11 +643,11 @@ Closest in right: $\{(12,10),(12,30)\}$ with $\delta_R = 20$.
 
 ### Correctness
 
-The algorithm correctly finds the closest pair because it considers all three possible cases — closest pair entirely in the left, entirely in the right, or split across the dividing line. The correctness of the strip check follows from the geometric packing argument: any split pair closer than $\delta$ must lie in the strip and must appear within 7 positions of each other when sorted by $y$.
+The algorithm correctly finds the closest pair because it considers all three possible cases — closest pair entirely in the left, entirely in the right, or split across the dividing line. The correctness of the strip check follows from the observation that any split pair closer than $\delta$ must lie in the strip (both points are within $\delta$ of the dividing line), and the inner loop's break condition (`dy >= delta`) guarantees that every such pair is examined.
 
 **Base case.** For 2 or 3 points, brute force checks all pairs. Correct.
 
-**Inductive step.** Assume the recursive calls return the correct closest pairs in $L$ and $R$. Then $\delta$ is the correct minimum distance within each half. The strip check examines all candidates for a closer split pair. Since the inner loop breaks when the $y$-distance exceeds $\delta$, and any valid split pair must appear within 7 $y$-neighbors, no valid candidate is missed. $\square$
+**Inductive step.** Assume the recursive calls return the correct closest pairs in $L$ and $R$. Then $\delta$ is the correct minimum distance within each half. The strip check examines all candidates for a closer split pair: it iterates over all strip points sorted by $y$, and for each point checks subsequent points until the $y$-distance reaches $\delta$. Any split pair with distance less than $\delta$ must have $y$-distance less than $\delta$ as well, so the break condition cannot skip a valid candidate. $\square$
 
 ### Complexity analysis
 
@@ -653,7 +656,7 @@ Let $T(n)$ be the running time. The algorithm:
 - Divides the points in half: $O(1)$ (the array is already sorted by $x$).
 - Recursively solves two subproblems: $2T(n/2)$.
 - Builds and sorts the strip: $O(n \log n)$ in the worst case (the strip could contain all $n$ points).
-- Checks strip pairs: $O(n)$ (each point is compared with at most 7 neighbors).
+- Checks strip pairs: $O(n)$. The packing argument shows that for each point, the Euclidean distance is computed at most 7 times (against at most 7 $y$-neighbors). The `dy` guard check that precedes each distance computation executes at most once more per point (the final check that triggers the break), so it adds at most $n$ comparisons total and does not affect the asymptotic bound.
 
 The combine step is dominated by the strip sort at $O(n \log n)$. The recurrence is:
 
@@ -708,7 +711,7 @@ This idea is at the heart of _dynamic programming_, a powerful algorithm design 
 
 ## Looking ahead
 
-In this chapter we developed recursion and the divide-and-conquer paradigm:
+in this chapter we developed understanding for
 
 - **Recursion** solves a problem by reducing it to smaller instances, terminating at base cases. Its correctness is proven by induction.
 - **Divide-and-conquer** is a specific recursion pattern: divide into subproblems, conquer recursively, combine the results.

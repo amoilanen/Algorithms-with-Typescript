@@ -8,6 +8,8 @@
 #     - xelatex (texlive-xetex + texlive-latex-extra + texlive-fonts-recommended)
 #     - tectonic (https://tectonic-typesetting.github.io/ — self-contained, no texlive needed)
 #   - DejaVu fonts (fonts-dejavu on Debian/Ubuntu, or install from https://dejavu-fonts.github.io/)
+#   - For SVG figures: rsvg-convert (librsvg2-bin on Debian/Ubuntu, librsvg on Arch)
+#     or inkscape as a fallback
 #
 # Usage:
 #   npm run build:pdf
@@ -63,6 +65,33 @@ fi
 echo "Building PDF..."
 echo "  Chapters: ${#CHAPTERS[@]}"
 
+# --- Convert SVG figures to PDF for LaTeX embedding ---
+# LaTeX cannot embed SVG directly; convert each .svg to .pdf using rsvg-convert.
+FIGURES_DIR="$BOOK_DIR/chapters/figures"
+if [ -d "$FIGURES_DIR" ]; then
+  SVG_COUNT=0
+  for svg in "$FIGURES_DIR"/*.svg; do
+    [ -f "$svg" ] || continue
+    pdf="${svg%.svg}.pdf"
+    # Re-convert only if the SVG is newer than the PDF (or PDF doesn't exist)
+    if [ ! -f "$pdf" ] || [ "$svg" -nt "$pdf" ]; then
+      if command -v rsvg-convert &>/dev/null; then
+        rsvg-convert -f pdf -o "$pdf" "$svg"
+        SVG_COUNT=$((SVG_COUNT + 1))
+      elif command -v inkscape &>/dev/null; then
+        inkscape "$svg" --export-type=pdf --export-filename="$pdf" 2>/dev/null
+        SVG_COUNT=$((SVG_COUNT + 1))
+      else
+        echo "Warning: Cannot convert $svg to PDF."
+        echo "  Install rsvg-convert (librsvg) or inkscape to include SVG figures in the PDF."
+      fi
+    fi
+  done
+  if [ "$SVG_COUNT" -gt 0 ]; then
+    echo "  Converted $SVG_COUNT SVG figure(s) to PDF"
+  fi
+fi
+
 pandoc \
   --from=markdown+tex_math_dollars+raw_tex+fenced_code_blocks+fenced_code_attributes+backtick_code_blocks+inline_code_attributes \
   --to=pdf \
@@ -73,7 +102,8 @@ pandoc \
   "${CHAPTERS[@]}" \
   "$BOOK_DIR/chapters/bibliography.md" \
   --output "$OUTPUT_FILE" \
-  --resource-path="$BOOK_DIR:$BOOK_DIR/assets:$PROJECT_ROOT" \
+  --resource-path="$BOOK_DIR:$BOOK_DIR/chapters:$BOOK_DIR/assets:$PROJECT_ROOT" \
+  --lua-filter="$BOOK_DIR/filters/svg-to-pdf.lua" \
   --highlight-style=tango \
   --top-level-division=chapter
 
