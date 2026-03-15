@@ -425,7 +425,7 @@ The middle index is $\lfloor (0 + 4)/2 \rfloor = 2$, so the pivot is $A[2] = 4$.
 
 $$[2, 1, 3, \underline{\mathbf{4}}, 5, \mathbf{6}, 8, 7]$$
 
-The pivot 4 is now in its final position. Left subproblem: $[2, 1, 3]$ (indices 0–2). Right subproblem: $[5]$ (index 4) — a single element, already in place.
+The pivot 4 is now in its final position. Left subproblem: $[2, 1, 3]$ (indices 0–2). Right subproblem: $[5]$ (index 4) — a single element, already in place and sorted as an array consisting of a single element.
 
 **Partition 3** — subarray, indices 0–2: $[2, 1, 3]$.
 
@@ -441,7 +441,7 @@ The middle index is $\lfloor (1 + 2)/2 \rfloor = 1$, so the pivot is $A[1] = 3$.
 
 $$[\mathbf{1}, 2, \underline{\mathbf{3}}, \mathbf{4}, \mathbf{5}, \mathbf{6}, 8, 7]$$
 
-The pivot 3 is now in its final position. Left subproblem: $[2]$ (index 1) — a single element, already in place. Right subproblem: empty. The entire left side of the original array is now sorted: $[\mathbf{1}, \mathbf{2}, \mathbf{3}, \mathbf{4}, \mathbf{5}, \mathbf{6}, \ldots]$.
+The pivot 3 is now in its final position. Left subproblem: $[2]$ (index 1) — a single element, already in place and sorted as an array consisting of a single element. Right subproblem: empty. The entire left side of the original array is now sorted: $[\mathbf{1}, \mathbf{2}, \mathbf{3}, \mathbf{4}, \mathbf{5}, \mathbf{6}, \ldots]$.
 
 **Partition 5** — right subarray, indices 6–7: $[8, 7]$.
 
@@ -449,7 +449,7 @@ The middle index is $\lfloor (6 + 7)/2 \rfloor = 6$, so the pivot is $A[6] = 8$.
 
 $$[\mathbf{1}, \mathbf{2}, \mathbf{3}, \mathbf{4}, \mathbf{5}, \mathbf{6}, 7, \underline{\mathbf{8}}]$$
 
-The pivot 8 is now in its final position. Left subproblem: $[7]$ (index 6) — a single element, already in place. Right subproblem: empty.
+The pivot 8 is now in its final position. Left subproblem: $[7]$ (index 6) — a single element, already in place and sorted as an array consisting of a single element. Right subproblem: empty.
 
 All subproblems have reached the base case. Result: $[\mathbf{1, 2, 3, 4, 5, 6, 7, 8}]$.
 
@@ -488,7 +488,11 @@ The partition loop moves all elements less than the pivot to positions before `s
 
 **Claim.** Quicksort correctly sorts the array.
 
-By induction on the subarray size. Subarrays of size 0 or 1 are trivially sorted (base case). For a subarray of size $k > 1$: partition places the pivot correctly, then quicksort recursively sorts the left subarray (elements $<$ pivot) and right subarray (elements $\geq$ pivot). By the inductive hypothesis, both recursive calls produce sorted subarrays. Since every element in the left subarray is $\leq$ pivot $\leq$ every element in the right subarray, the entire array is sorted. $\square$
+We argue by strong induction on the subarray size.
+
+_Base case._ A subarray of size 0 or 1 is trivially sorted. Quicksort returns it unchanged, so the claim holds.
+
+_Inductive step._ Assume that quicksort correctly sorts all subarrays of size less than $k$, for some $k > 1$. For a subarray of size $k$, partition places the pivot in its final correct position, with all elements $<$ pivot to its left and all elements $\geq$ pivot to its right. Both the left and right subarrays have size strictly less than $k$, so by the inductive hypothesis quicksort correctly sorts each of them. Since every element in the left subarray is $\leq$ pivot $\leq$ every element in the right subarray, and both subarrays are themselves sorted, the entire array of size $k$ is sorted. $\square$
 
 ### Complexity analysis
 
@@ -504,13 +508,87 @@ $$T(n) = T(n - 1) + O(n) = O(n^2).$$
 
 This worst case occurs with our middle-element pivot when the input is specially constructed, and with the first-element or last-element pivot strategies on already-sorted or reverse-sorted input.
 
-**Average case.** On a random permutation with any fixed pivot strategy, the expected running time is $O(n \log n)$. Intuitively, even moderately unbalanced partitions (say, 1:9 splits) only add a constant factor to the recursion depth: the shorter side shrinks by a factor of 10, and $\log_{10} n = O(\log n)$.
+**Average case.** On a random permutation with any fixed pivot strategy, the expected running time is $O(n \log n)$. Intuitively, even moderately unbalanced partitions (say, 1:9 splits) only add a constant factor to the recursion depth: the shorter side shrinks by a factor of 10, and $\log_{10} n = O(\log n)$. A careful analysis (presented below) shows that the exact expected number of comparisons is $2(n+1)H_n - 4n \approx 1.39\,n\log_2 n$, where $H_n$ is the $n$th harmonic number. This is only about **39% more comparisons** than merge sort's worst case of $n \log_2 n$ — a remarkably small penalty for an algorithm whose constant-factor advantages (in-place operation, cache friendliness) often make it faster in practice.
 
-More precisely, if we assume each element is equally likely to be the pivot, the expected number of comparisons is:
+---
 
-$$\mathbb{E}[C(n)] = 2(n + 1)H_n - 4n \approx 2n \ln n \approx 1.39\, n \log_2 n$$
+> **A note to the reader.** Understanding _where_ the exact formula $2(n+1)H_n - 4n$ comes from and why it behaves as $n\log n$ is not required for the rest of this book — only the conclusion that quicksort makes $\Theta(n \log n)$ expected comparisons matters. The derivation below is provided for the sake of completeness. If the algebra feels heavy, feel free to skip ahead to the Space analysis and return to this section later or skip it altogether.
 
-where $H_n = \sum_{k=1}^{n} 1/k$ is the $n$th harmonic number. This is only about 39% more comparisons than merge sort's worst case of $n \log_2 n$.
+_Setting up the recurrence._ Suppose we are sorting $n$ elements and each of the $n$ elements is equally likely to end up as the pivot (this is the case for a random permutation with a fixed pivot-selection rule such as "pick the first element" or "pick the middle element"). The partition step compares the pivot to every other element, making exactly $n - 1$ comparisons. After partitioning, the pivot lands in some position $k$ (where $0 \leq k \leq n - 1$), leaving a left subarray of size $k$ and a right subarray of size $n - 1 - k$. Since every position is equally likely, each value of $k$ occurs with probability $1/n$. Let $C(n)$ denote the expected number of comparisons to sort $n$ elements. We get:
+
+$$\mathbb{E}[C(n)] = (n - 1) + \frac{1}{n} \sum_{k=0}^{n-1} \bigl[\mathbb{E}[C(k)] + \mathbb{E}[C(n - 1 - k)]\bigr].$$
+
+The term $(n - 1)$ counts the comparisons in the partition step. The sum averages over all $n$ equally likely pivot positions: when the pivot lands at position $k$, we recursively sort subarrays of sizes $k$ and $n - 1 - k$.
+
+_Simplifying._ Notice that as $k$ ranges from $0$ to $n - 1$, the value $n - 1 - k$ ranges from $n - 1$ down to $0$ — the same set of values in reverse. Therefore, $\sum_{k=0}^{n-1} \mathbb{E}[C(n - 1 - k)] = \sum_{k=0}^{n-1} \mathbb{E}[C(k)]$, and the recurrence becomes:
+
+$$\mathbb{E}[C(n)] = (n - 1) + \frac{2}{n} \sum_{k=0}^{n-1} \mathbb{E}[C(k)].$$
+
+_Solving the recurrence._ This is a classic recurrence that is solved by the "multiply both sides by $n$" trick to eliminate the fraction:
+
+$$n\,\mathbb{E}[C(n)] = n(n - 1) + 2 \sum_{k=0}^{n-1} \mathbb{E}[C(k)].$$
+
+Write the same equation for $n - 1$:
+
+$$(n - 1)\,\mathbb{E}[C(n - 1)] = (n - 1)(n - 2) + 2 \sum_{k=0}^{n-2} \mathbb{E}[C(k)].$$
+
+Subtracting the second from the first cancels the entire sum except its last term:
+
+$$n\,\mathbb{E}[C(n)] - (n - 1)\,\mathbb{E}[C(n - 1)] = 2(n - 1) + 2\,\mathbb{E}[C(n - 1)].$$
+
+Collecting $\mathbb{E}[C(n-1)]$ on the right:
+
+$$n\,\mathbb{E}[C(n)] = (n + 1)\,\mathbb{E}[C(n - 1)] + 2(n - 1).$$
+
+Dividing both sides by $n(n + 1)$:
+
+$$\frac{\mathbb{E}[C(n)]}{n + 1} = \frac{\mathbb{E}[C(n - 1)]}{n} + \frac{2(n - 1)}{n(n + 1)}.$$
+
+Now define $a_n = \mathbb{E}[C(n)]/(n + 1)$. The recurrence becomes $a_n = a_{n-1} + \frac{2(n-1)}{n(n+1)}$, which _telescopes_ — we can unroll it all the way down to the base case $a_1 = 0$:
+
+$$a_n = \sum_{m=2}^{n} \frac{2(m - 1)}{m(m + 1)}.$$
+
+_Where the harmonic numbers arise._ We decompose the summand using partial fractions:
+
+$$\frac{2(m - 1)}{m(m + 1)} = \frac{2}{m + 1} - \frac{2}{m(m + 1)} = \frac{2}{m + 1} - \frac{2}{m} + \frac{2}{m + 1} = \frac{4}{m + 1} - \frac{2}{m}.$$
+
+Summing from $m = 2$ to $n$:
+
+$$a_n = 4\sum_{m=2}^{n}\frac{1}{m + 1} - 2\sum_{m=2}^{n}\frac{1}{m} = 4\sum_{j=3}^{n+1}\frac{1}{j} - 2\sum_{m=2}^{n}\frac{1}{m}.$$
+
+Both sums are closely related to the harmonic number $H_n = \sum_{k=1}^{n} 1/k$, but neither starts at $k = 1$ — the first runs from $j = 3$ and the second from $m = 2$. We express each in terms of $H_n$ by adding and subtracting the missing initial terms.
+
+For the first sum, add and subtract the $j = 1$ and $j = 2$ terms to complete the harmonic sum up to $n + 1$:
+
+$$\sum_{j=3}^{n+1}\frac{1}{j} = \left(\sum_{j=1}^{n+1}\frac{1}{j}\right) - 1 - \frac{1}{2} = H_{n+1} - \frac{3}{2}.$$
+
+For the second sum, add and subtract the $m = 1$ term:
+
+$$\sum_{m=2}^{n}\frac{1}{m} = \left(\sum_{m=1}^{n}\frac{1}{m}\right) - 1 = H_n - 1.$$
+
+Substituting back:
+
+$$a_n = 4\!\left(H_{n+1} - \tfrac{3}{2}\right) - 2(H_n - 1) = 4H_{n+1} - 6 - 2H_n + 2 = 4H_{n+1} - 2H_n - 4.$$
+
+Finally, use the identity $H_{n+1} = H_n + \frac{1}{n+1}$ to write everything in terms of $H_n$:
+
+$$a_n = 4\!\left(H_n + \tfrac{1}{n+1}\right) - 2H_n - 4 = 2H_n + \frac{4}{n+1} - 4.$$
+
+Multiplying back by $(n + 1)$ (recall $a_n = \mathbb{E}[C(n)]/(n+1)$):
+
+$$\mathbb{E}[C(n)] = (n+1)\!\left(2H_n + \frac{4}{n+1} - 4\right) = 2(n+1)H_n + 4 - 4(n+1) = 2(n+1)H_n - 4n.$$
+
+$$\boxed{\mathbb{E}[C(n)] = 2(n + 1)H_n - 4n.}$$
+
+This is the _exact_ expected number of comparisons. The harmonic number $H_n = 1 + \frac{1}{2} + \frac{1}{3} + \cdots + \frac{1}{n}$ arises naturally because the telescoping recurrence produces a sum of reciprocals — each "level" of the recursion contributes a term proportional to $1/k$, and these $1/k$ terms accumulate into a harmonic sum.
+
+_Approximating._ It is a well-known result from analysis that the harmonic number satisfies $H_n = \ln n + \gamma + O(1/n)$, where $\gamma \approx 0.5772$ is the Euler–Mascheroni constant. We omit the proof of this fact and simply use the result. Therefore:
+
+$$\mathbb{E}[C(n)] \approx 2n \ln n \approx 2n \cdot \frac{\log_2 n}{\log_2 e} = \frac{2}{\log_2 e}\, n \log_2 n \approx 1.39\, n \log_2 n.$$
+
+The factor $2/\log_2 e \approx 1.39$ arises from converting between natural logarithm and base-2 logarithm. $\square$
+
+---
 
 **Space.** Quicksort sorts in place. The recursion stack has depth $O(\log n)$ in the best case but $O(n)$ in the worst case. Tail-call optimization or explicit stack management can limit the worst-case stack depth to $O(\log n)$ by always recursing on the smaller partition first.
 
@@ -535,7 +613,13 @@ Despite its $O(n^2)$ worst case, quicksort is often the fastest comparison sort 
 
 3. **No auxiliary memory.** Quicksort needs only $O(\log n)$ stack space, while merge sort needs $O(n)$ auxiliary space. Less memory allocation means less overhead.
 
-4. **Adaptable.** In practice, quicksort implementations use optimizations like switching to insertion sort for small subarrays, choosing better pivots (median-of-three), and using three-way partitioning for inputs with many duplicates.
+4. **Adaptable.** In practice, quicksort implementations use several optimizations:
+
+   - **Insertion sort for small subarrays.** When a subarray shrinks below a threshold (typically 10–20 elements), the algorithm switches to insertion sort, which has lower overhead for small inputs.
+
+   - **Median-of-three pivot selection.** Instead of picking a single element (e.g., the middle or first) as the pivot, the algorithm examines three elements — typically the first, middle, and last — and chooses their _median_ as the pivot. For example, given first = 8, middle = 5, last = 2, the median is 5. Because the median of three samples is far less likely to be an extreme value than a single arbitrary pick, this strategy produces more balanced partitions and dramatically reduces the probability of hitting the $O(n^2)$ worst case — particularly on already-sorted or reverse-sorted inputs, which are the classic worst cases for naive pivot strategies.
+
+   - **Three-way partitioning (Dutch National Flag).** Standard Lomuto or Hoare partitioning splits the array into two regions: elements $<$ pivot and elements $\geq$ pivot. When many elements are equal to the pivot, those duplicates still end up in recursive calls even though they are already in their correct relative position. Three-way partitioning instead splits the array into _three_ regions — elements less than the pivot, elements _equal_ to the pivot, and elements greater than the pivot. The equal-to-pivot region is excluded from both recursive calls, since those elements are already in their final positions. This makes a large difference when the input has many duplicate values: in the extreme case of all-equal elements, a single partition call finishes the entire array in $O(n)$ time, whereas standard two-way partitioning would degrade to $O(n^2)$.
 
 ## Heapsort
 
