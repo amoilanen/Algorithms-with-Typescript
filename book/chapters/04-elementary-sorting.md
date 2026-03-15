@@ -75,7 +75,7 @@ All three algorithms in this chapter are in-place: they sort by swapping and shi
 
 ## Bubble sort
 
-Bubble sort is perhaps the simplest sorting algorithm. It works by repeatedly scanning the array from left to right, swapping adjacent elements that are out of order. After each complete pass, the largest unsorted element has "bubbled" to its correct position at the end. After $n - 1$ passes, every element is in place.
+Bubble sort's main virtue is pedagogical simplicity: it is the easiest sorting algorithm to understand and implement, which makes it an ideal first example when studying sorting. In practice, however, it is outperformed by insertion sort on nearly every input and is rarely used outside the classroom. The algorithm works by repeatedly scanning the array from left to right, swapping adjacent elements that are out of order. After each complete pass, the largest unsorted element has "bubbled" to its correct position at the end. After $n - 1$ passes, every element is in place.
 
 ### The algorithm
 
@@ -381,19 +381,60 @@ The inner `while` loop shifts elements rightward until it finds the correct posi
 
 ### Tracing through an example
 
-Let us sort $A = [5, 2, 4, 6, 1, 3]$.
+Let us sort $A = [5, 2, 4, 6, 1, 3]$. In the tables below, $j$ denotes `insertIndex` from the code.
 
-| $i$ | `toInsert` | Sorted prefix before | Shifts | Sorted prefix after |
-|-----|-----------|---------------------|--------|---------------------|
-| 1 | 2 | [**5**] | Shift 5 right | [2, 5] |
-| 2 | 4 | [2, **5**] | Shift 5 right | [2, 4, 5] |
-| 3 | 6 | [2, 4, 5] | None (6 ≥ 5) | [2, 4, 5, 6] |
-| 4 | 1 | [**2, 4, 5, 6**] | Shift all four right | [1, 2, 4, 5, 6] |
-| 5 | 3 | [1, **2**, **4, 5, 6**] | Shift 4, 5, 6 right | [1, 2, 3, 4, 5, 6] |
+**Iteration 1** ($i = 1$, `toInsert` $= 2$): insert 2 into the sorted prefix $[5]$.
+
+| $j$ | Array before | Comparison | Action | Array after |
+|-----|-------------|------------|--------|-------------|
+| 0 | [**5**, **2**, 4, 6, 1, 3] | $2 < 5$? Yes | Shift 5 right | [5, **5**, 4, 6, 1, 3] |
+| $-1$ | [5, 5, 4, 6, 1, 3] | $j < 0$ | Place 2 at position 0 | [**2**, 5, 4, 6, 1, 3] |
+
+After iteration 1: $[\underbrace{2, 5}_{\text{sorted}},\ 4, 6, 1, 3]$.
+
+**Iteration 2** ($i = 2$, `toInsert` $= 4$): insert 4 into the sorted prefix $[2, 5]$.
+
+| $j$ | Array before | Comparison | Action | Array after |
+|-----|-------------|------------|--------|-------------|
+| 1 | [2, **5**, **4**, 6, 1, 3] | $4 < 5$? Yes | Shift 5 right | [2, 5, **5**, 6, 1, 3] |
+| 0 | [**2**, 5, 5, 6, 1, 3] | $4 < 2$? No | Place 4 at position 1 | [2, **4**, 5, 6, 1, 3] |
+
+After iteration 2: $[\underbrace{2, 4, 5}_{\text{sorted}},\ 6, 1, 3]$.
+
+**Iteration 3** ($i = 3$, `toInsert` $= 6$): insert 6 into the sorted prefix $[2, 4, 5]$.
+
+| $j$ | Array before | Comparison | Action | Array after |
+|-----|-------------|------------|--------|-------------|
+| 2 | [2, 4, **5**, **6**, 1, 3] | $6 < 5$? No | Place 6 at position 3 | [2, 4, 5, **6**, 1, 3] |
+
+After iteration 3: $[\underbrace{2, 4, 5, 6}_{\text{sorted}},\ 1, 3]$. No shifting was needed — 6 is already in the right place.
+
+**Iteration 4** ($i = 4$, `toInsert` $= 1$): insert 1 into the sorted prefix $[2, 4, 5, 6]$.
+
+| $j$ | Array before | Comparison | Action | Array after |
+|-----|-------------|------------|--------|-------------|
+| 3 | [2, 4, 5, **6**, **1**, 3] | $1 < 6$? Yes | Shift 6 right | [2, 4, 5, 6, **6**, 3] |
+| 2 | [2, 4, **5**, 6, 6, 3] | $1 < 5$? Yes | Shift 5 right | [2, 4, 5, **5**, 6, 3] |
+| 1 | [2, **4**, 5, 5, 6, 3] | $1 < 4$? Yes | Shift 4 right | [2, 4, **4**, 5, 6, 3] |
+| 0 | [**2**, 4, 4, 5, 6, 3] | $1 < 2$? Yes | Shift 2 right | [2, **2**, 4, 5, 6, 3] |
+| $-1$ | [2, 2, 4, 5, 6, 3] | $j < 0$ | Place 1 at position 0 | [**1**, 2, 4, 5, 6, 3] |
+
+After iteration 4: $[\underbrace{1, 2, 4, 5, 6}_{\text{sorted}},\ 3]$.
+
+**Iteration 5** ($i = 5$, `toInsert` $= 3$): insert 3 into the sorted prefix $[1, 2, 4, 5, 6]$.
+
+| $j$ | Array before | Comparison | Action | Array after |
+|-----|-------------|------------|--------|-------------|
+| 4 | [1, 2, 4, 5, **6**, **3**] | $3 < 6$? Yes | Shift 6 right | [1, 2, 4, 5, 6, **6**] |
+| 3 | [1, 2, 4, **5**, 6, 6] | $3 < 5$? Yes | Shift 5 right | [1, 2, 4, 5, **5**, 6] |
+| 2 | [1, 2, **4**, 5, 5, 6] | $3 < 4$? Yes | Shift 4 right | [1, 2, 4, **4**, 5, 6] |
+| 1 | [1, **2**, 4, 4, 5, 6] | $3 < 2$? No | Place 3 at position 2 | [1, 2, **3**, 4, 5, 6] |
+
+After iteration 5: $[\underbrace{1, 2, 3, 4, 5, 6}_{\text{sorted}}]$.
 
 Result: $[1, 2, 3, 4, 5, 6]$.
 
-Notice how each element is inserted into its correct position within the growing sorted prefix on the left. When the element is already in the right place (like 6 in step 3), no shifting is needed and the inner loop exits immediately.
+Notice how each element is inserted into its correct position within the growing sorted prefix on the left. When the element is already in the right place (like 6 in iteration 3), no shifting is needed and the inner loop exits immediately.
 
 ### Correctness
 
@@ -480,7 +521,7 @@ Several observations stand out:
 
 ## The comparison-based sorting lower bound
 
-All three elementary sorting algorithms are _comparison-based_: they access the input elements only through pairwise comparisons. Can we do better than $O(n^2)$ with a comparison-based algorithm? The answer is yes — merge sort, heapsort, and quicksort achieve $O(n \log n)$ time, as we will see in Chapter 5. But can we do better than $O(n \log n)$? The answer is no.
+All three elementary sorting algorithms are _comparison-based_: they access the input elements only through pairwise comparisons. This shared trait raises a natural question — is $O(n^2)$ the best we can do under this model, or can a comparison-based algorithm sort faster? It turns out the answer is yes: merge sort, heapsort, and quicksort all achieve $O(n \log n)$ time, as we will see in Chapter 5. This immediately raises a deeper question: can we do better still — is there a comparison-based algorithm that beats $O(n \log n)$? It turns out that the answer is "no" and we are going to prove it below.
 
 ---
 
@@ -496,31 +537,45 @@ To prove this theorem, we model any comparison-based sorting algorithm as a _dec
 
 For the algorithm to be correct, it must be able to produce every permutation of $n$ elements as output — there must be at least $n!$ leaves. The number of comparisons in the worst case equals the height of the decision tree (the longest root-to-leaf path).
 
-A binary tree of height $h$ has at most $2^h$ leaves. For the tree to have at least $n!$ leaves:
+A binary tree of height $h$ has at most $2^h$ leaves. We have just established that a correct decision tree must have at least $n!$ leaves. Since the actual number of leaves is simultaneously _at most_ $2^h$ (the binary-tree bound) and _at least_ $n!$ (the correctness requirement), the upper bound must be large enough to accommodate the lower bound:
 
-$$2^h \geq n!$$
+$$n! \leq \text{number of leaves} \leq 2^h \quad\Longrightarrow\quad 2^h \geq n!$$
 
 Taking logarithms:
 
 $$h \geq \log_2(n!)$$
 
-Using Stirling's approximation, $n! \approx \sqrt{2\pi n}\, (n/e)^n$, we get:
+It remains to show that $\log_2(n!) = \Omega(n \log n)$. One can appeal to Stirling's approximation ($n! \approx \sqrt{2\pi n}\,(n/e)^n$), but a direct argument is just as short and more illuminating.
 
-$$\log_2(n!) = \Theta(n \log n).$$
+---
 
-More concretely:
+> **Claim — $\lceil \log_2(n!) \rceil = \Omega(n \log n)$**
+>
+> _Proof._ Write $\log_2(n!)$ as a sum and keep only the upper half of its terms:
+>
+> $$\log_2(n!) = \sum_{k=1}^{n} \log_2 k \;\geq\; \sum_{k=\lceil n/2 \rceil}^{n} \log_2 k.$$
+>
+> Every term in the remaining sum satisfies $k \geq n/2$, so $\log_2 k \geq \log_2(n/2)$. There are at least $\lfloor n/2 \rfloor$ such terms, giving:
+>
+> $$\sum_{k=\lceil n/2 \rceil}^{n} \log_2 k \;\geq\; \frac{n}{2} \cdot \log_2 \frac{n}{2} = \frac{n}{2}(\log_2 n - 1).$$
+>
+> For $n \geq 4$ we have $\log_2 n \geq 2$, so $\log_2 n - 1 \geq \tfrac{1}{2}\log_2 n$, and therefore:
+>
+> $$\log_2(n!) \;\geq\; \frac{n}{2} \cdot \frac{\log_2 n}{2} = \frac{n \log_2 n}{4} = \Omega(n \log n). \quad\square$$
 
-$$\log_2(n!) = \sum_{k=1}^{n} \log_2 k \geq \sum_{k=n/2}^{n} \log_2 k \geq \frac{n}{2} \cdot \log_2 \frac{n}{2} = \frac{n}{2}(\log_2 n - 1) = \Omega(n \log n).$$
+---
 
-Therefore, any comparison-based sorting algorithm requires $\Omega(n \log n)$ comparisons in the worst case. $\square$
+Combining $h \geq \log_2(n!)$ with the claim, any comparison-based sorting algorithm requires $\Omega(n \log n)$ comparisons in the worst case. $\square$
 
 ### Implications
 
 This lower bound tells us that $O(n \log n)$ algorithms like merge sort and heapsort are _asymptotically optimal_ among comparison-based sorts — they cannot be improved in the worst case.
 
+Moreover, once we prove that a sorting algorithm's worst-case running time is $O(n \log n)$ (an upper bound), the lower bound $\Omega(n \log n)$ that we just established applies to it automatically — because it is a comparison-based sort. The two bounds together give us $\Theta(n \log n)$: such an algorithm is not merely "at most $O(n \log n)$" but _exactly_ $\Theta(n \log n)$ in the worst case. There is no comparison-based sorting algorithm whose worst case grows slower, and merge sort and heapsort already match this floor.
+
 It also tells us that our elementary $O(n^2)$ algorithms are a factor of $n / \log n$ away from optimal. For $n = 1{,}000{,}000$, that factor is roughly 50,000 — the same dramatic gap we noted in the growth-rate table of Chapter 2.
 
-However, the lower bound applies only to comparison-based sorting. Algorithms that exploit additional structure in the input (such as knowing that elements are integers in a bounded range) can sort in $O(n)$ time, as we will see in Chapter 6.
+However, as it is evident from the proof of the lower bound, the lower bound applies only to comparison-based sorting. Algorithms that exploit additional structure in the input (such as knowing that elements are integers in a bounded range) can sort in $O(n)$ time, as we will see in Chapter 6.
 
 ## Looking ahead
 
@@ -535,12 +590,12 @@ In Chapter 5, we study three efficient sorting algorithms — merge sort, quicks
 
 ## Exercises
 
-**Exercise 4.1.** Trace through bubble sort on the input $[6, 4, 1, 8, 3]$. How many passes are needed? How many total swaps?
+**Exercise 4.1.** The chapter shows that selection sort is not stable. Describe how selection sort could be modified to become stable (hint: use insertion into a separate output instead of swapping). What is the cost of this modification?
 
-**Exercise 4.2.** Our bubble sort implementation scans the entire array on each pass. Modify the algorithm so that pass $k$ scans only positions $0$ through $n - k - 1$ (since the last $k$ elements are already in place). Does this change the worst-case asymptotic complexity? Does it improve the constant factor?
+**Exercise 4.2.** A _sentinel_ version of insertion sort places a minimum element at position $a[0]$ before sorting, eliminating the `insertIndex >= 0` bound check in the inner loop. Explain why this is correct and analyze its effect on performance. What are the drawbacks?
 
-**Exercise 4.3.** Give a concrete example showing that selection sort is not stable. Then describe how selection sort could be modified to become stable (hint: use insertion into a separate output instead of swapping). What is the cost of this modification?
+**Exercise 4.3.** Write a `Comparator<string>` for lexicographic ordering and use it to sort `["banana", "apple", "cherry", "date", "apricot"]` with insertion sort. Why can't a string comparator use the subtraction pattern `(a, b) => a - b` that `numberComparator` uses?
 
-**Exercise 4.4.** Prove that insertion sort performs exactly $n + I - 1$ comparisons on an input with $I$ inversions (assuming the inner loop always does one comparison to confirm the insertion point even when no shifting is needed). Use this to show that insertion sort is $O(n)$ on inputs with $O(n)$ inversions.
+**Exercise 4.4.** Given an array of student records `[{name: "Charlie", grade: 90}, {name: "Alice", grade: 85}, {name: "Bob", grade: 90}, {name: "Alice", grade: 90}]`, use the multi-key sorting technique described in the stability section to sort by grade (ascending) as the primary key and by name (alphabetically) as the secondary key. Then write a single composite comparator that achieves the same result in one pass — when would you prefer each approach?
 
-**Exercise 4.5.** A _sentinel_ version of insertion sort places a minimum element at position $a[0]$ before sorting, eliminating the `insertIndex >= 0` bound check in the inner loop. Explain why this is correct and analyze its effect on performance. What are the drawbacks?
+**Exercise 4.5.** Consider sorting an array of `{x: number, y: number}` points by their Euclidean distance from the origin. Write the comparator. Can you avoid computing square roots? Does the choice between insertion sort and selection sort matter if multiple points may share the same distance?
