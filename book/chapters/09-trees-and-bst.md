@@ -4,7 +4,7 @@ _Hash tables give us expected $O(1)$ lookups, but they cannot answer order-based
 
 ## Tree terminology
 
-A **tree** is a connected, acyclic graph. In computer science we almost always work with **rooted trees**, where one node is designated as the **root** and all other nodes are arranged in a parent-child hierarchy descending from it.
+A **tree** is a connected, acyclic graph. In Computer Science we almost always work with **rooted trees**, where one node is designated as the **root** and all other nodes are arranged in a parent-child hierarchy descending from it.
 
 Key definitions:
 
@@ -24,7 +24,7 @@ Key definitions:
 
 ## Binary trees
 
-A **binary tree** is a tree in which every node has at most two children, called the **left child** and the **right child**. Binary trees are the most fundamental tree structure in computer science, underpinning search trees, heaps, expression parsers, and many other data structures.
+A **binary tree** is a tree in which every node has at most two children, called the **left child** and the **right child**. Binary trees are the most fundamental tree structure in Computer Science, underpinning search trees, heaps, expression parsers, and many other data structures.
 
 ### Representations
 

@@ -1,6 +1,6 @@
 # Arrays, Linked Lists, Stacks, and Queues
 
-_The algorithms of the preceding chapters operate on arrays — contiguous blocks of memory indexed by integers. Arrays are powerful but they are only one of many ways to organize data. In this chapter we study the fundamental data structures that underpin nearly all of computer science: dynamic arrays, linked lists, stacks, queues, and deques. Each offers a different set of trade-offs between time complexity, memory usage, and flexibility. Understanding these structures deeply is essential, because every higher-level data structure — from hash tables to balanced trees to graphs — is built on top of them._
+_The algorithms of the preceding chapters operate on arrays — contiguous blocks of memory indexed by integers. Arrays are powerful but they are only one of many ways to organize data. In this chapter we study the fundamental data structures that underpin nearly all of Computer Science: dynamic arrays, linked lists, stacks, queues, and deques. Each offers a different set of trade-offs between time complexity, memory usage, and flexibility. Understanding these structures deeply is essential, because every higher-level data structure — from hash tables to balanced trees to graphs — is built on top of them._
 
 ## Arrays
 
@@ -445,7 +445,7 @@ We could equally implement a stack with a dynamic array (push = append, pop = re
 
 #### Applications
 
-Stacks appear throughout computer science:
+Stacks appear throughout Computer Science:
 
 - **Function call stack.** When a function is called, its local variables and return address are pushed onto the call stack. When it returns, they are popped. This is why recursive algorithms can overflow the stack with too many nested calls.
 - **Parenthesis matching.** To check whether brackets are balanced in an expression like `((a + b) * c)`, push each opening bracket and pop when a matching closing bracket is found.

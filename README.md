@@ -87,6 +87,18 @@ mdbook serve book --open
 
 The website is written to `dist/web/`.
 
+### Local development (live-reload)
+
+When editing chapters locally, use `mdbook serve` to get a **live-reloading** preview — the browser refreshes automatically every time you save a file under `book/chapters/`:
+
+```bash
+mdbook serve book --open
+```
+
+This starts a local server at `http://localhost:3000` (by default) and watches `book/chapters/` for changes. Edit any Markdown file in your editor, save it, and the page updates instantly in the browser — no manual rebuild needed.
+
+> **Tip:** If port 3000 is already in use, pick another one with `mdbook serve book --open --port 3001`.
+
 ## Deployment
 
 The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-TypeScript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.

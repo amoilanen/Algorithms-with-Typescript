@@ -69,7 +69,7 @@ It is known that $\mathbf{P} \subseteq \mathbf{NP} \cap \mathbf{co\text{-}NP}$. 
 
 ## The P versus NP question
 
-The most famous open problem in theoretical computer science — and one of the seven Clay Millennium Prize Problems — asks:
+The most famous open problem in theoretical Computer Science — and one of the seven Clay Millennium Prize Problems — asks:
 
 > **Is P = NP?**
 
@@ -460,7 +460,7 @@ Whether any of these inclusions are strict is unknown (except that NP-hard $\not
 
 This chapter introduced the theoretical framework for classifying computational problems by their inherent difficulty.
 
-**P** contains problems solvable in polynomial time — the "efficiently solvable" problems that have been our focus throughout this book. **NP** contains problems whose solutions can be verified in polynomial time, even if finding a solution may be hard. The question of whether P = NP — whether efficient verification implies efficient solution — is the most important open problem in computer science.
+**P** contains problems solvable in polynomial time — the "efficiently solvable" problems that have been our focus throughout this book. **NP** contains problems whose solutions can be verified in polynomial time, even if finding a solution may be hard. The question of whether P = NP — whether efficient verification implies efficient solution — is the most important open problem in Computer Science.
 
 **NP-complete** problems, identified through polynomial-time reductions, are the hardest problems in NP: solving any one of them efficiently would solve all of them. The Cook-Levin theorem established SAT as the first NP-complete problem, and thousands more have been identified through chains of reductions — from satisfiability to graph problems (vertex cover, clique, Hamiltonian cycle), to numeric problems (subset sum, partition), to optimization problems (TSP, set cover).
 

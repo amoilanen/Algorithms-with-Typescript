@@ -1,6 +1,6 @@
 # String Matching
 
-_Given a text $T$ of length $n$ and a pattern $P$ of length $m$, find all positions in $T$ where $P$ occurs. This deceptively simple problem — searching for a word in a document, a DNA motif in a genome, a keyword in a log file — is one of the most fundamental in computer science. In this chapter we develop three algorithms of increasing sophistication: the naive brute-force approach, the Rabin-Karp algorithm based on rolling hashes, and the Knuth-Morris-Pratt (KMP) algorithm based on the failure function. Each illustrates a different strategy for avoiding redundant comparisons._
+_Given a text $T$ of length $n$ and a pattern $P$ of length $m$, find all positions in $T$ where $P$ occurs. This deceptively simple problem — searching for a word in a document, a DNA motif in a genome, a keyword in a log file — is one of the most fundamental in Computer Science. In this chapter we develop three algorithms of increasing sophistication: the naive brute-force approach, the Rabin-Karp algorithm based on rolling hashes, and the Knuth-Morris-Pratt (KMP) algorithm based on the failure function. Each illustrates a different strategy for avoiding redundant comparisons._
 
 ## The pattern matching problem
 

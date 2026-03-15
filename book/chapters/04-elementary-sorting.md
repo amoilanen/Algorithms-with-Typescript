@@ -1,20 +1,33 @@
 # Elementary Sorting
 
-_Sorting is one of the most fundamental problems in computer science. In this chapter we define the sorting problem precisely, introduce the concepts of stability and in-place sorting, and study three elementary sorting algorithms — bubble sort, selection sort, and insertion sort. All three run in $O(n^2)$ time in the worst case, but they differ in important ways: their behavior on nearly sorted input, their stability properties, and their practical performance. We close the chapter by proving that any comparison-based sorting algorithm must make $\Omega(n \log n)$ comparisons in the worst case — a lower bound that the elementary algorithms do not achieve, motivating the efficient algorithms of Chapter 5._
+_Sorting is one of the most fundamental problems in Computer Science. In this chapter we define the sorting problem precisely, introduce the concepts of stability and in-place sorting, and study three elementary sorting algorithms — bubble sort, selection sort, and insertion sort. All three run in $O(n^2)$ time in the worst case, but they differ in important ways: their behavior on nearly sorted input, their stability properties, and their practical performance. We close the chapter by proving that any comparison-based sorting algorithm must make $\Omega(n \log n)$ comparisons in the worst case — a lower bound that the elementary algorithms do not achieve, motivating the efficient algorithms of Chapter 5._
 
 ## The sorting problem
 
-Sorting is the problem of rearranging a collection of elements into a specified order. It arises constantly in practice — in database queries, in preparing data for binary search, in eliminating duplicates, in scheduling, and in countless other contexts. Knuth devoted an entire volume of _The Art of Computer Programming_ to sorting and searching, calling sorting "perhaps the most deeply studied problem in computer science."
+Sorting is the problem of rearranging a collection of elements into a specified order. It arises constantly in practice — in database queries, in preparing data for binary search, in eliminating duplicates, in scheduling, and in countless other contexts. Knuth devoted an entire volume of _The Art of Computer Programming_ to sorting and searching, calling sorting "perhaps the most deeply studied problem in Computer Science."
 
 ---
 
-> **Definition 4.1 --- The sorting problem**
+> **Definition 4.1 - The sorting problem**
 >
 > **Input:** A sequence of $n$ elements $\langle a_1, a_2, \ldots, a_n \rangle$ and a total ordering $\leq$ on the elements.
 >
 > **Output:** A permutation $\langle a'_1, a'_2, \ldots, a'_n \rangle$ of the input such that $a'_1 \leq a'_2 \leq \cdots \leq a'_n$.
 
 ---
+
+The definition requires a **total ordering** on the elements. A total ordering is a relation $\leq$ that satisfies four properties for all elements $a$, $b$, and $c$:
+
+1. **Reflexivity:** $a \leq a$.
+2. **Transitivity:** if $a \leq b$ and $b \leq c$, then $a \leq c$.
+3. **Antisymmetry:** if $a \leq b$ and $b \leq a$, then $a = b$.
+4. **Totality:** for any two elements, either $a \leq b$ or $b \leq a$ (or both).
+
+The crucial property is _totality_: every pair of elements is comparable. Numbers compared with $\leq$ are the most familiar example — given any two numbers, one is less than or equal to the other — but numbers are not the only things we can sort: for example, strings can be sorted lexicographically (dictionary order), dates can be sorted chronologically, and objects can be sorted by any key that admits a total ordering. No matter what the nature of the elements is, any sequence of such elements can be sorted, if we can define a total ordering on them.
+
+So far we have seen only total orderings. A natural question arises if there exist any other kinds of orderings. It turns out that not all orderings are total: a **partial ordering** satisfies the first three properties but not totality: some pairs of elements may be _incomparable_. For example, consider sets ordered by the subset relation $\subseteq$. We have $\{1\} \subseteq \{1, 2\}$, but $\{1, 2\}$ and $\{2, 3\}$ are incomparable — neither is a subset of the other. Another example is a task dependency relation: task A must precede task B, and task C must precede task D, but A and C have no ordering relation between them.
+
+Because with partial ordering we cannot compare any arbitrary pair of elements, we cannot sort elements into a single linear sequence (though we can _topologically sort_ them, which is a different problem discussed in Chapter 12). This is why the condition that there is a total ordering defined on the elements of the sequence being sorted is important and cannot be omitted: sorting requires a total ordering because the output must be a _linear_ sequence where every adjacent pair of elements satisfies $a'_i \leq a'_{i+1}$. If some elements were incomparable, there would be no way to decide which should come first.
 
 In TypeScript, we express the ordering through a _comparator function_:
 
@@ -36,7 +49,7 @@ When a sequence contains elements that compare as equal, there is a choice: shou
 
 ---
 
-> **Definition 4.2 --- Stable sort**
+> **Definition 4.2 - Stable sort**
 >
 > A sorting algorithm is **stable** if, whenever two elements $a_i$ and $a_j$ satisfy $a_i = a_j$ and $i < j$ in the input, then $a_i$ appears before $a_j$ in the output.
 
@@ -52,7 +65,7 @@ Of the three algorithms in this chapter, **bubble sort** and **insertion sort** 
 
 ---
 
-> **Definition 4.3 --- In-place sort**
+> **Definition 4.3 - In-place sort**
 >
 > A sorting algorithm is **in-place** if it uses $O(1)$ auxiliary space — that is, a constant amount of memory beyond the input array.
 
@@ -366,7 +379,7 @@ The performance of insertion sort is closely tied to the concept of _inversions_
 
 ---
 
-> **Definition 4.4 --- Inversion**
+> **Definition 4.4 - Inversion**
 >
 > An **inversion** in a sequence $\langle a_1, a_2, \ldots, a_n \rangle$ is a pair $(i, j)$ with $i < j$ and $a_i > a_j$.
 
@@ -415,7 +428,7 @@ All three elementary sorting algorithms are _comparison-based_: they access the 
 
 ---
 
-> **Theorem 4.1 --- Comparison-based sorting lower bound**
+> **Theorem 4.1 - Comparison-based sorting lower bound**
 >
 > Any comparison-based sorting algorithm must make at least $\lceil \log_2(n!) \rceil = \Omega(n \log n)$ comparisons in the worst case to sort $n$ elements.
 
