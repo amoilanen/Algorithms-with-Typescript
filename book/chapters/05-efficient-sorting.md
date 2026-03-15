@@ -240,6 +240,24 @@ $$T(n) = 2T(n/2) + O(n), \quad T(1) = O(1).$$
 
 By the Master Theorem (case 2, with $a = 2$, $b = 2$, $f(n) = O(n)$), we get $T(n) = O(n \log n)$.
 
+_Exact worst-case comparison count._ While $O(n \log n)$ captures the growth rate, we can pin down the exact number of comparisons. The key observation is that merging two sorted arrays of sizes $a$ and $b$ requires at most $a + b - 1$ comparisons in the worst case — when the elements are fully interleaved, so we must exhaust both arrays before the merge is complete. (In the best case, all elements of one array are smaller than all elements of the other, requiring only $\min(a, b)$ comparisons.)
+
+For $n = 2^k$, every split is perfectly even and the recursion tree has $k = \log_2 n$ levels of merging. At level $j$ (counting from the bottom), there are $n / 2^j$ merges, each combining two arrays of size $2^{j-1}$ with at most $2^j - 1$ comparisons:
+
+$$\frac{n}{2^j}\,(2^j - 1) = n - \frac{n}{2^j}.$$
+
+Summing over all $k$ levels:
+
+$$W(n) = \sum_{j=1}^{k}\!\left(n - \frac{n}{2^j}\right) = nk - n\!\sum_{j=1}^{k}\frac{1}{2^j} = nk - n\!\left(1 - \frac{1}{2^k}\right) = nk - n + 1.$$
+
+Since $k = \log_2 n$, this gives $W(2^k) = n\log_2 n - n + 1$. For general $n$, the exact worst-case count satisfies the recurrence $W(n) = W(\lfloor n/2\rfloor) + W(\lceil n/2\rceil) + (n - 1)$ with $W(1) = 0$. A straightforward strong induction shows that the solution is:
+
+$$\boxed{W(n) = n\lceil\log_2 n\rceil - 2^{\lceil\log_2 n\rceil} + 1.}$$
+
+The leading term is $n\log_2 n$ with coefficient exactly **1** — not a hidden Big-O constant, but a precise value. We will use this fact in the quicksort section to make an exact comparison between quicksort's average-case and merge sort's worst-case comparison counts.
+
+For completeness: the best-case comparison count (when every merge encounters one subarray entirely smaller than the other, requiring only $\min(a,b)$ comparisons) is roughly half the worst case. For $n = 2^k$, each of the $k$ levels contributes $n/2$ comparisons, giving $B(n) = \frac{n}{2}\log_2 n$. Both best and worst case are $\Theta(n \log n)$, but the leading coefficients differ — $\frac{1}{2}$ versus $1$.
+
 **Space.** The merge procedure uses an auxiliary array of size up to $n$ to hold merged elements during each merge. The bottom-up version uses no recursion stack; the recursive version would add $O(\log n)$ stack frames. The total auxiliary space is $O(n)$.
 
 ### Properties
@@ -508,7 +526,7 @@ $$T(n) = T(n - 1) + O(n) = O(n^2).$$
 
 This worst case occurs with our middle-element pivot when the input is specially constructed, and with the first-element or last-element pivot strategies on already-sorted or reverse-sorted input.
 
-**Average case.** On a random permutation with any fixed pivot strategy, the expected running time is $O(n \log n)$. Intuitively, even moderately unbalanced partitions (say, 1:9 splits) only add a constant factor to the recursion depth: the shorter side shrinks by a factor of 10, and $\log_{10} n = O(\log n)$. A careful analysis (presented below) shows that the exact expected number of comparisons is $2(n+1)H_n - 4n \approx 1.39\,n\log_2 n$, where $H_n$ is the $n$th harmonic number. This is only about **39% more comparisons** than merge sort's worst case of $n \log_2 n$ — a remarkably small penalty for an algorithm whose constant-factor advantages (in-place operation, cache friendliness) often make it faster in practice.
+**Average case.** On a random permutation with any fixed pivot strategy, the expected running time is $O(n \log n)$. Intuitively, even moderately unbalanced partitions (say, 1:9 splits) only add a constant factor to the recursion depth: the shorter side shrinks by a factor of 10, and $\log_{10} n = O(\log n)$. A careful analysis (presented below) shows that the exact expected number of comparisons is $2(n+1)H_n - 4n \approx 1.39\,n\log_2 n$, where $H_n$ is the $n$th harmonic number. Recall from the merge sort section that merge sort's exact worst-case comparison count is $n \lceil\log_2 n\rceil - 2^{\lceil\log_2 n\rceil} + 1$, whose leading term is $n\log_2 n$ with coefficient exactly 1. The ratio of the two leading terms is $1.39 / 1 = 1.39$, so quicksort's average case uses only about **39% more comparisons** than merge sort's worst case — a remarkably small penalty for an algorithm whose constant-factor advantages (in-place operation, cache friendliness) often make it faster in practice.
 
 ---
 
