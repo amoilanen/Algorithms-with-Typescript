@@ -1,7 +1,7 @@
 [book]
 title = "Algorithms with TypeScript"
 authors = []
-description = "A practical guide to data structures and algorithms for software engineers and Computer Science students"
+description = "A free, comprehensive book on algorithms and data structures — with idiomatic TypeScript 5 implementations, complexity analysis, exercises, and a full Vitest test suite. Covers sorting, graphs, dynamic programming, and more."
 src = "chapters"
 language = "en"
 
