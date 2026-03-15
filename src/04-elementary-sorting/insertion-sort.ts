@@ -2,28 +2,25 @@ import type { Comparator } from '../types';
 import { numberComparator } from '../types';
 
 /**
- * Sorts an array using the insertion sort algorithm.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using the insertion sort algorithm.
  *
  * Time complexity: O(n²) worst/average, O(n) best (already sorted)
- * Space complexity: O(n) for the copy
+ * Space complexity: O(1)
  */
 export function insertionSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  for (let i = 1; i < copy.length; i++) {
-    const toInsert = copy[i]!;
+  for (let i = 1; i < elements.length; i++) {
+    const toInsert = elements[i]!;
     let insertIndex = i - 1;
 
-    while (insertIndex >= 0 && comparator(toInsert, copy[insertIndex]!) < 0) {
-      copy[insertIndex + 1] = copy[insertIndex]!;
+    while (insertIndex >= 0 && comparator(toInsert, elements[insertIndex]!) < 0) {
+      elements[insertIndex + 1] = elements[insertIndex]!;
       insertIndex--;
     }
     insertIndex++;
-    copy[insertIndex] = toInsert;
+    elements[insertIndex] = toInsert;
   }
-  return copy;
+  return elements;
 }

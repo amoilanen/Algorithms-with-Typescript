@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { selectionSort } from '../../src/04-elementary-sorting/selection-sort';
 import { bubbleSort } from '../../src/04-elementary-sorting/bubble-sort';
+import { bubbleSortOptimized } from '../../src/04-elementary-sorting/bubble-sort-optimized';
 import { insertionSort } from '../../src/04-elementary-sorting/insertion-sort';
 
 describe('elementary sorting', () => {
-  for (const sortFunc of [selectionSort, insertionSort, bubbleSort]) {
+  for (const sortFunc of [selectionSort, insertionSort, bubbleSort, bubbleSortOptimized]) {
     describe(sortFunc.name, () => {
       it('should sort an array', () => {
         expect(sortFunc([6, 0, 4, 3, 9, 8, 7, 1, 2, 5])).toEqual([
@@ -36,11 +37,12 @@ describe('elementary sorting', () => {
         ]);
       });
 
-      it('should not change array that was provided as argument but create a new one', () => {
+      it('should sort the array in place', () => {
         const input = [3, 5, 1, 4, 2];
+        const result = sortFunc(input);
 
-        expect(sortFunc(input)).toEqual([1, 2, 3, 4, 5]);
-        expect(input).toEqual([3, 5, 1, 4, 2]);
+        expect(result).toEqual([1, 2, 3, 4, 5]);
+        expect(result).toBe(input);
       });
     });
   }

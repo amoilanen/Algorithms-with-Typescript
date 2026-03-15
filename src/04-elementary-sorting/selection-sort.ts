@@ -2,32 +2,29 @@ import type { Comparator } from '../types';
 import { numberComparator } from '../types';
 
 /**
- * Sorts an array using the selection sort algorithm.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using the selection sort algorithm.
  *
  * Time complexity: O(n²) in all cases
- * Space complexity: O(n) for the copy
+ * Space complexity: O(1)
  */
 export function selectionSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  for (let i = 0; i < copy.length - 1; i++) {
-    let remainingMinimum = copy[i]!;
+  for (let i = 0; i < elements.length - 1; i++) {
+    let remainingMinimum = elements[i]!;
     let indexToSwap = -1;
 
-    for (let j = i + 1; j < copy.length; j++) {
-      if (comparator(copy[j]!, remainingMinimum) < 0) {
-        remainingMinimum = copy[j]!;
+    for (let j = i + 1; j < elements.length; j++) {
+      if (comparator(elements[j]!, remainingMinimum) < 0) {
+        remainingMinimum = elements[j]!;
         indexToSwap = j;
       }
     }
     if (indexToSwap >= 0) {
-      copy[indexToSwap] = copy[i]!;
-      copy[i] = remainingMinimum;
+      elements[indexToSwap] = elements[i]!;
+      elements[i] = remainingMinimum;
     }
   }
-  return copy;
+  return elements;
 }
