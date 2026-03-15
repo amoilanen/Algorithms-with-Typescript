@@ -8,12 +8,24 @@ Merge sort is the most straightforward application of divide-and-conquer to sort
 
 ### The algorithm
 
+The recursive (top-down) formulation of merge sort is:
+
 1. If the array has zero or one elements, it is already sorted. Return.
 2. Divide the array into two halves of roughly equal size.
 3. Recursively sort each half.
-4. Merge the two sorted halves into a single sorted array.
+4. Merge the two sorted halves into a single sorted array using an efficient $O(n)$ merge procedure.
 
-The key insight is that merging two sorted arrays of total length $n$ takes $O(n)$ time: we scan both arrays from left to right, always taking the smaller of the two current elements.
+Notice that the divide step (step 2) does no real work — it simply computes a midpoint. The recursive sort (step 3) keeps splitting until it reaches single-element subarrays, which are trivially sorted. All the real work happens in the merge step (step 4). Since the recursive splitting always ends the same way — $n$ individual elements — we can skip it entirely and work bottom-up:
+
+1. Start with $n$ runs of length 1 (each individual element is a trivially sorted run).
+2. Set the run length $w = 1$.
+3. While $w < n$:
+   - Merge each adjacent pair of sorted runs of length $w$ into a sorted run of length $2w$ using an efficient $O(w)$ merge procedure.
+   - Double the run length: $w = 2w$.
+
+This bottom-up formulation performs exactly the same merges as the recursive version but avoids the $O(\log n)$ recursion stack. It is the version we will implement.
+
+The key insight shared by both formulations is that merging two sorted arrays of total length $n$ takes $O(n)$ time: we scan both arrays from left to right, always taking the smaller of the two current elements.
 
 ### The merge procedure
 
@@ -59,11 +71,38 @@ export function merge<T>(
 
 The comparison `<= 0` (rather than `< 0`) ensures _stability_: when two elements are equal, the one from the left subarray comes first, preserving original order.
 
+### Tracing the merge procedure
+
+To understand how merge works step by step, let us trace through two small examples.
+
+**Example 1:** merge the sorted subarrays $[2, 8]$ and $[4, 5]$.
+
+We initialize two pointers: $i$ at the start of the left subarray and $j$ at the start of the right subarray. At each step, we compare the elements at $i$ and $j$, take the smaller one into the auxiliary array `sorted`, and advance the corresponding pointer. When one subarray is exhausted, we append the remainder of the other.
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 2 | 4 | $2 \leq 4$? Yes | Take 2 from left, $i$++ | $[2]$ |
+| 2 | 8 | 4 | $8 \leq 4$? No | Take 4 from right, $j$++ | $[2, 4]$ |
+| 3 | 8 | 5 | $8 \leq 5$? No | Take 5 from right, $j$++ | $[2, 4, 5]$ |
+| 4 | 8 | — | Right exhausted | Append remaining from left | $[2, 4, 5, 8]$ |
+
+The right subarray is exhausted after step 3 (both of its elements have been taken). The remaining element from the left subarray (8) is appended. The auxiliary array `sorted` = $[2, 4, 5, 8]$ is then copied back into the corresponding positions of the original array.
+
+**Example 2:** merge the sorted subarrays $[1, 3, 6]$ and $[2]$.
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 1 | 2 | $1 \leq 2$? Yes | Take 1 from left, $i$++ | $[1]$ |
+| 2 | 3 | 2 | $3 \leq 2$? No | Take 2 from right, $j$++ | $[1, 2]$ |
+| 3 | 3 | — | Right exhausted | Append remaining from left | $[1, 2, 3, 6]$ |
+
+The right subarray has only one element. After it is taken in step 2, the right subarray is exhausted and we append the remaining elements from the left subarray (3 and 6) in order. The merge procedure handles subarrays of unequal length naturally — the two "cleanup" loops in the code (lines 43–50) append whichever subarray still has remaining elements.
+
 ### Tracing through an example
 
-Let us sort $A = [38, 27, 43, 3, 9, 82, 10]$.
+Let us sort $A = [38, 27, 43, 3, 9, 82, 10]$ using the bottom-up approach.
 
-**Divide phase** (conceptual; our bottom-up implementation avoids this):
+**The divide phase is implicit.** Had we used the recursive (top-down) formulation, the algorithm would begin by splitting the array in half through recursive calls, producing the following tree of subproblems:
 
 ```
                 [38, 27, 43, 3, 9, 82, 10]
@@ -75,41 +114,97 @@ Let us sort $A = [38, 27, 43, 3, 9, 82, 10]$.
   [38]   [27]  [43]    [3]   [9]   [82]
 ```
 
-**Merge phase:**
+As discussed above, this divide phase performs no useful work — it merely determines which subarrays to merge. Our bottom-up implementation skips it entirely, starting from single-element runs and doubling the run length each iteration.
 
-| Step | Left | Right | Merged |
-|------|------|-------|--------|
-| 1 | [38] | [27] | [27, 38] |
-| 2 | [43] | [3] | [3, 43] |
-| 3 | [27, 38] | [3, 43] | [3, 27, 38, 43] |
-| 4 | [9] | [82] | [9, 82] |
-| 5 | [9, 82] | [10] | [9, 10, 82] |
-| 6 | [3, 27, 38, 43] | [9, 10, 82] | [3, 9, 10, 27, 38, 43, 82] |
+**Iteration 1** (`step = 2`): merge pairs of 1-element runs into sorted 2-element runs.
+
+Merge of $[38]$ and $[27]$ — `merge(arr, 0, 1, 2)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 38 | 27 | $38 \leq 27$? No | Take 27 from right, $j$++ | $[27]$ |
+| 2 | 38 | — | Right exhausted | Append remaining from left | $[27, 38]$ |
+
+Merge of $[43]$ and $[3]$ — `merge(arr, 2, 3, 4)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 43 | 3 | $43 \leq 3$? No | Take 3 from right, $j$++ | $[3]$ |
+| 2 | 43 | — | Right exhausted | Append remaining from left | $[3, 43]$ |
+
+Merge of $[9]$ and $[82]$ — `merge(arr, 4, 5, 6)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 9 | 82 | $9 \leq 82$? Yes | Take 9 from left, $i$++ | $[9]$ |
+| 2 | — | 82 | Left exhausted | Append remaining from right | $[9, 82]$ |
+
+The element 10 at index 6 has no partner to merge with (the array has odd length), so it remains as a 1-element run.
+
+Array after iteration 1: $[\underbrace{27, 38},\ \underbrace{3, 43},\ \underbrace{9, 82},\ \underbrace{10}]$.
+
+**Iteration 2** (`step = 4`): merge pairs of 2-element runs into sorted 4-element runs.
+
+Merge of $[27, 38]$ and $[3, 43]$ — `merge(arr, 0, 2, 4)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 27 | 3 | $27 \leq 3$? No | Take 3 from right, $j$++ | $[3]$ |
+| 2 | 27 | 43 | $27 \leq 43$? Yes | Take 27 from left, $i$++ | $[3, 27]$ |
+| 3 | 38 | 43 | $38 \leq 43$? Yes | Take 38 from left, $i$++ | $[3, 27, 38]$ |
+| 4 | — | 43 | Left exhausted | Append remaining from right | $[3, 27, 38, 43]$ |
+
+Merge of $[9, 82]$ and $[10]$ — `merge(arr, 4, 6, 7)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 9 | 10 | $9 \leq 10$? Yes | Take 9 from left, $i$++ | $[9]$ |
+| 2 | 82 | 10 | $82 \leq 10$? No | Take 10 from right, $j$++ | $[9, 10]$ |
+| 3 | 82 | — | Right exhausted | Append remaining from left | $[9, 10, 82]$ |
+
+Array after iteration 2: $[\underbrace{3, 27, 38, 43},\ \underbrace{9, 10, 82}]$.
+
+**Iteration 3** (`step = 8`): merge the two remaining runs into a single sorted array.
+
+Merge of $[3, 27, 38, 43]$ and $[9, 10, 82]$ — `merge(arr, 0, 4, 7)`:
+
+| # | `arr[i]` | `arr[j]` | Comparison | Action | `sorted` |
+|---|----------|----------|------------|--------|----------|
+| 1 | 3 | 9 | $3 \leq 9$? Yes | Take 3 from left, $i$++ | $[3]$ |
+| 2 | 27 | 9 | $27 \leq 9$? No | Take 9 from right, $j$++ | $[3, 9]$ |
+| 3 | 27 | 10 | $27 \leq 10$? No | Take 10 from right, $j$++ | $[3, 9, 10]$ |
+| 4 | 27 | 82 | $27 \leq 82$? Yes | Take 27 from left, $i$++ | $[3, 9, 10, 27]$ |
+| 5 | 38 | 82 | $38 \leq 82$? Yes | Take 38 from left, $i$++ | $[3, 9, 10, 27, 38]$ |
+| 6 | 43 | 82 | $43 \leq 82$? Yes | Take 43 from left, $i$++ | $[3, 9, 10, 27, 38, 43]$ |
+| 7 | — | 82 | Left exhausted | Append remaining from right | $[3, 9, 10, 27, 38, 43, 82]$ |
+
+Array after iteration 3: $[\underbrace{3, 9, 10, 27, 38, 43, 82}_{\text{sorted}}]$.
 
 Result: $[3, 9, 10, 27, 38, 43, 82]$.
 
+Notice how the bottom-up approach performs exactly the same merges that the recursive version would, but in a simple iterative pattern: each iteration doubles the run length, and the algorithm terminates after $\lceil \log_2 7 \rceil = 3$ iterations. The total number of element comparisons across all merges is 14 — fewer than the $n(n-1)/2 = 21$ comparisons that an elementary $O(n^2)$ algorithm would make on the same input. The difference is modest here, but it grows rapidly with input size: merge sort makes $O(n \log n)$ comparisons versus $O(n^2)$, so for large $n$ the savings are enormous.
+
 ### Bottom-up implementation
 
-The classic recursive merge sort divides the array top-down and merges bottom-up. An equivalent approach is to skip the divide phase entirely and work bottom-up from the start: first merge pairs of single elements into sorted pairs, then merge pairs of pairs into sorted 4-element runs, and so on, doubling the run length each time.
+Here is the bottom-up formulation described above, which performs the same merges as the recursive version but avoids the recursion stack.
 
 ```typescript
 export function mergeSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
   let step = 1;
 
-  while (step < copy.length) {
+  while (step < elements.length) {
     step = step * 2;
-    for (let start = 0; start < copy.length; start = start + step) {
-      const middle = Math.min(start + step / 2, copy.length);
-      const end = Math.min(start + step, copy.length);
+    for (let start = 0; start < elements.length; start = start + step) {
+      const middle = Math.min(start + step / 2, elements.length);
+      const end = Math.min(start + step, elements.length);
 
-      merge(copy, start, middle, end, comparator);
+      merge(elements, start, middle, end, comparator);
     }
   }
-  return copy;
+  return elements;
 }
 ```
 
@@ -117,13 +212,19 @@ The bottom-up approach has the same time complexity as the recursive version but
 
 ### Correctness
 
-**Claim.** The merge procedure correctly merges two sorted subarrays.
+**Claim.** The merge procedure merges two sorted subarrays into a single sorted subarray.
 
-At each step of the main loop, we choose the smaller of the two current front elements. Since both subarrays are sorted, the current front element of each is the smallest remaining element in that subarray. Therefore, the smaller of the two fronts is the smallest remaining element overall. After the main loop, one subarray is exhausted and we append the remainder of the other (which is already sorted). The result is a sorted permutation of all elements from both subarrays. The `<= 0` comparison ensures that equal elements from the left subarray come first, preserving stability.
+At each step of the main loop, we choose the smaller of the two current front elements. Since both subarrays are sorted, the current front element of each is the smallest remaining element in that subarray. Therefore, the smaller of the two fronts is the smallest remaining element overall. After the main loop, one subarray is exhausted. Every remaining element in the other subarray is greater than or equal to the last element placed into the merged result (otherwise it would have been chosen earlier), and these remaining elements are already sorted among themselves, so appending them preserves the sorted order. The result is a sorted permutation of all elements from both subarrays. The `<= 0` comparison ensures that equal elements from the left subarray come first, preserving stability.
 
 **Claim.** Merge sort correctly sorts the array.
 
-We argue by induction on the run length. In the first iteration (`step = 2`), each merge operates on runs of length 1, which are trivially sorted. Each merge produces a sorted run of length 2. In each subsequent iteration, the runs from the previous iteration are sorted (by the inductive hypothesis), and the merge procedure correctly combines pairs of sorted runs into longer sorted runs. After $\lceil \log_2 n \rceil$ iterations, the entire array is a single sorted run. $\square$
+We argue by induction on the run length.
+
+_Base case._ In the first iteration (`step = 2`), each merge operates on runs of length 1, which are trivially sorted. By the merge claim above, each merge produces a sorted run of length 2.
+
+_Inductive step._ Assume that after iteration $k$ every run has length $2^k$ and is sorted. In iteration $k + 1$, the merge procedure combines each pair of sorted runs of length $2^k$ into a sorted run of length $2^{k+1}$, which is sorted by the merge claim.
+
+After $\lceil \log_2 n \rceil$ iterations, the entire array is a single sorted run. $\square$
 
 ### Complexity analysis
 
@@ -139,7 +240,7 @@ $$T(n) = 2T(n/2) + O(n), \quad T(1) = O(1).$$
 
 By the Master Theorem (case 2, with $a = 2$, $b = 2$, $f(n) = O(n)$), we get $T(n) = O(n \log n)$.
 
-**Space.** The merge procedure uses an auxiliary array of size up to $n$ to hold merged elements. Combined with the $O(n)$ copy of the input, the total space is $O(n)$. The bottom-up version uses no recursion stack; the recursive version would add $O(\log n)$ stack frames.
+**Space.** The merge procedure uses an auxiliary array of size up to $n$ to hold merged elements during each merge. The bottom-up version uses no recursion stack; the recursive version would add $O(\log n)$ stack frames. The total auxiliary space is $O(n)$.
 
 ### Properties
 
@@ -157,6 +258,18 @@ By the Master Theorem (case 2, with $a = 2$, $b = 2$, $f(n) = O(n)$), we get $T(
 Quicksort, invented by Tony Hoare in 1959, takes the opposite approach from merge sort. Where merge sort divides trivially (split in half) and combines carefully (merge), quicksort divides carefully (partition) and combines trivially (the subarrays are already in the right place).
 
 The idea: choose a _pivot_ element, rearrange the array so that all elements less than the pivot come before it and all elements greater come after it, then recursively sort the two partitions.
+
+### The algorithm
+
+The recursive formulation of quicksort is:
+
+1. If the array has zero or one elements, it is already sorted. Return.
+2. Choose a _pivot_ element from the array.
+3. _Partition_ the array: rearrange elements so that all elements less than the pivot come before it and all elements greater come after it. The pivot is now in its correct final position.
+4. Recursively sort the subarray of elements before the pivot.
+5. Recursively sort the subarray of elements after the pivot.
+
+Notice that the combine step is trivial — there is nothing to do after the recursive calls, because the partitioning has already placed every element on the correct side of the pivot. All the real work happens in the partition step (step 3). The quality of the pivot choice (step 2) determines performance. Since the pivot itself is placed in its final position and does not participate in either recursive call, the two subarrays together contain $n - 1$ elements. An ideal pivot splits them into two roughly equal halves, which results in the $O(n \log n)$ running time for the algorithm, while a poor pivot that lands at one extreme produces one subarray of size $n - 1$ and one of size 0, which results in the $O(n^2)$ running time for the algorithm.
 
 ### The partition procedure
 
@@ -206,35 +319,141 @@ export function partition<T>(
 
 The pivot is first swapped to the end, then `storeIndex` tracks the boundary between elements known to be less than the pivot and elements not yet examined. After the scan, the pivot is swapped into `storeIndex`, its correct position.
 
+### The Lomuto partition scheme in detail
+
+The Lomuto partition scheme (named after Nico Lomuto and popularized by Jon Bentley) is an elegant single-pass algorithm that partitions an array around a pivot using two indices: `storeIndex` and `i`. The pivot is first moved to the end of the array, and then the scan pointer `i` advances from left to right, examining each element exactly once.
+
+At every point during the scan, the array is divided into four regions. The two pointers `storeIndex` and `i` carve out the boundaries:
+
+$$[\underbrace{a_{\text{start}}, \ldots, a_{\text{storeIndex}-1}}_{\text{< pivot}},\ \underbrace{a_{\text{storeIndex}}, \ldots, a_{i-1}}_{\text{≥ pivot}},\ \underbrace{a_{i}, \ldots, a_{\text{end}-1}}_{\text{not yet examined}},\ \underbrace{a_{\text{end}}}_{\text{pivot}}]$$
+
+- **`arr[start..storeIndex-1]`** — elements already classified as _less than_ the pivot.
+- **`arr[storeIndex..i-1]`** — elements already classified as _greater than or equal to_ the pivot. This region may be **empty**: at the very beginning of the scan `storeIndex = i = start`, and it remains empty as long as every element examined so far is less than the pivot (because each such element advances both `i` and `storeIndex`). The region grows only when the scan encounters an element $\geq$ pivot — that element stays in place and `i` advances past it while `storeIndex` does not.
+- **`arr[i..end-1]`** — elements _not yet examined_.
+- **`arr[end]`** — the pivot itself (parked at the end).
+
+On each step, the scan pointer `i` examines one element:
+
+- If `arr[i] < pivot`: swap `arr[i]` with `arr[storeIndex]` and advance both `i` and `storeIndex`. This grows the "less than" region by one. If the "≥ pivot" region is non-empty, the swap moves its first element into the position just vacated by `arr[i]`, keeping it in the "≥ pivot" region. If the "≥ pivot" region is empty (`storeIndex = i`), the element is effectively swapped with itself — a no-op — and both pointers advance together.
+- If `arr[i] ≥ pivot`: advance `i` only. The element stays where it is, and `storeIndex` does not move, so the element becomes part of the "≥ pivot" region. This is also the moment when `storeIndex` and `i` diverge (if they were still equal).
+
+When the scan is complete (`i = end`), the "not examined" region is empty. We swap the pivot from `arr[end]` into `arr[storeIndex]` — the boundary between the two classified regions — placing it in its correct final position.
+
+**Tracing the Lomuto scheme.** Let us trace the partition of $[8, 3, 5, 1, 4, 2]$ (indices 0–5) with the middle element as pivot. The middle index is $\lfloor (0 + 5)/2 \rfloor = 2$, so the pivot is $A[2] = 5$. Swap it to the end:
+
+$[8, 3, \underline{2}, 1, 4, \underline{5}]$
+
+Now scan with `storeIndex = 0`. At each step, we show the four regions of the array. Elements in the "less than" region are shown in **bold**, elements in the "greater or equal" region are shown in _italics_, and the pivot is underlined.
+
+**Initial state** (`storeIndex = 0`, `i = 0`):
+
+$$[\underbrace{\vphantom{8}}_{ < 5}\underbrace{8, 3, 2, 1, 4}_{\text{not examined}},\ \underline{5}]$$
+
+**Step 1** (`i = 0`): $A[0] = 8$. Is $8 < 5$? No. Do nothing.
+
+$$[\underbrace{\vphantom{8}}_{ < 5}\underbrace{_8}_{\geq 5},\underbrace{3, 2, 1, 4}_{\text{not examined}},\ \underline{5}]$$
+
+`storeIndex` stays at 0.
+
+**Step 2** (`i = 1`): $A[1] = 3$. Is $3 < 5$? Yes. Swap $A[0]$ and $A[1]$:
+
+$$[\underbrace{\mathbf{3}}_{ < 5},\underbrace{_8}_{\geq 5},\underbrace{2, 1, 4}_{\text{not examined}},\ \underline{5}]$$
+
+`storeIndex` advances to 1.
+
+**Step 3** (`i = 2`): $A[2] = 2$. Is $2 < 5$? Yes. Swap $A[1]$ and $A[2]$:
+
+$$[\underbrace{\mathbf{3, 2}}_{ < 5},\underbrace{_8}_{\geq 5},\underbrace{1, 4}_{\text{not examined}},\ \underline{5}]$$
+
+`storeIndex` advances to 2.
+
+**Step 4** (`i = 3`): $A[3] = 1$. Is $1 < 5$? Yes. Swap $A[2]$ and $A[3]$:
+
+$$[\underbrace{\mathbf{3, 2, 1}}_{ < 5},\underbrace{_8}_{\geq 5},\underbrace{4}_{\text{not examined}},\ \underline{5}]$$
+
+`storeIndex` advances to 3.
+
+**Step 5** (`i = 4`): $A[4] = 4$. Is $4 < 5$? Yes. Swap $A[3]$ and $A[4]$:
+
+$$[\underbrace{\mathbf{3, 2, 1, 4}}_{ < 5},\underbrace{_8}_{\geq 5},\underbrace{\vphantom{8}}_{\text{not examined}}\ \underline{5}]$$
+
+`storeIndex` advances to 4.
+
+**Place pivot:** Swap $A[\text{storeIndex}] = A[4]$ with $A[\text{end}] = A[5]$:
+
+$$[\underbrace{3, 2, 1, 4}_{ < 5},\ \underline{5},\ \underbrace{8}_{\geq 5}]$$
+
+The pivot 5 is now at index 4, its correct sorted position. Every element to its left is less than 5, and every element to its right is greater than or equal to 5.
+
+Notice how the "greater or equal" region (just the element 8 in this example) gets pushed rightward one position each time a smaller element is swapped into the "less than" region. The `storeIndex` pointer always marks the exact boundary: everything before it is less than the pivot, everything from it onward (up to the scan pointer) is greater or equal.
+
+This detailed trace also serves as an informal correctness argument for the Lomuto scheme. At every step, the four-region invariant is maintained: elements before `storeIndex` are less than the pivot, elements from `storeIndex` to `i - 1` are greater than or equal, elements from `i` onward have not yet been examined, and the pivot sits at the end. When the scan completes, the "not examined" region is empty, so swapping the pivot into `storeIndex` places it at the exact boundary between the "less than" and "greater or equal" regions — its correct final position. Note also that the scan examines each of the $n - 1$ non-pivot elements exactly once, performing at most one swap per element, so the partition procedure runs in $\Theta(n)$ time.
+
+Now that we understand how a single partition call rearranges an array around a pivot, we can see how quicksort uses this operation repeatedly to sort an entire array. Each partition places one element — the pivot — in its correct final position and divides the remaining elements into two subproblems. The following example traces the full recursive process, showing how successive partitions progressively sort the array.
+
 ### Tracing through an example
 
-Let us sort $A = [7, 2, 1, 6, 8, 5, 3, 4]$ with middle-element pivot selection.
+Let us sort $A = [7, 2, 1, 6, 8, 5, 3, 4]$ with middle-element pivot selection. Since we have already traced the Lomuto partition scheme step-by-step in the previous section, here we skip the inner details of each partition call and focus on the recursive structure of quicksort — which subarray is partitioned at each step, which pivot is chosen, and how the array evolves toward the sorted order.
 
-**First partition** (full array, indices 0–7):
+In the array snapshots below, elements already in their **final sorted positions** are shown in **bold**, and the pivot just placed by the current partition is underlined.
 
-The middle index is $\lfloor (0 + 7)/2 \rfloor = 3$, so the pivot is $A[3] = 6$. Swap it to the end:
+The full recursion tree (each node shows the subarray and the pivot chosen):
 
-$[7, 2, 1, 4, 8, 5, 3, \underline{6}]$
+```
+                  [7, 2, 1, 6, 8, 5, 3, 4]  pivot 6
+                  /                        \
+       [2, 1, 4, 5, 3]  pivot 4         [8, 7]  pivot 8
+        /            \                   /
+   [2, 1, 3]  pivot 1  [5]          [7]
+        \
+      [3, 2]  pivot 3
+       /
+     [2]
+```
 
-Scan with `storeIndex = 0`:
+**Partition 1** — full array, indices 0–7.
 
-| $i$ | $A[i]$ | $A[i] < 6$? | Action | `storeIndex` |
-|-----|--------|------------|--------|-------------|
-| 0 | 7 | No | — | 0 |
-| 1 | 2 | Yes | Swap $A[0]$ and $A[1]$ | 1 |
-| 2 | 1 | Yes | Swap $A[1]$ and $A[2]$ | 2 |
-| 3 | 4 | Yes | Swap $A[2]$ and $A[3]$ | 3 |
-| 4 | 8 | No | — | 3 |
-| 5 | 5 | Yes | Swap $A[3]$ and $A[5]$ | 4 |
-| 6 | 3 | Yes | Swap $A[4]$ and $A[6]$ | 5 |
+The middle index is $\lfloor (0 + 7)/2 \rfloor = 3$, so the pivot is $A[3] = 6$. Partition places 6 at index 5:
 
-Place pivot at `storeIndex = 5`:
+$$[2, 1, 4, 5, 3, \underline{\mathbf{6}}, 8, 7]$$
 
-$[2, 1, 4, 5, 3, \underline{6}, 7, 8]$
+The pivot 6 is now in its final position. Two subproblems remain: the left subarray $[2, 1, 4, 5, 3]$ (indices 0–4) and the right subarray $[8, 7]$ (indices 6–7).
 
-Now 6 is in its final position. Recursively sort $[2, 1, 4, 5, 3]$ (indices 0–4) and $[7, 8]$ (indices 6–7).
+**Partition 2** — left subarray, indices 0–4: $[2, 1, 4, 5, 3]$.
 
-The recursion continues, each time placing one element in its final position, until the base cases (subarrays of size 0 or 1) are reached.
+The middle index is $\lfloor (0 + 4)/2 \rfloor = 2$, so the pivot is $A[2] = 4$. Partition places 4 at index 3:
+
+$$[2, 1, 3, \underline{\mathbf{4}}, 5, \mathbf{6}, 8, 7]$$
+
+The pivot 4 is now in its final position. Left subproblem: $[2, 1, 3]$ (indices 0–2). Right subproblem: $[5]$ (index 4) — a single element, already in place.
+
+**Partition 3** — subarray, indices 0–2: $[2, 1, 3]$.
+
+The middle index is $\lfloor (0 + 2)/2 \rfloor = 1$, so the pivot is $A[1] = 1$. Partition places 1 at index 0:
+
+$$[\underline{\mathbf{1}}, 3, 2, \mathbf{4}, \mathbf{5}, \mathbf{6}, 8, 7]$$
+
+The pivot 1 is now in its final position. Left subproblem: empty. Right subproblem: $[3, 2]$ (indices 1–2).
+
+**Partition 4** — subarray, indices 1–2: $[3, 2]$.
+
+The middle index is $\lfloor (1 + 2)/2 \rfloor = 1$, so the pivot is $A[1] = 3$. Partition places 3 at index 2:
+
+$$[\mathbf{1}, 2, \underline{\mathbf{3}}, \mathbf{4}, \mathbf{5}, \mathbf{6}, 8, 7]$$
+
+The pivot 3 is now in its final position. Left subproblem: $[2]$ (index 1) — a single element, already in place. Right subproblem: empty. The entire left side of the original array is now sorted: $[\mathbf{1}, \mathbf{2}, \mathbf{3}, \mathbf{4}, \mathbf{5}, \mathbf{6}, \ldots]$.
+
+**Partition 5** — right subarray, indices 6–7: $[8, 7]$.
+
+The middle index is $\lfloor (6 + 7)/2 \rfloor = 6$, so the pivot is $A[6] = 8$. Partition places 8 at index 7:
+
+$$[\mathbf{1}, \mathbf{2}, \mathbf{3}, \mathbf{4}, \mathbf{5}, \mathbf{6}, 7, \underline{\mathbf{8}}]$$
+
+The pivot 8 is now in its final position. Left subproblem: $[7]$ (index 6) — a single element, already in place. Right subproblem: empty.
+
+All subproblems have reached the base case. Result: $[\mathbf{1, 2, 3, 4, 5, 6, 7, 8}]$.
+
+Notice that quicksort performed five partitions to sort eight elements, placing one pivot in its final position each time. The three remaining elements ($2$, $5$, and $7$) reached their final positions by ending up in base-case subarrays of size 1.
 
 ### Implementation
 
@@ -256,10 +475,8 @@ export function quickSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  sort(copy, 0, copy.length - 1, comparator);
-  return copy;
+  sort(elements, 0, elements.length - 1, comparator);
+  return elements;
 }
 ```
 
@@ -295,7 +512,7 @@ $$\mathbb{E}[C(n)] = 2(n + 1)H_n - 4n \approx 2n \ln n \approx 1.39\, n \log_2 n
 
 where $H_n = \sum_{k=1}^{n} 1/k$ is the $n$th harmonic number. This is only about 39% more comparisons than merge sort's worst case of $n \log_2 n$.
 
-**Space.** Quicksort sorts in place (aside from our defensive copy of the input). The recursion stack has depth $O(\log n)$ in the best case but $O(n)$ in the worst case. Tail-call optimization or explicit stack management can limit the worst-case stack depth to $O(\log n)$ by always recursing on the smaller partition first.
+**Space.** Quicksort sorts in place. The recursion stack has depth $O(\log n)$ in the best case but $O(n)$ in the worst case. Tail-call optimization or explicit stack management can limit the worst-case stack depth to $O(\log n)$ by always recursing on the smaller partition first.
 
 ### Properties
 
@@ -407,18 +624,17 @@ export function heapSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const arr = elements.slice(0);
-  let heapSize = arr.length;
+  let heapSize = elements.length;
 
-  buildHeap(arr, heapSize, comparator);
-  for (let i = arr.length - 1; i > 0; i--) {
-    const temp = arr[0]!;
-    arr[0] = arr[i]!;
-    arr[i] = temp;
+  buildHeap(elements, heapSize, comparator);
+  for (let i = elements.length - 1; i > 0; i--) {
+    const temp = elements[0]!;
+    elements[0] = elements[i]!;
+    elements[i] = temp;
     heapSize--;
-    heapify(arr, heapSize, 0, comparator);
+    heapify(elements, heapSize, 0, comparator);
   }
-  return arr;
+  return elements;
 }
 ```
 
@@ -452,8 +668,8 @@ Max-heap: $[10, 5, 3, 4, 1]$.
 
 **Extract-max loop:**
 
-| Step | Swap | Array after swap | Heapify root | Result |
-|------|------|-----------------|-------------|--------|
+| # | Swap | Array after swap | Heapify root | Result |
+|---|------|-----------------|-------------|--------|
 | 1 | $A[0] \leftrightarrow A[4]$ | [$\underline{1}$, 5, 3, 4, **10**] | $[5, 4, 3, 1]$ | $[5, 4, 3, 1, 10]$ |
 | 2 | $A[0] \leftrightarrow A[3]$ | [$\underline{1}$, 4, 3, **5**, 10] | $[4, 1, 3]$ | $[4, 1, 3, 5, 10]$ |
 | 3 | $A[0] \leftrightarrow A[2]$ | [$\underline{3}$, 1, **4**, 5, 10] | $[3, 1]$ | $[3, 1, 4, 5, 10]$ |
@@ -481,7 +697,7 @@ $$T(n) = O(n) + (n - 1) \cdot O(\log n) = O(n \log n).$$
 
 This holds for all inputs — heapsort is not adaptive.
 
-**Space.** Heapsort sorts in place. The only auxiliary space is $O(1)$ for temporary variables (plus $O(n)$ for our defensive copy).
+**Space.** Heapsort sorts in place. The only auxiliary space is $O(1)$ for temporary variables.
 
 ### Properties
 
@@ -545,10 +761,8 @@ export function randomizedQuickSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  sort(copy, 0, copy.length - 1, comparator);
-  return copy;
+  sort(elements, 0, elements.length - 1, comparator);
+  return elements;
 }
 ```
 

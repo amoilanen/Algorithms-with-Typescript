@@ -51,21 +51,18 @@ function sort<T>(
 }
 
 /**
- * Sorts an array using quicksort with random pivot selection.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using quicksort with random pivot selection.
  *
  * The random pivot avoids worst-case O(n²) behavior on adversarial inputs,
  * giving an expected running time of O(n log n) for all inputs.
  *
  * Time complexity: O(n log n) expected, O(n²) worst case
- * Space complexity: O(n) for the copy + O(log n) expected recursion depth
+ * Space complexity: O(log n) expected recursion depth
  */
 export function randomizedQuickSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  sort(copy, 0, copy.length - 1, comparator);
-  return copy;
+  sort(elements, 0, elements.length - 1, comparator);
+  return elements;
 }

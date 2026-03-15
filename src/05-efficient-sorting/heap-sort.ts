@@ -52,26 +52,24 @@ function buildHeap<T>(
 }
 
 /**
- * Sorts an array using the heap sort algorithm.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using the heap sort algorithm.
  *
  * Time complexity: O(n log n) in all cases
- * Space complexity: O(n) for the copy
+ * Space complexity: O(1)
  */
 export function heapSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const arr = elements.slice(0);
-  let heapSize = arr.length;
+  let heapSize = elements.length;
 
-  buildHeap(arr, heapSize, comparator);
-  for (let i = arr.length - 1; i > 0; i--) {
-    const temp = arr[0]!;
-    arr[0] = arr[i]!;
-    arr[i] = temp;
+  buildHeap(elements, heapSize, comparator);
+  for (let i = elements.length - 1; i > 0; i--) {
+    const temp = elements[0]!;
+    elements[0] = elements[i]!;
+    elements[i] = temp;
     heapSize--;
-    heapify(arr, heapSize, 0, comparator);
+    heapify(elements, heapSize, 0, comparator);
   }
-  return arr;
+  return elements;
 }

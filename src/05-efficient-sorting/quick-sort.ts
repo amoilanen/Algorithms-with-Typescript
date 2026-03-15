@@ -54,18 +54,15 @@ function sort<T>(
 }
 
 /**
- * Sorts an array using the quicksort algorithm with middle-element pivot.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using the quicksort algorithm with middle-element pivot.
  *
  * Time complexity: O(n²) worst case, O(n log n) average
- * Space complexity: O(n) for the copy + O(log n) recursion stack
+ * Space complexity: O(log n) recursion stack
  */
 export function quickSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
-
-  sort(copy, 0, copy.length - 1, comparator);
-  return copy;
+  sort(elements, 0, elements.length - 1, comparator);
+  return elements;
 }

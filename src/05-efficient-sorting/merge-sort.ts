@@ -42,27 +42,25 @@ export function merge<T>(
 }
 
 /**
- * Sorts an array using iterative (bottom-up) merge sort.
- * Returns a new sorted array; the input is not mutated.
+ * Sorts an array in place using iterative (bottom-up) merge sort.
  *
  * Time complexity: O(n log n) in all cases
- * Space complexity: O(n)
+ * Space complexity: O(n) auxiliary for the merge buffer
  */
 export function mergeSort<T>(
   elements: T[],
   comparator: Comparator<T> = numberComparator as Comparator<T>,
 ): T[] {
-  const copy = elements.slice(0);
   let step = 1;
 
-  while (step < copy.length) {
+  while (step < elements.length) {
     step = step * 2;
-    for (let start = 0; start < copy.length; start = start + step) {
-      const middle = Math.min(start + step / 2, copy.length);
-      const end = Math.min(start + step, copy.length);
+    for (let start = 0; start < elements.length; start = start + step) {
+      const middle = Math.min(start + step / 2, elements.length);
+      const end = Math.min(start + step, elements.length);
 
-      merge(copy, start, middle, end, comparator);
+      merge(elements, start, middle, end, comparator);
     }
   }
-  return copy;
+  return elements;
 }

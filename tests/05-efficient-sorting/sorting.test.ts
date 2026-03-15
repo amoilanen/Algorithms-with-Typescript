@@ -42,11 +42,12 @@ describe('efficient sorting', () => {
         ]);
       });
 
-      it('should not change array that was provided as argument but create a new one', () => {
+      it('should sort the array in place', () => {
         const input = [3, 5, 1, 4, 2];
+        const result = sortFunc(input);
 
-        expect(sortFunc(input)).toEqual([1, 2, 3, 4, 5]);
-        expect(input).toEqual([3, 5, 1, 4, 2]);
+        expect(result).toEqual([1, 2, 3, 4, 5]);
+        expect(result).toBe(input);
       });
     });
   }
