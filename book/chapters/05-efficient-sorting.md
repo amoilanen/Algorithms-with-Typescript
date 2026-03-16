@@ -653,6 +653,20 @@ A _max-heap_ is a complete binary tree stored in an array where every node's val
 
 The max-heap property ensures that the root (index 0) holds the largest element.
 
+### The algorithm
+
+Heapsort works in two phases:
+
+1. **Build a max-heap** from the input array. After this step, the array satisfies the max-heap property: every node's value is greater than or equal to its children's values, and in particular the largest element is at the root (index 0).
+2. **Extract the maximum repeatedly.** For $i = n - 1, n - 2, \ldots, 1$:
+   - Swap the root (the current maximum) with element $i$, placing the maximum in its final sorted position.
+   - Reduce the heap size by 1 — element $i$ is now in its final position and excluded from the heap.
+   - Call heapify on the new root to restore the max-heap property among the remaining elements.
+
+Notice that unlike merge sort and quicksort, heapsort does not use divide-and-conquer in the traditional recursive sense. Instead, it uses the heap data structure to efficiently find and remove the maximum element at each step. The build-heap phase (step 1) does the structural work of organizing the array, while the extraction loop (step 2) does the sorting work by repeatedly peeling off the maximum. The sorted elements accumulate at the end of the array while the heap shrinks from the front — the algorithm sorts in place with $O(1)$ auxiliary space.
+
+The sections below describe the heap data structure, the heapify and build-heap operations that support it, and the full heapsort implementation.
+
 ### Heapify
 
 The `heapify` operation takes a node whose children are both valid max-heaps but whose own value may violate the heap property, and "sinks" it down to restore the property:
@@ -687,6 +701,50 @@ function heapify<T>(
 
 The element at `index` is compared with its children. If a child is larger, the element is swapped with the largest child, and the process repeats in that child's subtree. Each step moves down one level, so heapify runs in $O(\log n)$ time (the height of the tree).
 
+### Tracing the heapify procedure
+
+To understand how heapify works step by step, let us trace through a small example.
+
+**Example:** call `heapify(arr, 7, 0)` on the array $[2, 7, 6, 5, 4, 1, 3]$. The root (value 2) violates the max-heap property, but both of its subtrees are valid max-heaps:
+
+```
+        2          ← violates heap property
+       / \
+      7    6
+     / \  / \
+    5  4 1   3
+```
+
+At each step, we compare the current node with its children, find the largest of the three, and swap if the current node is not the largest. If a swap occurs, we recurse into the affected subtree because the swapped-down value may violate the heap property there.
+
+**Step 1** (index 0): Compare $A[0] = 2$ with its children $A[1] = 7$ and $A[2] = 6$. The largest is 7 at index 1. Since $7 > 2$, swap $A[0]$ and $A[1]$:
+
+```
+        7
+       / \
+      2    6
+     / \  / \
+    5  4 1   3
+```
+
+Array: $[7, 2, 6, 5, 4, 1, 3]$. The right subtree (rooted at 6) is unaffected. Recurse into the left subtree at index 1, where the value 2 may now violate the heap property.
+
+**Step 2** (index 1): Compare $A[1] = 2$ with its children $A[3] = 5$ and $A[4] = 4$. The largest is 5 at index 3. Since $5 > 2$, swap $A[1]$ and $A[3]$:
+
+```
+        7
+       / \
+      5    6
+     / \  / \
+    2  4 1   3
+```
+
+Array: $[7, 5, 6, 2, 4, 1, 3]$. Recurse into index 3.
+
+**Step 3** (index 3): Node $A[3] = 2$ has no children (left child index $2 \cdot 3 + 1 = 7 \geq$ heapSize). It is a leaf — stop.
+
+The element 2 has "sunk" from the root to a leaf in two swaps. The result $[7, 5, 6, 2, 4, 1, 3]$ is a valid max-heap: every node is greater than or equal to its children.
+
 ### Building a heap
 
 We can convert an unordered array into a max-heap by calling `heapify` on every non-leaf node, bottom-up:
@@ -705,21 +763,99 @@ function buildHeap<T>(
 }
 ```
 
+**Why `Math.floor((heapSize + 1) / 2) - 1`?** The last non-leaf is the parent of the last element in the array. Since the last element has index $n - 1$, its parent is at index $\lfloor((n - 1) - 1)/2\rfloor = \lfloor(n - 2)/2\rfloor$. Every node after this index has no children — it is a leaf. For example, in a heap of size 6, the last element is at index 5, its parent is at $\lfloor 4/2 \rfloor = 2$, and indices 3, 4, 5 are all leaves.
+
+The code's expression $\lfloor(n + 1)/2\rfloor - 1$ equals $\lfloor(n - 2)/2\rfloor$ when $n$ is even. When $n$ is odd, it yields one index higher — a leaf node — but this is harmless: `heapify` on a leaf finds no children and returns immediately. The more direct formula `Math.floor((heapSize - 2) / 2)` gives the exact last non-leaf for all $n$, but it computes `heapSize - 2`, which underflows when `heapSize` is 0 or 1 in languages with unsigned integers. The `(heapSize + 1) / 2 - 1` form avoids negative intermediate values, making it portable and safe regardless of the integer type. (When `heapSize` is 0, the expression evaluates to $-1$, so the loop condition `i >= 0` is immediately false and the loop body never executes — correctly treating an empty array as a trivial heap.)
+
 **Why bottom-up?** The leaves (the bottom half of the array) are trivially valid heaps. By processing nodes from the bottom up, each call to `heapify` encounters a node whose children are already valid heaps — exactly the precondition heapify requires.
 
-**Why $O(n)$ and not $O(n \log n)$?** A naive analysis says: $n/2$ calls to heapify, each costing $O(\log n)$, giving $O(n \log n)$. But this overestimates. Most nodes are near the bottom and sink only a few levels. The precise cost is:
+It turns out that `buildHeap` built this way has the time complexity $O(n)$.
+
+**Why $O(n)$ and not $O(n \log n)$?** A naive analysis says: $n/2$ calls to heapify, each costing $O(\log n)$, giving $O(n \log n)$. But this overestimates the boundary because it treats every node as if it could sink all the way to the bottom. In reality, most nodes are near the bottom and sink only a few levels. To get the true cost, we group nodes by their _height_ in the tree and sum the work done at each height.
+
+**How many nodes are at each height?** Define the height of a node as the number of edges on the longest downward path to a leaf. Leaves have height 0, their parents have height 1, and so on up to the root at height $\lfloor \log_2 n \rfloor$. In a complete binary tree with $n$ nodes, the number of nodes at height $h$ is $\left\lceil n / 2^{h+1} \right\rceil$. Intuitively, each successive level going _up_ has roughly half as many nodes as the level below: about $n/2$ leaves (height 0), $n/4$ nodes at height 1, $n/8$ at height 2, and so on.
+
+**How much work does heapify do on a node at height $h$?** Each call to heapify sinks a node by at most $h$ levels (one comparison-and-swap per level), so the cost is $O(h)$.
+
+**The total cost.** Multiplying the number of nodes at height $h$ by the cost per node and summing over all heights gives:
+
+$$\sum_{h=0}^{\lfloor \log n \rfloor} \underbrace{\left\lceil \frac{n}{2^{h+1}} \right\rceil}_{\text{nodes at height } h} \cdot \underbrace{O(h)}_{\text{cost per node}}.$$
+
+Dropping the ceiling and pulling out $n$, this is at most:
+
+$$O\!\left(\frac{n}{2}\sum_{h=0}^{\lfloor \log n \rfloor} \frac{h}{2^h}\right).$$
+
+Since every term is positive, we can safely extend the upper limit to infinity (which only increases the sum), obtaining:
+
+$$O\!\left(n \sum_{h=0}^{\infty} \frac{h}{2^h}\right).$$
+
+**Evaluating the series $\sum_{h=0}^{\infty} h/2^h$.** It is a well-known result from analysis that this series converges to exactly 2 (it can be derived by differentiating the geometric series and substituting $x = 1/2$; we omit the proof here). So:
+
+$$\sum_{h=0}^{\infty} \frac{h}{2^h} = 2.$$
+
+Therefore:
 
 $$\sum_{h=0}^{\lfloor \log n \rfloor} \left\lceil \frac{n}{2^{h+1}} \right\rceil \cdot O(h) = O\!\left(n \sum_{h=0}^{\infty} \frac{h}{2^h}\right) = O(n \cdot 2) = O(n).$$
 
-The series $\sum_{h=0}^{\infty} h/2^h = 2$ converges, so building a heap takes linear time.
+The key insight is that the work pyramid is inverted: the many nodes near the bottom of the tree each sink at most a few levels, while the few nodes near the top can sink many levels. Because the heavy per-node work is concentrated at the top where there are very few nodes, the total work sums to $O(n)$ rather than to $O(n \log n)$.
 
-### The heapsort algorithm
+### Tracing the buildHeap procedure
 
-1. Build a max-heap from the input array: $O(n)$.
-2. Repeat for $i = n - 1, n - 2, \ldots, 1$:
-   - Swap the root (maximum) with element $i$.
-   - Reduce the heap size by 1 (element $i$ is now in its final position).
-   - Call heapify on the root to restore the heap property.
+Let us trace `buildHeap` on the array $A = [3, 1, 6, 5, 2, 4]$. Since we have already traced the heapify procedure step-by-step in the previous section, here we treat each heapify call as a single step and focus on the overall bottom-up process.
+
+The initial array as a tree:
+
+```
+        3
+       / \
+      1    6
+     / \  /
+    5   2 4
+```
+
+The array has $n = 6$ elements. The last non-leaf index is $\lfloor (6 - 2) / 2 \rfloor = 2$, so we call heapify on indices 2, 1, and 0, in that order.
+
+**heapify(arr, 6, 2)** — node at index 2 (value 6). Its only child is $A[5] = 4$. Since $6 \geq 4$, the heap property is already satisfied. No change.
+
+```
+        3
+       / \
+      1    6
+     / \  /
+    5   2 4
+```
+
+Array: $[3, 1, 6, 5, 2, 4]$ (unchanged).
+
+**heapify(arr, 6, 1)** — node at index 1 (value 1). Children are $A[3] = 5$ and $A[4] = 2$. The largest child is 5 at index 3. Since $5 > 1$, heapify swaps 1 and 5. The element 1 sinks to index 3, which is a leaf — no further swaps.
+
+```
+        3
+       / \
+      5    6
+     / \  /
+    1   2 4
+```
+
+Array: $[3, 5, 6, 1, 2, 4]$.
+
+**heapify(arr, 6, 0)** — node at index 0 (value 3). Children are $A[1] = 5$ and $A[2] = 6$. The largest child is 6 at index 2. Since $6 > 3$, heapify swaps 3 and 6. The element 3 sinks to index 2, where its only child is $A[5] = 4$. Since $4 > 3$, heapify swaps again. Now 3 is at index 5, a leaf — done.
+
+```
+        6
+       / \
+      5    4
+     / \  /
+    1   2 3
+```
+
+Array: $[6, 5, 4, 1, 2, 3]$.
+
+The result is a valid max-heap. Notice the bottom-up order: by the time we process a node, all nodes below it have already been heapified, so both of its subtrees are valid max-heaps — exactly the precondition that heapify requires.
+
+Now that we have the necessary building blocks: `heapify` and `buildHeap` we can proceed to the implementation of the sorting algorithm itself.
+
+### Implementation
 
 ```typescript
 export function heapSort<T>(
@@ -729,6 +865,8 @@ export function heapSort<T>(
   let heapSize = elements.length;
 
   buildHeap(elements, heapSize, comparator);
+  // Extract-max loop: repeatedly swap the root (maximum) with the last
+  // heap element, shrink the heap, and restore the heap property.
   for (let i = elements.length - 1; i > 0; i--) {
     const temp = elements[0]!;
     elements[0] = elements[i]!;
@@ -766,11 +904,11 @@ Process non-leaf nodes bottom-up. Node at index 1 (value 10): children are 5, 1.
     5   1         4   1
 ```
 
-Max-heap: $[10, 5, 3, 4, 1]$.
+After calling `buildHeap` have the following max-heap: $[10, 5, 3, 4, 1]$.
 
 **Extract-max loop:**
 
-| # | Swap | Array after swap | Heapify root | Result |
+| # | swap | After swap | Current heap | after heapify |
 |---|------|-----------------|-------------|--------|
 | 1 | $A[0] \leftrightarrow A[4]$ | [$\underline{1}$, 5, 3, 4, **10**] | $[5, 4, 3, 1]$ | $[5, 4, 3, 1, 10]$ |
 | 2 | $A[0] \leftrightarrow A[3]$ | [$\underline{1}$, 4, 3, **5**, 10] | $[4, 1, 3]$ | $[4, 1, 3, 5, 10]$ |
@@ -781,15 +919,15 @@ Result: $[1, 3, 4, 5, 10]$.
 
 ### Correctness
 
-**Invariant:** At the start of each iteration $i$ of the extract-max loop:
+**Invariant:** The extract-max loop variable `i` starts at $n - 1$ and decreases to $1$. At the start of the iteration with loop variable value $i$:
 - $A[0..i]$ is a max-heap containing the $i + 1$ smallest elements.
-- $A[i+1..n-1]$ contains the $n - i - 1$ largest elements, in sorted order.
+- $A[i+1..n-1]$ is the sorted prefix, contains the $n - i - 1$ largest elements, in sorted order (when $i = n - 1$, this range is empty — no elements have been sorted yet).
 
-**Initialization.** After `buildHeap`, the entire array is a max-heap and the sorted suffix is empty.
+**Initialization ($i = n - 1$).** After `buildHeap`, the entire array $A[0..n-1]$ is a max-heap and the sorted suffix is empty.
 
-**Maintenance.** The root $A[0]$ is the largest element in the heap $A[0..i]$. Swapping it with $A[i]$ places it in the correct position (it is the $(i+1)$th largest overall). Reducing the heap size and calling heapify restores the heap property on $A[0..i-1]$.
+**Maintenance.** The root $A[0]$ is the largest element in the heap $A[0..i]$. Swapping it with $A[i]$ places it in the correct position (it is the $(n - i)$th largest overall). Reducing the heap size and calling heapify restores the heap property on $A[0..i-1]$.
 
-**Termination.** When $i = 0$, the heap contains a single element (the minimum), which is trivially in its correct position. The array is sorted. $\square$
+**Termination ($i = 0$).** When `i` becomes `0`, the loop exits. At this point the invariant tells us that $A[1..n-1]$ contains the $n - 1$ largest elements in sorted order, and $A[0]$ is a trivial one-element max-heap holding the minimum. The array is sorted. $\square$
 
 ### Complexity analysis
 

@@ -64,6 +64,8 @@ export function heapSort<T>(
   let heapSize = elements.length;
 
   buildHeap(elements, heapSize, comparator);
+  // Extract-max loop: repeatedly swap the root (maximum) with the last
+  // heap element, shrink the heap, and restore the heap property.
   for (let i = elements.length - 1; i > 0; i--) {
     const temp = elements[0]!;
     elements[0] = elements[i]!;
