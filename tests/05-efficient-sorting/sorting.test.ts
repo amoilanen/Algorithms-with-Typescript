@@ -8,9 +8,10 @@ import {
   partition,
 } from '../../src/05-efficient-sorting/quick-sort';
 import { heapSort } from '../../src/05-efficient-sorting/heap-sort';
+import { randomizedQuickSort } from '../../src/05-efficient-sorting/randomized-quick-sort';
 
 describe('efficient sorting', () => {
-  for (const sortFunc of [mergeSort, heapSort, quickSort]) {
+  for (const sortFunc of [mergeSort, heapSort, quickSort, randomizedQuickSort]) {
     describe(sortFunc.name, () => {
       it('should sort an array', () => {
         expect(sortFunc([6, 0, 4, 3, 9, 8, 7, 1, 2, 5])).toEqual([
@@ -48,6 +49,43 @@ describe('efficient sorting', () => {
 
         expect(result).toEqual([1, 2, 3, 4, 5]);
         expect(result).toBe(input);
+      });
+
+      it('should sort a reverse-sorted array', () => {
+        expect(sortFunc([5, 4, 3, 2, 1])).toEqual([1, 2, 3, 4, 5]);
+      });
+
+      it('should sort an array of all identical elements', () => {
+        expect(sortFunc([7, 7, 7, 7, 7])).toEqual([7, 7, 7, 7, 7]);
+      });
+
+      it('should sort a large array correctly', () => {
+        const input = Array.from({ length: 1000 }, (_, i) => 1000 - i);
+        const expected = Array.from({ length: 1000 }, (_, i) => i + 1);
+
+        expect(sortFunc(input)).toEqual(expected);
+      });
+
+      it('should sort with a custom comparator (descending)', () => {
+        const descending = (a: number, b: number) => b - a;
+
+        expect(sortFunc([3, 1, 4, 1, 5, 9], descending)).toEqual([
+          9, 5, 4, 3, 1, 1,
+        ]);
+      });
+
+      it('should sort strings with a custom comparator', () => {
+        const stringComparator = (a: string, b: string) => a.localeCompare(b);
+
+        expect(
+          sortFunc(['banana', 'apple', 'cherry'], stringComparator),
+        ).toEqual(['apple', 'banana', 'cherry']);
+      });
+
+      it('should handle negative numbers', () => {
+        expect(sortFunc([-3, -1, -4, -1, -5, -9])).toEqual([
+          -9, -5, -4, -3, -1, -1,
+        ]);
       });
     });
   }
