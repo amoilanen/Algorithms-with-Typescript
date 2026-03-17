@@ -639,6 +639,101 @@ Despite its $O(n^2)$ worst case, quicksort is often the fastest comparison sort 
 
    - **Three-way partitioning (Dutch National Flag).** Standard Lomuto or Hoare partitioning splits the array into two regions: elements $<$ pivot and elements $\geq$ pivot. When many elements are equal to the pivot, those duplicates still end up in recursive calls even though they are already in their correct relative position. Three-way partitioning instead splits the array into _three_ regions — elements less than the pivot, elements _equal_ to the pivot, and elements greater than the pivot. The equal-to-pivot region is excluded from both recursive calls, since those elements are already in their final positions. This makes a large difference when the input has many duplicate values: in the extreme case of all-equal elements, a single partition call finishes the entire array in $O(n)$ time, whereas standard two-way partitioning would degrade to $O(n^2)$.
 
+### Randomized quicksort
+
+Deterministic quicksort's performance depends on the pivot choice. A fixed strategy — first element, last element, middle element — can always be defeated by a carefully constructed input that forces $O(n^2)$ behavior. Randomized quicksort eliminates this vulnerability by choosing the pivot _uniformly at random_.
+
+#### Motivation
+
+Consider a sorting library used by millions of applications. An adversary who knows the pivot-selection strategy can craft inputs that trigger worst-case behavior, leading to denial-of-service attacks. By choosing the pivot randomly, we ensure that no input is consistently bad — the algorithm's expected performance is $O(n \log n)$ for _every_ input, regardless of how it was constructed.
+
+This is a powerful guarantee. It shifts the source of randomness from the input (which an adversary controls) to the algorithm (which the adversary cannot predict).
+
+#### The algorithm
+
+Randomized quicksort is identical to standard quicksort, except that the partition step selects a random element as the pivot instead of a fixed one. The only change is the pivot index computation — everything else (the Lomuto scan, the swap logic, the recursive structure) remains exactly the same:
+
+```typescript
+function randomizedPartition<T>(
+  arr: T[],
+  start: number,
+  end: number,
+  comparator: Comparator<T>,
+): number {
+  // The only change: pick a random pivot instead of the middle element
+  const randomIndex = start + Math.floor(Math.random() * (end - start + 1));
+
+  // ... rest identical to partition
+}
+```
+
+The line `Math.floor(Math.random() * (end - start + 1))` replaces `Math.floor((start + end) / 2)` — a uniform random index in `[start, end]` instead of the fixed middle index. The Lomuto scan, the swap into `storeIndex`, and the recursive `sort` driver all remain unchanged.
+
+#### Expected running time
+
+**Theorem 5.1.** The expected number of comparisons made by randomized quicksort on any input of size $n$ is at most $2n \ln n = O(n \log n)$.
+
+**Proof.** Let $a_1 < a_2 < \cdots < a_n$ be the elements of the input in sorted order. Define the indicator random variable $X_{ij}$ as 1 if $a_i$ and $a_j$ are ever compared during the execution, and 0 otherwise.
+
+The total number of comparisons is:
+
+$$C = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} X_{ij}.$$
+
+Why does this sum count all comparisons? The double sum iterates over every pair of distinct elements exactly once: the outer index $i$ ranges from 1 to $n - 1$ and the inner index $j$ ranges from $i + 1$ to $n$, so we visit exactly the pairs $(a_1, a_2), (a_1, a_3), \ldots, (a_1, a_n), (a_2, a_3), \ldots, (a_{n-1}, a_n)$ — all $\binom{n}{2}$ pairs with $i < j$. (The constraint $i < j$ avoids counting each pair twice; $i$ stops at $n - 1$ because the smallest valid pair has $i = n - 1, j = n$.)
+
+For each pair, $X_{ij}$ contributes 1 if those two elements are compared during the execution, and 0 if they are not. The sum therefore counts the total number of pairs that are compared — but is this the same as the total number of comparisons? It is, because each pair is compared _at most once_. To see why: every comparison in quicksort happens during a partition step, where the pivot is compared against each other element in the current subarray. A comparison between $a_i$ and $a_j$ can therefore only occur when one of them is the pivot. Once an element serves as pivot, it is placed in its final position and excluded from all future recursive calls — so that element is never compared with anything again, and in particular $a_i$ and $a_j$ can never be compared a second time.
+
+Since every comparison corresponds to exactly one pair and every pair is compared at most once, the double sum counts exactly the total number of comparisons.
+
+Since the algorithm is randomized, $C$ is a random variable — it may take different values on different runs of the algorithm (due to different random pivot choices). We want to compute $\mathbb{E}[C]$, the _expected value_ (long-run average) of the total number of comparisons. By _linearity of expectation_ — the fact that the expected value of a sum equals the sum of the expected values, regardless of dependencies — we can pull the expectation inside the double sum:
+
+$$\mathbb{E}[C] = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \mathbb{E}[X_{ij}].$$
+
+Now, $X_{ij}$ is an indicator variable: it equals either 0 or 1. A standard property of indicator variables is that the expected value of an indicator equals the probability that it is 1: $\mathbb{E}[X_{ij}] = \Pr[X_{ij} = 1] = \Pr[a_i \text{ and } a_j \text{ are compared}]$. This gives us:
+
+$$\mathbb{E}[C] = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \Pr[a_i \text{ and } a_j \text{ are compared}].$$
+
+It remains to compute these probabilities. Fix a pair $a_i$ and $a_j$ (with $i < j$) and ask: under what circumstances are they compared?
+
+Recall that the only comparisons quicksort makes are between a pivot and the other elements in its subarray. So $a_i$ and $a_j$ can only be compared when one of them is a pivot and both are in the same subarray for which the partition function is called. The question is: do they ever find themselves in this situation, or are they separated into different subarrays before either becomes a pivot?
+
+The answer depends on the set of elements _between_ them in sorted order: $\{a_i, a_{i+1}, \ldots, a_j\}$. Consider what happens when some element $a_k$ from this set is chosen as pivot for the first time:
+
+- **If $i < k < j$ (an element strictly between them):** The pivot $a_k$ satisfies $a_i < a_k < a_j$, so $a_i$ goes to the left partition and $a_j$ goes to the right partition. They are now in different subarrays and will _never_ be in the same subarray again — so they will never be compared. (Note that during this partition step, both $a_i$ and $a_j$ are compared to the pivot $a_k$, but not to each other.)
+
+- **If $k = i$ or $k = j$ (one of the endpoints):** That endpoint is the pivot and is compared to every other element in its subarray — including the other endpoint. So $a_i$ and $a_j$ _are_ compared.
+
+What about elements _outside_ this interval — pivots $a_k$ with $k < i$ or $k > j$? These cannot separate $a_i$ and $a_j$: if $k < i$, then $a_k < a_i < a_j$, so both $a_i$ and $a_j$ are greater than the pivot and land in the same (right) partition. If $k > j$, both are less than the pivot and land in the same (left) partition. Either way, $a_i$ and $a_j$ remain together, and the question whether they will be compared is deferred to a later pivot choice and a partition function call.
+
+Therefore, the fate of the pair $(a_i, a_j)$ (whether they will be compared once during the quicksort sorting or not) is determined entirely by which element in $\{a_i, a_{i+1}, \ldots, a_j\}$ is the _first_ to be chosen as a pivot. If it is $a_i$ or $a_j$, they are compared; if it is any of the $j - i - 1$ elements strictly between them, they are separated without being compared.
+
+Since pivots are chosen uniformly at random, each of the $j - i + 1$ elements in $\{a_i, a_{i+1}, \ldots, a_j\}$ is equally likely to be the first one selected. Two of these choices (namely $a_i$ and $a_j$) lead to a comparison, so:
+
+$$\Pr[a_i \text{ and } a_j \text{ are compared}] = \frac{2}{j - i + 1}.$$
+
+Therefore:
+
+$$\mathbb{E}[C] = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \frac{2}{j - i + 1} = \sum_{i=1}^{n-1} \sum_{k=2}^{n-i+1} \frac{2}{k} \leq \sum_{i=1}^{n-1} 2H_n = 2(n - 1)H_n \leq 2n \ln n.$$
+
+where $H_n = \sum_{k=1}^{n} 1/k \leq \ln n + 1$ is the $n$th harmonic number. $\square$
+
+This expected bound holds for _every_ input — it is not an average over random inputs. Even on an adversarial input, randomized quicksort makes $O(n \log n)$ expected comparisons.
+
+#### Worst case
+
+The worst case of $O(n^2)$ still exists in theory: if the random choices happen to always pick the smallest or largest element as pivot. However, the probability of this occurring is astronomically small. For $n = 1000$, the probability of consistently terrible pivots through all recursive calls is effectively zero.
+
+#### Properties
+
+| Property | Randomized quicksort |
+|----------|---------------------|
+| Worst-case time | $\Theta(n^2)$ (extremely unlikely) |
+| Expected time | $\Theta(n \log n)$ for all inputs |
+| Space | $O(\log n)$ expected stack depth |
+| Stable | No |
+
+Note: the expected time is $\Theta(n \log n)$, not merely $O(n \log n)$. The upper bound $O(n \log n)$ follows from Theorem 5.1 above. The lower bound $\Omega(n \log n)$ follows from the comparison-based sorting lower bound proved in Chapter 4: any comparison-based sorting algorithm — including randomized ones — must make $\Omega(n \log n)$ comparisons in expectation, since for any fixed sequence of random choices the algorithm is deterministic and the information-theoretic lower bound applies.
+
 ## Heapsort
 
 Heapsort uses a _binary heap_ to sort an array in place. A binary heap is an array-based data structure that maintains a partial ordering — not fully sorted, but structured enough to find the maximum (or minimum) in $O(1)$ time and restore order in $O(\log n)$ time after a removal.
@@ -950,104 +1045,9 @@ This holds for all inputs — heapsort is not adaptive.
 | Stable | No |
 | Adaptive | No |
 
-## Randomized quicksort
-
-Deterministic quicksort's performance depends on the pivot choice. A fixed strategy — first element, last element, middle element — can always be defeated by a carefully constructed input that forces $O(n^2)$ behavior. Randomized quicksort eliminates this vulnerability by choosing the pivot _uniformly at random_.
-
-### Motivation
-
-Consider a sorting library used by millions of applications. An adversary who knows the pivot-selection strategy can craft inputs that trigger worst-case behavior, leading to denial-of-service attacks. By choosing the pivot randomly, we ensure that no input is consistently bad — the algorithm's expected performance is $O(n \log n)$ for _every_ input, regardless of how it was constructed.
-
-This is a powerful guarantee. It shifts the source of randomness from the input (which an adversary controls) to the algorithm (which the adversary cannot predict).
-
-### The algorithm
-
-Randomized quicksort is identical to standard quicksort, except that the partition step selects a random element as the pivot instead of a fixed one:
-
-```typescript
-function randomizedPartition<T>(
-  arr: T[],
-  start: number,
-  end: number,
-  comparator: Comparator<T>,
-): number {
-  // Choose a random pivot index in [start, end]
-  const randomIndex = start + Math.floor(Math.random() * (end - start + 1));
-  let storeIndex = start;
-
-  // Move pivot to end
-  const pivotTemp = arr[randomIndex]!;
-  arr[randomIndex] = arr[end]!;
-  arr[end] = pivotTemp;
-
-  for (let i = start; i < end; i++) {
-    if (comparator(arr[i]!, arr[end]!) < 0) {
-      const temp = arr[storeIndex]!;
-      arr[storeIndex] = arr[i]!;
-      arr[i] = temp;
-      storeIndex++;
-    }
-  }
-
-  // Move pivot to its final position
-  const temp = arr[storeIndex]!;
-  arr[storeIndex] = arr[end]!;
-  arr[end] = temp;
-
-  return storeIndex;
-}
-
-export function randomizedQuickSort<T>(
-  elements: T[],
-  comparator: Comparator<T> = numberComparator as Comparator<T>,
-): T[] {
-  sort(elements, 0, elements.length - 1, comparator);
-  return elements;
-}
-```
-
-The only change from deterministic quicksort is the line that computes the pivot index: `Math.floor(Math.random() * (end - start + 1))` instead of `Math.floor((start + end) / 2)`.
-
-### Expected running time
-
-**Theorem 5.1.** The expected number of comparisons made by randomized quicksort on any input of size $n$ is at most $2n \ln n = O(n \log n)$.
-
-**Proof sketch.** Let $z_1 < z_2 < \cdots < z_n$ be the elements of the input in sorted order. Define the indicator random variable $X_{ij}$ as 1 if $z_i$ and $z_j$ are ever compared during the execution, and 0 otherwise.
-
-The total number of comparisons is:
-
-$$C = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} X_{ij}.$$
-
-By linearity of expectation:
-
-$$\mathbb{E}[C] = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \Pr[z_i \text{ and } z_j \text{ are compared}].$$
-
-Now, $z_i$ and $z_j$ are compared if and only if one of them is chosen as the pivot before any element in $\{z_i, z_{i+1}, \ldots, z_j\}$. Since we choose pivots uniformly at random, the probability that $z_i$ or $z_j$ is chosen first among these $j - i + 1$ elements is $2 / (j - i + 1)$.
-
-Therefore:
-
-$$\mathbb{E}[C] = \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \frac{2}{j - i + 1} = \sum_{i=1}^{n-1} \sum_{k=2}^{n-i+1} \frac{2}{k} \leq \sum_{i=1}^{n-1} 2H_n = 2(n - 1)H_n \leq 2n \ln n.$$
-
-where $H_n = \sum_{k=1}^{n} 1/k \leq \ln n + 1$ is the $n$th harmonic number. $\square$
-
-This expected bound holds for _every_ input — it is not an average over random inputs. Even on an adversarial input, randomized quicksort makes $O(n \log n)$ expected comparisons.
-
-### Worst case
-
-The worst case of $O(n^2)$ still exists in theory: if the random choices happen to always pick the smallest or largest element as pivot. However, the probability of this occurring is astronomically small. For $n = 1000$, the probability of consistently terrible pivots through all recursive calls is effectively zero.
-
-### Properties
-
-| Property | Randomized quicksort |
-|----------|---------------------|
-| Worst-case time | $O(n^2)$ (extremely unlikely) |
-| Expected time | $O(n \log n)$ for all inputs |
-| Space | $O(\log n)$ expected stack depth |
-| Stable | No |
-
 ## Comparison of efficient sorting algorithms
 
-We have now studied four $O(n \log n)$ sorting algorithms. Let us compare them across the dimensions that matter in practice.
+We have now studied three $O(n \log n)$ sorting algorithms. Let us compare them across the dimensions that matter in practice.
 
 ### Time complexity
 
@@ -1055,7 +1055,7 @@ We have now studied four $O(n \log n)$ sorting algorithms. Let us compare them a
 |-----------|-----------|-------------|------------|
 | Merge sort | $\Theta(n \log n)$ | $\Theta(n \log n)$ | $\Theta(n \log n)$ |
 | Quicksort | $\Theta(n \log n)$ | $\Theta(n \log n)$ | $\Theta(n^2)$ |
-| Randomized quicksort | $\Theta(n \log n)$ | $O(n \log n)$ expected | $O(n^2)$ |
+| Randomized quicksort | $\Theta(n \log n)$ | $\Theta(n \log n)$ expected | $\Theta(n^2)$ unlikely |
 | Heapsort | $\Theta(n \log n)$ | $\Theta(n \log n)$ | $\Theta(n \log n)$ |
 
 Merge sort and heapsort provide _guaranteed_ $O(n \log n)$ performance. Quicksort has a theoretical $O(n^2)$ worst case, but randomization makes this practically irrelevant. In terms of constant factors, quicksort (including randomized) typically makes the fewest comparisons on average — about $1.39\, n \log_2 n$ versus merge sort's $n \log_2 n$ comparisons, but with lower overhead per comparison.
@@ -1080,11 +1080,11 @@ Heapsort is the clear winner for space: it sorts truly in place with $O(1)$ extr
 | Randomized quicksort | No |
 | Heapsort | No |
 
-Merge sort is the only stable $O(n \log n)$ algorithm among the four. This makes it the default choice when stability is required — for example, in database sorting or when composing sorts on multiple keys.
+Merge sort is the only stable $O(n \log n)$ algorithm among the three. This makes it the default choice when stability is required — for example, in database sorting or when composing sorts on multiple keys.
 
 ### Cache performance
 
-Quicksort has the best cache performance among the four. Its partition scan accesses elements sequentially, making excellent use of CPU cache lines. Merge sort accesses two separate subarrays during merge, which can cause cache misses when the subarrays are far apart in memory. Heapsort has the worst cache performance: heap navigation accesses elements at indices $i$, $2i + 1$, and $2i + 2$, which jump around the array unpredictably for large arrays.
+Quicksort has the best cache performance among the three. Its partition scan accesses elements sequentially, making excellent use of CPU cache lines. Merge sort accesses two separate subarrays during merge, which can cause cache misses when the subarrays are far apart in memory. Heapsort has the worst cache performance: heap navigation accesses elements at indices $i$, $2i + 1$, and $2i + 2$, which jump around the array unpredictably for large arrays.
 
 ### Practical recommendations
 
@@ -1098,17 +1098,15 @@ Quicksort has the best cache performance among the four. Its partition scan acce
 
 ## Chapter summary
 
-In this chapter we studied four efficient comparison-based sorting algorithms:
+In this chapter we studied three efficient comparison-based sorting algorithms:
 
 - **Merge sort** divides the array in half, sorts each half recursively, and merges the sorted halves. It runs in $\Theta(n \log n)$ time in all cases but requires $O(n)$ auxiliary space. It is stable.
 
-- **Quicksort** partitions the array around a pivot, placing it in its correct position, then recursively sorts the two partitions. It runs in $O(n \log n)$ average time with excellent cache performance, but has $O(n^2)$ worst-case time with a fixed pivot strategy.
+- **Quicksort** partitions the array around a pivot, placing it in its correct position, then recursively sorts the two partitions. It runs in $O(n \log n)$ average time with excellent cache performance, but has $O(n^2)$ worst-case time with a fixed pivot strategy. Randomized quicksort eliminates this vulnerability to adversarial inputs by choosing pivots uniformly at random, achieving $\Theta(n \log n)$ expected time on _every_ input.
 
 - **Heapsort** builds a max-heap and repeatedly extracts the maximum to build the sorted array from right to left. It runs in $\Theta(n \log n)$ time in all cases and uses $O(1)$ auxiliary space, but has poor cache performance.
 
-- **Randomized quicksort** eliminates quicksort's vulnerability to adversarial inputs by choosing pivots uniformly at random. It achieves $O(n \log n)$ expected time on _every_ input.
-
-All four algorithms achieve the $\Omega(n \log n)$ lower bound proved in Chapter 4. In the next chapter, we explore a different question: can we sort _faster_ than $O(n \log n)$ by using information beyond pairwise comparisons?
+All three algorithms achieve the $\Omega(n \log n)$ lower bound proved in Chapter 4. In the next chapter, we explore a different question: can we sort _faster_ than $O(n \log n)$ by using information beyond pairwise comparisons?
 
 ## Exercises
 
