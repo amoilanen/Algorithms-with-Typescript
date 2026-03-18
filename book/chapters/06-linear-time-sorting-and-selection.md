@@ -1,18 +1,18 @@
 # Linear-Time Sorting and Selection
 
-_In Chapter 4 we proved a lower bound: every comparison-based sorting algorithm must make $\Omega(n \log n)$ comparisons in the worst case. The efficient algorithms of Chapter 5 — merge sort, quicksort, heapsort — all meet this bound, and none can beat it. But what if we are willing to go beyond pairwise comparisons? If we know something about the structure of the keys — for instance, that they are integers in a bounded range — we can exploit that structure to sort in linear time. In this chapter we study three such algorithms: counting sort, radix sort, and bucket sort. We also turn to a related problem — selection — and present two algorithms that find the $k$th smallest element in $O(n)$ time without sorting: randomized quickselect and the deterministic median-of-medians algorithm._
+_In Chapter 4 we proved a lower bound: every comparison-based sorting algorithm must make $\Omega(n \log n)$ comparisons in the worst case. The efficient algorithms of Chapter 5 — merge sort, quicksort, heapsort — all meet this bound, and none can beat it. But what if we are willing to go beyond pairwise comparisons? If we know something about the structure of the values — for instance, that they are integers in a bounded range — then it turns out that we can exploit that structure to sort in linear time. In this chapter we study three such algorithms: counting sort, radix sort, and bucket sort. We also turn to a related problem — selection — and present two algorithms that find the $k$th smallest element in $O(n)$ time without sorting: randomized quickselect and the deterministic median-of-medians algorithm._
 
 ## Breaking the comparison lower bound
 
-The $\Omega(n \log n)$ lower bound from Chapter 4 applies to comparison-based sorting: algorithms that learn about the input only by comparing pairs of elements. The decision-tree argument shows that any comparison-based algorithm must traverse a binary tree of height at least $\log_2(n!) = \Theta(n \log n)$, because there are $n!$ possible permutations and each leaf of the decision tree corresponds to one permutation.
+The $\Omega(n \log n)$ lower bound from Chapter 4 applies to comparison-based sorting: algorithms that learn about the input only by comparing pairs of elements. The decision-tree argument shows that any comparison-based algorithm must traverse a binary tree of height of at least $\log_2(n!) = \Theta(n \log n)$, because there are $n!$ possible permutations and each leaf of the decision tree corresponds to one permutation.
 
-This lower bound does _not_ apply if we use operations other than comparisons. If the keys are integers, we can look at individual digits. If the keys are bounded, we can use them as array indices. These non-comparison-based operations give us additional information that comparison-based algorithms cannot access, and this is what allows us to sort faster.
+This lower bound however does _not_ apply if we use operations other than comparisons and know more about the values in the underlying array. For example, if the values are integers, we can look at their individual digits. And if the values are bounded, we can use them as array indices. These non-comparison-based operations give us additional information that comparison-based algorithms cannot access, and this is what allows us to sort faster.
 
-The trade-off is generality: comparison-based sorting works for any totally ordered type, while the algorithms in this chapter require specific key structure (integers, bounded range, uniform distribution).
+The obvious trade-off we are making here is generality: comparison-based sorting works for any totally ordered type, while the algorithms in this chapter require specific value structure (integers, bounded range, uniform distribution).
 
 ## Counting sort
 
-Counting sort is the simplest linear-time sorting algorithm. It works for non-negative integer keys in a known range $[0, k]$ and sorts by _counting_ how many times each value appears.
+Counting sort is the simplest linear-time sorting algorithm. It works for non-negative integer values in a known range $[0, k]$ and sorts by _counting_ how many times each value appears.
 
 ### The algorithm
 
@@ -62,13 +62,13 @@ Let us sort $A = [4, 2, 2, 8, 3, 3, 1]$.
 
 | Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |-------|---|---|---|---|---|---|---|---|---|
-| Count | 0 | 1 | 2 | 2 | 1 | 0 | 0 | 0 | 1 |
+| counts | 0 | 1 | 2 | 2 | 1 | 0 | 0 | 0 | 1 |
 
 **Step 3: Prefix sums.** Each entry becomes the cumulative count:
 
 | Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |-------|---|---|---|---|---|---|---|---|---|
-| Prefix sum | 0 | 1 | 3 | 5 | 6 | 6 | 6 | 6 | 7 |
+| counts | 0 | 1 | 3 | 5 | 6 | 6 | 6 | 6 | 7 |
 
 The prefix sum tells us: 0 elements are $\leq 0$, 1 element is $\leq 1$, 3 elements are $\leq 2$, and so on.
 
@@ -90,9 +90,9 @@ Notice that the two 2s and the two 3s appear in the same relative order as in th
 
 ### Stability
 
-Counting sort's stability is not an accident; it is a consequence of scanning the input in reverse during the placement step. When we encounter the last occurrence of a value (scanning right to left), we place it at the highest available position for that value. The second-to-last occurrence goes one position earlier, and so on. This preserves the original relative order among elements with equal keys.
+Counting sort's stability is not an accident; it is a consequence of scanning the input in reverse during the placement step. When we encounter the last occurrence of a value (scanning right to left), we place it at the highest available position for that value. The second-to-last occurrence goes one position earlier, and so on. This preserves the original relative order among elements with equal values.
 
-Stability matters when sorting records by one key while preserving order on another, and it is essential for counting sort's role as a subroutine in radix sort.
+Stability matters when sorting records by one field while preserving order on another, and it is essential for the counting sort's role as a subroutine in radix sort.
 
 ### Complexity analysis
 
@@ -106,7 +106,11 @@ Total: $O(n + k)$, where $k$ is the maximum value.
 
 **Space.** The `counts` array uses $O(k)$ space, and the output array uses $O(n)$ space. Total: $O(n + k)$.
 
-**When is counting sort practical?** When $k = O(n)$, counting sort runs in $O(n)$ time and is excellent. When $k \gg n$ (for example, sorting 10 numbers in the range $[0, 10^9]$), the $O(k)$ space and time become prohibitive, and a comparison-based sort would be faster.
+**The core trade-off.** At this point the reader might wonder: if counting sort runs in linear time, why don't we always use it instead of comparison-based algorithms? The answer is that counting sort trades _space for speed_, and this trade-off is only possible because we assume the input consists of non-negative integers in a known range $[0, k]$. The algorithm allocates an auxiliary `counts` array of size $k + 1$ and uses the element values directly as array indices — an operation that comparison-based algorithms never perform. It is this extra structural knowledge that lets us bypass the $\Omega(n \log n)$ comparison lower bound.
+
+**When is counting sort practical?** When $k = O(n)$, the space overhead is proportional to the input size, and counting sort runs in $O(n)$ time — excellent. But when $k \gg n$, the trade-off breaks down: we pay $O(k)$ space and time for a mostly empty `counts` array while gaining nothing. For instance, if the values range up to $10^9$ but the array has only $n = 1{,}000$ elements, counting sort performs $n + k \approx 10^9$ operations and allocates a billion-entry `counts` array occupying roughly 4 GB of memory (at 4 bytes per integer) — while a comparison-based sort finishes in roughly $n \log n \approx 10{,}000$ operations using $O(n)$ space (some Kbs of memory at 4 bytes per integer).
+
+**Other limitations.** Counting sort also cannot handle negative integers (without shifting), floating-point numbers, or strings — any type that cannot serve as an array index. Comparison-based sorting, by contrast, works for _any_ totally ordered type. So counting sort is a more specialized algorithm with a more limited applicability: extremely fast under the right conditions, but inapplicable or wasteful otherwise.
 
 ### Properties
 
@@ -116,11 +120,11 @@ Total: $O(n + k)$, where $k$ is the maximum value.
 | Space | $O(n + k)$ |
 | Stable | Yes |
 | In-place | No |
-| Key type | Non-negative integers in $[0, k]$ |
+| Value type | Non-negative integers in $[0, k]$ |
 
 ## Radix sort
 
-Radix sort extends counting sort to handle integers with many digits. Instead of sorting on the entire key at once (which would require a `counts` array as large as the key range), radix sort processes one digit at a time, from least significant to most significant.
+Radix sort extends counting sort to handle integers with many digits. Instead of sorting on the entire value at once (which would require a `counts` array as large as the value range), radix sort processes one digit at a time, from least significant to most significant.
 
 ### The algorithm
 
@@ -278,7 +282,7 @@ For $d = O(1)$ (bounded number of digits), this is $O(n)$. More generally, if th
 | Time | $O(dn)$ where $d$ = number of digits |
 | Space | $O(n)$ |
 | Stable | Yes |
-| Key type | Non-negative integers |
+| Value type | Non-negative integers |
 
 ## Bucket sort
 
@@ -402,19 +406,19 @@ Including the $O(n)$ distribution and concatenation steps, the total expected ti
 | Worst-case time | $O(n^2)$ |
 | Space | $O(n)$ |
 | Stable | Yes (with stable per-bucket sort) |
-| Key type | Numeric keys in a known range |
+| Value type | Numeric values in a known range |
 
 ## Comparison of linear-time sorts
 
 | Algorithm | Time | Space | Stable | Assumptions |
 |-----------|------|-------|--------|-------------|
-| Counting sort | $O(n + k)$ | $O(n + k)$ | Yes | Integer keys in $[0, k]$ |
-| Radix sort | $O(dn)$ | $O(n)$ | Yes | Integer keys with $d$ digits |
-| Bucket sort | $O(n)$ expected | $O(n)$ | Yes | Uniformly distributed keys |
+| Counting sort | $O(n + k)$ | $O(n + k)$ | Yes | Integer values in $[0, k]$ |
+| Radix sort | $O(dn)$ | $O(n)$ | Yes | Integer values with $d$ digits |
+| Bucket sort | $O(n)$ expected | $O(n)$ | Yes | Uniformly distributed values |
 
-All three algorithms achieve linear time under specific conditions. Counting sort is simplest and best when the key range $k$ is not much larger than $n$. Radix sort extends counting sort to larger ranges by processing one digit at a time. Bucket sort is ideal for floating-point data with a known, roughly uniform distribution.
+All three algorithms achieve linear time under specific conditions. Counting sort is simplest and best when the value range $k$ is not much larger than $n$. Radix sort extends counting sort to larger ranges by processing one digit at a time. Bucket sort is ideal for floating-point data with a known, roughly uniform distribution.
 
-None of these algorithms contradicts the $\Omega(n \log n)$ comparison lower bound — they bypass it by using non-comparison operations (indexing into an array by key value, extracting digits).
+None of these algorithms contradicts the $\Omega(n \log n)$ comparison lower bound — they bypass it by using non-comparison operations (indexing into an array by value, extracting digits).
 
 ## The selection problem
 
