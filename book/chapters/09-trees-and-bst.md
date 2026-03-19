@@ -524,6 +524,14 @@ Hash tables are faster for pure lookup workloads, but BSTs support order-based o
 
 The "average" column assumes random insertion order. The "worst" column covers sorted or adversarial insertion order, which produces a degenerate tree.
 
+## Summary
+
+Trees are hierarchical data structures where each node has a value and links to its children. Binary trees restrict each node to at most two children, and support four standard traversals: inorder (left-root-right), preorder (root-left-right), postorder (left-right-root), and level-order (breadth-first). All traversals run in $O(n)$ time.
+
+A **binary search tree** augments the binary tree with the BST property: left subtree values are less than the node's value, and right subtree values are greater. This enables $O(h)$ search, insert, delete, min, max, successor, and predecessor operations by following a single root-to-leaf path.
+
+The critical limitation of a plain BST is that its height $h$ depends on insertion order. Random insertions yield an expected height of $O(\log n)$, but sorted insertions produce a degenerate tree of height $O(n)$, reducing all operations to linear time. In the next chapter, we study **balanced search trees** — AVL trees and red-black trees — that maintain $O(\log n)$ height through automatic rotations, guaranteeing efficient operations regardless of the input order.
+
 ## Exercises
 
 **Exercise 9.1.** Given the preorder traversal `[8, 3, 1, 6, 4, 7, 10, 14, 13]` of a BST, reconstruct the tree and write out the inorder and postorder traversals. Verify that the inorder traversal is sorted.
@@ -535,11 +543,3 @@ The "average" column assumes random insertion order. The "worst" column covers s
 **Exercise 9.4.** Write a function `isBST(root)` that checks whether a given binary tree satisfies the BST property. Your solution should run in $O(n)$ time. Be careful with the common pitfall of only checking immediate children — for example, the tree with root 10, left child 5, and left child's right child 15 violates the BST property even though each parent-child relationship individually looks correct.
 
 **Exercise 9.5.** Implement a function `rangeQuery(bst, low, high)` that returns all values in the BST that fall within $[\texttt{low}, \texttt{high}]$, in sorted order. Your solution should run in $O(h + k)$ time where $k$ is the number of values in the range, not $O(n)$. (Hint: adapt the inorder traversal to skip subtrees that cannot contain values in the range.)
-
-## Summary
-
-Trees are hierarchical data structures where each node has a value and links to its children. Binary trees restrict each node to at most two children, and support four standard traversals: inorder (left-root-right), preorder (root-left-right), postorder (left-right-root), and level-order (breadth-first). All traversals run in $O(n)$ time.
-
-A **binary search tree** augments the binary tree with the BST property: left subtree values are less than the node's value, and right subtree values are greater. This enables $O(h)$ search, insert, delete, min, max, successor, and predecessor operations by following a single root-to-leaf path.
-
-The critical limitation of a plain BST is that its height $h$ depends on insertion order. Random insertions yield an expected height of $O(\log n)$, but sorted insertions produce a degenerate tree of height $O(n)$, reducing all operations to linear time. In the next chapter, we study **balanced search trees** — AVL trees and red-black trees — that maintain $O(\log n)$ height through automatic rotations, guaranteeing efficient operations regardless of the input order.

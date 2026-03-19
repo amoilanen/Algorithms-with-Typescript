@@ -516,6 +516,20 @@ Decision guide:
 - **All-pairs shortest paths, dense graph:** Use **Floyd-Warshall**. Simple to implement and efficient for dense graphs.
 - **All-pairs shortest paths, sparse graph:** Run **Dijkstra** from each vertex ($O(V(V+E) \log V)$), or use Johnson's algorithm (which combines Bellman-Ford reweighting with Dijkstra) for $O(V^2 \log V + VE)$.
 
+## Summary
+
+The **shortest-path problem** asks for minimum-weight paths in weighted graphs. Four algorithms address different variants of this problem.
+
+**Dijkstra's algorithm** uses a greedy strategy with a priority queue, extracting vertices in order of increasing distance. It runs in $O((V + E) \log V)$ time but requires non-negative edge weights. It is the standard choice for road networks, routing protocols, and other practical applications.
+
+**Bellman-Ford** relaxes every edge $V - 1$ times, running in $O(VE)$ time. It handles negative edge weights and detects negative-weight cycles. It is slower than Dijkstra but more general.
+
+**DAG shortest paths** exploits the absence of cycles by processing vertices in topological order, achieving optimal $O(V + E)$ time. It handles negative weights and is useful for scheduling and critical-path analysis.
+
+**Floyd-Warshall** computes all-pairs shortest paths using dynamic programming in $O(V^3)$ time and $O(V^2)$ space. It handles negative weights and detects negative cycles. It is simple to implement and efficient for dense graphs.
+
+All four algorithms use **relaxation** as the core operation. They differ in the order of relaxations (greedy by distance, repeated over all edges, topological order, or systematic DP over intermediate vertices) and the resulting time-space trade-offs. In Chapter 14, we will see a related problem — finding **minimum spanning trees** — that also uses edge relaxation but optimizes a different objective.
+
 ## Exercises
 
 **Exercise 13.1.** Run Dijkstra's algorithm on the following undirected graph from source $a$. Show the state of the priority queue and the distance estimates after each extraction.
@@ -543,17 +557,3 @@ Show the incorrect distances Dijkstra computes and the correct distances.
 **Exercise 13.4.** Consider a directed graph representing course prerequisites at a university. Each edge $(u, v)$ has a weight representing the "effort" of completing course $v$ after $u$. Give an $O(V + E)$ algorithm to find the minimum-effort path from a starting course to a target course. What property of this graph makes this possible?
 
 **Exercise 13.5.** The **transitive closure** of a directed graph $G = (V, E)$ is a graph $G^* = (V, E^*)$ where $(u, v) \in E^*$ if and only if there is a path from $u$ to $v$ in $G$. Show how to compute the transitive closure using Floyd-Warshall. What is the time complexity? Can you modify the algorithm to use Boolean operations (AND, OR) instead of arithmetic for a constant-factor speedup?
-
-## Summary
-
-The **shortest-path problem** asks for minimum-weight paths in weighted graphs. Four algorithms address different variants of this problem.
-
-**Dijkstra's algorithm** uses a greedy strategy with a priority queue, extracting vertices in order of increasing distance. It runs in $O((V + E) \log V)$ time but requires non-negative edge weights. It is the standard choice for road networks, routing protocols, and other practical applications.
-
-**Bellman-Ford** relaxes every edge $V - 1$ times, running in $O(VE)$ time. It handles negative edge weights and detects negative-weight cycles. It is slower than Dijkstra but more general.
-
-**DAG shortest paths** exploits the absence of cycles by processing vertices in topological order, achieving optimal $O(V + E)$ time. It handles negative weights and is useful for scheduling and critical-path analysis.
-
-**Floyd-Warshall** computes all-pairs shortest paths using dynamic programming in $O(V^3)$ time and $O(V^2)$ space. It handles negative weights and detects negative cycles. It is simple to implement and efficient for dense graphs.
-
-All four algorithms use **relaxation** as the core operation. They differ in the order of relaxations (greedy by distance, repeated over all edges, topological order, or systematic DP over intermediate vertices) and the resulting time-space trade-offs. In Chapter 14, we will see a related problem — finding **minimum spanning trees** — that also uses edge relaxation but optimizes a different objective.

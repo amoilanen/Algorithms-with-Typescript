@@ -543,13 +543,25 @@ Not every optimization problem admits a greedy solution. Here are instructive ex
 
 The lesson: always prove that the greedy-choice property holds before trusting a greedy algorithm. The proofs in this chapter — "greedy stays ahead" and the exchange argument — are the standard tools for doing so.
 
-## Comparison of algorithms in this chapter
+## Summary
+
+Greedy algorithms solve optimization problems by making locally optimal choices at each step. They are simpler and typically faster than dynamic programming — often requiring just a sort followed by a linear scan — but they require careful proof that the greedy-choice property holds.
+
+We studied two proof techniques. The **greedy stays ahead** argument shows that the greedy solution maintains an advantage over any optimal solution at every step, and we applied it to interval scheduling. The **exchange argument** shows that any optimal solution can be transformed into the greedy solution without loss, and we applied it to Huffman coding and fractional knapsack.
+
+The three problems in this chapter illustrate the range of greedy applications:
+
+- **Interval scheduling** selects the maximum number of non-overlapping activities by always choosing the one that finishes earliest — a $O(n \log n)$ algorithm.
+- **Huffman coding** produces optimal prefix-free binary codes by repeatedly merging the two lowest-frequency symbols — also $O(n \log n)$.
+- **Fractional knapsack** maximizes value by greedily packing items in order of value-to-weight ratio — $O(n \log n)$.
 
 | Problem | Strategy | Time | Space | Proof technique |
 |---------|----------|------|-------|-----------------|
 | Interval scheduling | Sort by finish time | $O(n \log n)$ | $O(n)$ | Greedy stays ahead |
 | Huffman coding | Merge lowest-frequency pairs | $O(n \log n)$ | $O(n)$ | Exchange argument |
 | Fractional knapsack | Sort by value/weight ratio | $O(n \log n)$ | $O(n)$ | Exchange argument |
+
+We also contrasted greedy with DP on the knapsack problem: the fractional variant yields to greedy, while the 0/1 variant requires dynamic programming. Recognizing which problems have the greedy-choice property — and which do not — is a fundamental skill in algorithm design.
 
 ## Exercises
 
@@ -562,17 +574,3 @@ The lesson: always prove that the greedy-choice property holds before trusting a
 4. **Huffman vs fixed-width.** Prove that Huffman coding never uses more bits than a fixed-width encoding. Under what conditions does it use the same number of bits?
 
 5. **Greedy failure.** Consider the coin-change problem with denominations $\{1, 3, 4\}$ and target amount 6. Show that the greedy algorithm (always use the largest denomination that fits) gives a suboptimal solution. What is the optimal solution?
-
-## Chapter summary
-
-Greedy algorithms solve optimization problems by making locally optimal choices at each step. They are simpler and typically faster than dynamic programming — often requiring just a sort followed by a linear scan — but they require careful proof that the greedy-choice property holds.
-
-We studied two proof techniques. The **greedy stays ahead** argument shows that the greedy solution maintains an advantage over any optimal solution at every step, and we applied it to interval scheduling. The **exchange argument** shows that any optimal solution can be transformed into the greedy solution without loss, and we applied it to Huffman coding and fractional knapsack.
-
-The three problems in this chapter illustrate the range of greedy applications:
-
-- **Interval scheduling** selects the maximum number of non-overlapping activities by always choosing the one that finishes earliest — a $O(n \log n)$ algorithm.
-- **Huffman coding** produces optimal prefix-free binary codes by repeatedly merging the two lowest-frequency symbols — also $O(n \log n)$.
-- **Fractional knapsack** maximizes value by greedily packing items in order of value-to-weight ratio — $O(n \log n)$.
-
-We also contrasted greedy with DP on the knapsack problem: the fractional variant yields to greedy, while the 0/1 variant requires dynamic programming. Recognizing which problems have the greedy-choice property — and which do not — is a fundamental skill in algorithm design.

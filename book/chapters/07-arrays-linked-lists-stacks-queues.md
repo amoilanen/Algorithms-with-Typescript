@@ -650,18 +650,6 @@ This flexibility makes the deque a useful building block when the access pattern
 
 \* Amortized
 
-## Exercises
-
-**Exercise 7.1.** Implement a function `isBalanced(expression: string): boolean` that uses a `Stack` to determine whether the parentheses `()`, brackets `[]`, and braces `{}` in an expression are properly balanced. For example, `isBalanced("((a+b)*[c-d])")` should return `false` (mismatched outer parentheses), while `isBalanced("{a*(b+c)}")` should return `true`.
-
-**Exercise 7.2.** Implement a circular buffer–based queue. Use a fixed-size array and two indices (`front` and `back`) that wrap around using modular arithmetic. Compare its performance characteristics with our linked-list–based `Queue`.
-
-**Exercise 7.3.** Implement a `MinStack<T>` that supports `push`, `pop`, `peek`, and an additional `min()` operation that returns the minimum element in the stack — all in $O(1)$ time. _Hint:_ maintain a second stack that tracks minimums.
-
-**Exercise 7.4.** Using only two `Stack`s, implement a `Queue`. Analyze the amortized time complexity of `enqueue` and `dequeue`. _Hint:_ use one stack for enqueuing and another for dequeuing; transfer elements between them lazily.
-
-**Exercise 7.5.** Implement a function `slidingWindowMax(arr: number[], k: number): number[]` that returns the maximum value in each window of size $k$ as the window slides from left to right across the array. Use a `Deque` to achieve $O(n)$ time complexity.
-
 ## Summary
 
 This chapter introduced the foundational data structures upon which nearly everything else is built:
@@ -676,3 +664,15 @@ This chapter introduced the foundational data structures upon which nearly every
 The choice between arrays and linked lists comes down to access patterns. If you need random access or sequential iteration (where cache locality matters), use an array. If insertions and deletions at the endpoints dominate, use a linked list. When in doubt, the dynamic array is usually the right default — it is what most languages provide as their standard collection.
 
 In the next chapter, we will use these building blocks to construct **hash tables**, which achieve expected $O(1)$ lookup by combining arrays with a hash function.
+
+## Exercises
+
+**Exercise 7.1.** Implement a function `isBalanced(expression: string): boolean` that uses a `Stack` to determine whether the parentheses `()`, brackets `[]`, and braces `{}` in an expression are properly balanced. For example, `isBalanced("((a+b)*[c-d])")` should return `false` (mismatched outer parentheses), while `isBalanced("{a*(b+c)}")` should return `true`.
+
+**Exercise 7.2.** Implement a circular buffer–based queue. Use a fixed-size array and two indices (`front` and `back`) that wrap around using modular arithmetic. Compare its performance characteristics with our linked-list–based `Queue`.
+
+**Exercise 7.3.** Implement a `MinStack<T>` that supports `push`, `pop`, `peek`, and an additional `min()` operation that returns the minimum element in the stack — all in $O(1)$ time. _Hint:_ maintain a second stack that tracks minimums.
+
+**Exercise 7.4.** Using only two `Stack`s, implement a `Queue`. Analyze the amortized time complexity of `enqueue` and `dequeue`. _Hint:_ use one stack for enqueuing and another for dequeuing; transfer elements between them lazily.
+
+**Exercise 7.5.** Implement a function `slidingWindowMax(arr: number[], k: number): number[]` that returns the maximum value in each window of size $k$ as the window slides from left to right across the array. Use a `Deque` to achieve $O(n)$ time complexity.

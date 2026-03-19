@@ -400,6 +400,18 @@ An alternative to union by rank is **union by size**, which attaches the tree wi
 
 Our implementation uses union by rank, following the approach in CLRS.
 
+## Summary
+
+The **disjoint-set** (Union-Find) data structure maintains a partition of elements into disjoint sets, supporting `makeSet`, `find`, and `union` operations. Naive implementations achieve at best $O(\log n)$ per operation (with union by rank alone) or $O(n)$ in the worst case (without any optimizations).
+
+**Union by rank** keeps trees shallow by always attaching the shorter tree beneath the taller one, guaranteeing a maximum height of $O(\log n)$.
+
+**Path compression** flattens trees during `find` operations by pointing every traversed node directly at the root, making subsequent finds faster.
+
+Together, union by rank and path compression achieve $O(\alpha(n))$ amortized time per operation, where $\alpha$ is the inverse Ackermann function — a function so slow-growing that $\alpha(n) \leq 4$ for any practically conceivable input size. This bound is **optimal**: no pointer-based data structure can do better.
+
+Union-Find is a fundamental building block in algorithm design. Its primary application is **Kruskal's MST algorithm** (Chapter 14), where it provides efficient cycle detection. It also appears in dynamic connectivity, image processing, percolation, type unification in compilers, and many other settings. In Chapter 22, we will see Union-Find used again in approximation algorithms for NP-hard problems.
+
 ## Exercises
 
 **Exercise 18.1.** Starting from eight singleton sets $\{0\}, \{1\}, \ldots, \{7\}$, perform the following operations using union by rank and path compression. Draw the forest after each operation and show how path compression modifies the tree structure.
@@ -419,15 +431,3 @@ union(0, 4), find(7), find(3), find(5)
 **Exercise 18.5.** A social network has $n$ users. Friendships arrive as a stream of pairs $(a, b)$. You want to determine the **exact moment** when all users become connected (directly or transitively). Describe an algorithm using Union-Find and analyze its complexity.
 
 (_Hint: maintain a component count and check when it reaches 1._)
-
-## Summary
-
-The **disjoint-set** (Union-Find) data structure maintains a partition of elements into disjoint sets, supporting `makeSet`, `find`, and `union` operations. Naive implementations achieve at best $O(\log n)$ per operation (with union by rank alone) or $O(n)$ in the worst case (without any optimizations).
-
-**Union by rank** keeps trees shallow by always attaching the shorter tree beneath the taller one, guaranteeing a maximum height of $O(\log n)$.
-
-**Path compression** flattens trees during `find` operations by pointing every traversed node directly at the root, making subsequent finds faster.
-
-Together, union by rank and path compression achieve $O(\alpha(n))$ amortized time per operation, where $\alpha$ is the inverse Ackermann function — a function so slow-growing that $\alpha(n) \leq 4$ for any practically conceivable input size. This bound is **optimal**: no pointer-based data structure can do better.
-
-Union-Find is a fundamental building block in algorithm design. Its primary application is **Kruskal's MST algorithm** (Chapter 14), where it provides efficient cycle detection. It also appears in dynamic connectivity, image processing, percolation, type unification in compilers, and many other settings. In Chapter 22, we will see Union-Find used again in approximation algorithms for NP-hard problems.

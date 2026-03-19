@@ -402,6 +402,16 @@ Given a claimed MST, we can verify it in $O(E \cdot \alpha(V))$ time by checking
 2. The tree spans all vertices (use union-find or BFS/DFS).
 3. For every non-tree edge $(u, v)$, the weight of $(u, v)$ is at least as large as the maximum edge weight on the path from $u$ to $v$ in the tree (cycle property).
 
+## Summary
+
+A **minimum spanning tree** of a connected, undirected, weighted graph is a spanning tree with minimum total edge weight. The **cut property** guarantees that the lightest edge crossing any cut is safe to include, while the **cycle property** guarantees that the heaviest edge in any cycle is safe to exclude.
+
+**Kruskal's algorithm** sorts all edges by weight and greedily adds edges that do not create a cycle, using a **Union-Find** data structure for efficient cycle detection. It runs in $O(E \log V)$ time and naturally produces a spanning forest for disconnected graphs.
+
+**Prim's algorithm** grows the MST from a single vertex, always adding the lightest edge connecting the tree to a new vertex, using a **priority queue** to select the minimum-weight frontier edge. It also runs in $O(E \log V)$ with a binary heap, improving to $O(E + V \log V)$ with a Fibonacci heap.
+
+Both algorithms are greedy, both are correct by the cut property, and both produce MSTs of identical total weight. Kruskal's is typically preferred for sparse graphs and for its simplicity; Prim's is preferred for dense graphs, especially when a Fibonacci heap is available. The Union-Find data structure introduced here — with path compression and union by rank — achieves near-constant amortized time per operation and will reappear in Chapter 18 and in the approximation algorithms of Chapter 22.
+
 ## Exercises
 
 **Exercise 14.1.** Run Kruskal's algorithm on the following weighted graph. Show the state of the Union-Find structure after each edge addition and the final MST.
@@ -421,13 +431,3 @@ Given a claimed MST, we can verify it in $O(E \cdot \alpha(V))$ time by checking
 **Exercise 14.4.** A **bottleneck spanning tree** is a spanning tree that minimizes the weight of its maximum-weight edge. Prove that every MST is a bottleneck spanning tree. Is the converse true?
 
 **Exercise 14.5.** You are given a connected, weighted, undirected graph $G$ and its MST $T$. A new edge $(u, v, w)$ is added to $G$. Describe an efficient algorithm to update the MST. What is the time complexity? (_Hint: adding the new edge to $T$ creates exactly one cycle._)
-
-## Summary
-
-A **minimum spanning tree** of a connected, undirected, weighted graph is a spanning tree with minimum total edge weight. The **cut property** guarantees that the lightest edge crossing any cut is safe to include, while the **cycle property** guarantees that the heaviest edge in any cycle is safe to exclude.
-
-**Kruskal's algorithm** sorts all edges by weight and greedily adds edges that do not create a cycle, using a **Union-Find** data structure for efficient cycle detection. It runs in $O(E \log V)$ time and naturally produces a spanning forest for disconnected graphs.
-
-**Prim's algorithm** grows the MST from a single vertex, always adding the lightest edge connecting the tree to a new vertex, using a **priority queue** to select the minimum-weight frontier edge. It also runs in $O(E \log V)$ with a binary heap, improving to $O(E + V \log V)$ with a Fibonacci heap.
-
-Both algorithms are greedy, both are correct by the cut property, and both produce MSTs of identical total weight. Kruskal's is typically preferred for sparse graphs and for its simplicity; Prim's is preferred for dense graphs, especially when a Fibonacci heap is available. The Union-Find data structure introduced here — with path compression and union by rank — achieves near-constant amortized time per operation and will reappear in Chapter 18 and in the approximation algorithms of Chapter 22.

@@ -510,18 +510,6 @@ A `Set` is essentially a hash table that stores only keys (no values).
 
 The expected $O(1)$ complexities hold under the assumptions that the hash function distributes keys uniformly and the load factor is bounded by a constant.
 
-## Exercises
-
-**Exercise 8.1.** Implement a function `groupAnagrams(words: string[]): string[][]` that groups an array of words into sub-arrays of anagrams. For example, `groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"])` should return `[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]` (in any order). Use a hash table where the key is the sorted characters of each word.
-
-**Exercise 8.2.** Our open-addressing implementation uses a load factor threshold of 0.5 and doubles the table when exceeded. Experiment with different thresholds (0.6, 0.7, 0.8) and measure the average number of probes per lookup on random data. At what point does performance degrade noticeably?
-
-**Exercise 8.3.** Implement a `HashSet<T>` class backed by `HashTableChaining<T, boolean>`. Support `add`, `has`, `delete`, `size`, and iteration. How does this compare to using TypeScript's built-in `Set`?
-
-**Exercise 8.4.** The **cuckoo hashing** scheme uses two hash functions and two tables. Each key has exactly two possible locations — one in each table. If both are occupied during an insertion, one of the existing keys is "kicked out" and re-inserted using its alternate location. Research cuckoo hashing and explain: (a) why lookup is $O(1)$ worst case, (b) under what conditions insertion might fail, and (c) how to handle insertion failures.
-
-**Exercise 8.5.** Our hash function uses FNV-1a for strings and a bit-mixing scheme for numbers. Design an experiment to test how uniformly these functions distribute keys. Generate 10,000 random strings (and separately, 10,000 random integers), hash each into a table of 1,000 buckets, and compute the chi-squared statistic. Compare with a theoretically perfect uniform distribution.
-
 ## Summary
 
 Hash tables achieve expected $O(1)$ time for insert, lookup, and delete by using a hash function to map keys to array indices. The two main collision resolution strategies are:
@@ -534,3 +522,15 @@ The **load factor** $\alpha = n/m$ controls performance. Chaining tables typical
 Hash tables are the backbone of frequency counting, deduplication, two-sum–style problems, caching, and countless other applications. Their expected $O(1)$ operations make them the go-to data structure whenever fast key-based access is needed — though their worst-case $O(n)$ behavior means they are not a substitute for balanced search trees when guaranteed performance is required.
 
 In the next chapter, we study **trees and binary search trees**, which provide $O(\log n)$ worst-case operations and support order-based queries that hash tables cannot efficiently answer.
+
+## Exercises
+
+**Exercise 8.1.** Implement a function `groupAnagrams(words: string[]): string[][]` that groups an array of words into sub-arrays of anagrams. For example, `groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"])` should return `[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]` (in any order). Use a hash table where the key is the sorted characters of each word.
+
+**Exercise 8.2.** Our open-addressing implementation uses a load factor threshold of 0.5 and doubles the table when exceeded. Experiment with different thresholds (0.6, 0.7, 0.8) and measure the average number of probes per lookup on random data. At what point does performance degrade noticeably?
+
+**Exercise 8.3.** Implement a `HashSet<T>` class backed by `HashTableChaining<T, boolean>`. Support `add`, `has`, `delete`, `size`, and iteration. How does this compare to using TypeScript's built-in `Set`?
+
+**Exercise 8.4.** The **cuckoo hashing** scheme uses two hash functions and two tables. Each key has exactly two possible locations — one in each table. If both are occupied during an insertion, one of the existing keys is "kicked out" and re-inserted using its alternate location. Research cuckoo hashing and explain: (a) why lookup is $O(1)$ worst case, (b) under what conditions insertion might fail, and (c) how to handle insertion failures.
+
+**Exercise 8.5.** Our hash function uses FNV-1a for strings and a bit-mixing scheme for numbers. Design an experiment to test how uniformly these functions distribute keys. Generate 10,000 random strings (and separately, 10,000 random integers), hash each into a table of 1,000 buckets, and compute the chi-squared statistic. Compare with a theoretically perfect uniform distribution.

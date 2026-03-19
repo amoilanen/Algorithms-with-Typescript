@@ -1096,7 +1096,7 @@ Quicksort has the best cache performance among the three. Its partition scan acc
 
 - **Hybrid algorithms:** The best practical sorts combine multiple algorithms. Timsort (Python, Java) combines merge sort with insertion sort. Introsort (C++ STL) starts with quicksort, switches to heapsort if the recursion depth exceeds $2\log n$ (to guarantee $O(n \log n)$ worst case), and uses insertion sort for small subarrays.
 
-## Chapter summary
+## Summary
 
 In this chapter we studied three efficient comparison-based sorting algorithms:
 

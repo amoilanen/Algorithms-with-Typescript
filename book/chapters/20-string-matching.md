@@ -422,6 +422,18 @@ The string matching algorithms presented here search for exact occurrences of a 
 - **Suffix arrays and suffix trees** (introduced in Chapter 19): preprocess the text rather than the pattern, enabling $O(m)$ or $O(m + \log n)$ queries after $O(n)$ or $O(n \log n)$ construction.
 - **Approximate matching**: finding occurrences that are within a given edit distance of the pattern, which connects to the dynamic programming techniques of Chapter 16.
 
+## Summary
+
+The string matching problem — finding all occurrences of a pattern $P$ of length $m$ in a text $T$ of length $n$ — admits several algorithmic approaches.
+
+The **naive algorithm** checks each of the $n - m + 1$ possible shifts by comparing characters one by one, taking $O(nm)$ time in the worst case. It requires no preprocessing and no extra space, making it suitable for short patterns or large alphabets where mismatches occur quickly.
+
+The **Rabin-Karp algorithm** improves on the naive approach by using a rolling hash to filter out non-matching shifts in $O(1)$ time each. Only when hashes match does it verify character by character. With a good hash function, the expected running time is $O(n + m)$, though the worst case remains $O(nm)$. Its main strength is easy extension to multi-pattern search.
+
+The **Knuth-Morris-Pratt algorithm** achieves $O(n + m)$ time in the worst case by preprocessing the pattern into a failure function that encodes its self-similarity structure. When a mismatch occurs, the failure function determines exactly how far to shift the pattern without missing any potential matches and without re-examining any text characters. The failure function computation and the search each use an elegant amortized argument: a counter that increases by at most 1 per step and decreases on fallbacks, bounding the total work.
+
+These three algorithms illustrate a progression of ideas — from brute force to hashing to finite automaton-like preprocessing — that recur throughout algorithm design. The choice among them in practice depends on the use case: naive for simplicity, Rabin-Karp for multi-pattern search, and KMP when worst-case guarantees matter.
+
 ## Exercises
 
 **Exercise 20.1.** Trace the naive string matching algorithm on $T =$ `aabaabaaab` and $P =$ `aab`. Count the total number of character comparisons. Then trace KMP on the same input and count comparisons. By what factor does KMP reduce the work?
@@ -435,15 +447,3 @@ The string matching algorithms presented here search for exact occurrences of a 
 **Exercise 20.5.** A **circular string** is one where the end wraps around to the beginning: the circular string `abcd` contains the substring `dab`. Describe how to use any of the string matching algorithms in this chapter to search for a pattern in a circular string of length $n$. What is the time complexity?
 
 (_Hint: consider searching in $T \| T$ — the text concatenated with itself — but be careful about reporting duplicate matches._)
-
-## Summary
-
-The string matching problem — finding all occurrences of a pattern $P$ of length $m$ in a text $T$ of length $n$ — admits several algorithmic approaches.
-
-The **naive algorithm** checks each of the $n - m + 1$ possible shifts by comparing characters one by one, taking $O(nm)$ time in the worst case. It requires no preprocessing and no extra space, making it suitable for short patterns or large alphabets where mismatches occur quickly.
-
-The **Rabin-Karp algorithm** improves on the naive approach by using a rolling hash to filter out non-matching shifts in $O(1)$ time each. Only when hashes match does it verify character by character. With a good hash function, the expected running time is $O(n + m)$, though the worst case remains $O(nm)$. Its main strength is easy extension to multi-pattern search.
-
-The **Knuth-Morris-Pratt algorithm** achieves $O(n + m)$ time in the worst case by preprocessing the pattern into a failure function that encodes its self-similarity structure. When a mismatch occurs, the failure function determines exactly how far to shift the pattern without missing any potential matches and without re-examining any text characters. The failure function computation and the search each use an elegant amortized argument: a counter that increases by at most 1 per step and decreases on fallbacks, bounding the total work.
-
-These three algorithms illustrate a progression of ideas — from brute force to hashing to finite automaton-like preprocessing — that recur throughout algorithm design. The choice among them in practice depends on the use case: naive for simplicity, Rabin-Karp for multi-pattern search, and KMP when worst-case guarantees matter.

@@ -509,6 +509,16 @@ Since the array is sorted, we can binary-search for any pattern $P$ in $O(m \log
 
 We do not implement suffix arrays in this chapter, as their construction algorithms are more specialized. The key takeaway is that the trie concept extends naturally to substring search when applied to suffixes.
 
+## Summary
+
+A **trie** (prefix tree) is a tree-based data structure that stores strings by their character-by-character structure. Each path from the root to an end-of-word node represents a stored string, and strings that share a common prefix share the same initial path. This yields $O(m)$ lookup, insertion, and deletion, where $m$ is the key length — independent of the number of stored strings.
+
+A **compressed trie** (radix tree) optimizes the standard trie by collapsing chains of single-child nodes into single edges labeled with substrings. This reduces the node count from $O(N)$ to $O(n)$, where $N$ is the total length of all stored strings and $n$ is the number of strings. The time complexity of all operations remains $O(m)$.
+
+Tries are the natural choice for problems involving **prefix queries**: autocomplete, spell checking, IP routing, and predictive text. For **substring queries**, the trie concept extends to suffix trees and suffix arrays, which preprocess a text to enable fast pattern matching.
+
+The trie is one of the most elegant examples of a data structure designed around the structure of the data it stores. Rather than treating keys as opaque objects to be compared or hashed, it decomposes keys into their constituent characters and exploits shared structure. This principle — designing data structures that respect the internal structure of their keys — is a powerful idea that appears throughout Computer Science.
+
 ## Exercises
 
 **Exercise 19.1.** Insert the words "bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop" into an empty trie. Draw the resulting trie and count the total number of nodes (including the root). Then repeat the exercise with a compressed trie and compare the node counts.
@@ -522,13 +532,3 @@ We do not implement suffix arrays in this chapter, as their construction algorit
 (_Hint: consider storing the top-$k$ completions at each node, or augmenting the trie with a priority queue._)
 
 **Exercise 19.5.** An IP routing table contains the following prefixes (in binary): "0", "01", "011", "1", "10", "100", "1000". Build a compressed trie for these prefixes. Given the IP address "10010110" (in binary), trace the longest-prefix-match lookup and identify which prefix matches.
-
-## Summary
-
-A **trie** (prefix tree) is a tree-based data structure that stores strings by their character-by-character structure. Each path from the root to an end-of-word node represents a stored string, and strings that share a common prefix share the same initial path. This yields $O(m)$ lookup, insertion, and deletion, where $m$ is the key length — independent of the number of stored strings.
-
-A **compressed trie** (radix tree) optimizes the standard trie by collapsing chains of single-child nodes into single edges labeled with substrings. This reduces the node count from $O(N)$ to $O(n)$, where $N$ is the total length of all stored strings and $n$ is the number of strings. The time complexity of all operations remains $O(m)$.
-
-Tries are the natural choice for problems involving **prefix queries**: autocomplete, spell checking, IP routing, and predictive text. For **substring queries**, the trie concept extends to suffix trees and suffix arrays, which preprocess a text to enable fast pattern matching.
-
-The trie is one of the most elegant examples of a data structure designed around the structure of the data it stores. Rather than treating keys as opaque objects to be compared or hashed, it decomposes keys into their constituent characters and exploits shared structure. This principle — designing data structures that respect the internal structure of their keys — is a powerful idea that appears throughout Computer Science.

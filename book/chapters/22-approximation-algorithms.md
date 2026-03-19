@@ -489,19 +489,7 @@ Approximation algorithms form a rich and active area of research. Some important
 
 - **The PCP theorem:** The celebrated PCP (Probabilistically Checkable Proofs) theorem provides the theoretical foundation for hardness of approximation results, showing that for many problems, achieving certain approximation ratios is as hard as solving the problem exactly.
 
-## Exercises
-
-1. **Vertex cover on trees.** Show that the minimum vertex cover of a tree can be computed exactly in polynomial time using dynamic programming. (Hint: root the tree and compute, for each vertex, the minimum cover of its subtree with and without including that vertex.) Does this contradict the NP-hardness of vertex cover?
-
-2. **Weighted set cover.** Generalize the greedy set cover algorithm to the weighted case, where each subset $S_i$ has a cost $c_i$ and we want to minimize the total cost of selected subsets. Show that the greedy algorithm (pick the set with the smallest cost per newly covered element) achieves the same $O(\log n)$ approximation ratio.
-
-3. **TSP triangle inequality failure.** Construct a graph with 4 vertices where the triangle inequality is violated, and show that the MST-based algorithm produces a tour whose cost exceeds $2 \cdot \text{OPT}$. Explain why the shortcutting argument fails.
-
-4. **MAX-SAT approximation.** Consider the following simple algorithm for MAX-SAT: independently set each variable to true with probability $\frac{1}{2}$. Show that this randomized algorithm satisfies at least $\frac{m}{2}$ clauses in expectation when each clause has at least one literal, and at least $\frac{7m}{8}$ clauses when each clause has exactly 3 literals. (Here $m$ is the number of clauses.) Can you derandomize this algorithm?
-
-5. **Tight examples.** For each of the three algorithms in this chapter, describe a family of instances where the approximation ratio approaches the proven bound. That is: find graphs where the vertex cover algorithm returns a cover of size approaching $2 \cdot \text{OPT}$, set cover instances where the greedy algorithm uses $\Omega(\log n) \cdot \text{OPT}$ sets, and metric TSP instances where the MST tour approaches $2 \cdot \text{OPT}$.
-
-## Chapter summary
+## Summary
 
 Approximation algorithms provide a principled approach to NP-hard optimization problems: polynomial-time algorithms with **provable guarantees** on solution quality.
 
@@ -514,3 +502,15 @@ We studied three classical examples:
 - **Metric TSP 2-approximation via MST:** Compute a minimum spanning tree, perform a DFS preorder traversal, and return the resulting tour. The MST provides a lower bound on OPT, and the triangle inequality ensures the shortcutted tour costs at most twice the MST weight. Christofides' algorithm improves this to a $\frac{3}{2}$-approximation.
 
 The study of approximation algorithms reveals a rich structure within NP-hard problems. Some problems (like knapsack) admit $(1 + \epsilon)$-approximations for any $\epsilon > 0$. Others (like vertex cover) admit constant-factor approximations but resist improvements below specific thresholds. Still others (like general TSP) cannot be approximated at all. Understanding where a problem falls in this landscape guides us toward the most effective algorithmic approach.
+
+## Exercises
+
+1. **Vertex cover on trees.** Show that the minimum vertex cover of a tree can be computed exactly in polynomial time using dynamic programming. (Hint: root the tree and compute, for each vertex, the minimum cover of its subtree with and without including that vertex.) Does this contradict the NP-hardness of vertex cover?
+
+2. **Weighted set cover.** Generalize the greedy set cover algorithm to the weighted case, where each subset $S_i$ has a cost $c_i$ and we want to minimize the total cost of selected subsets. Show that the greedy algorithm (pick the set with the smallest cost per newly covered element) achieves the same $O(\log n)$ approximation ratio.
+
+3. **TSP triangle inequality failure.** Construct a graph with 4 vertices where the triangle inequality is violated, and show that the MST-based algorithm produces a tour whose cost exceeds $2 \cdot \text{OPT}$. Explain why the shortcutting argument fails.
+
+4. **MAX-SAT approximation.** Consider the following simple algorithm for MAX-SAT: independently set each variable to true with probability $\frac{1}{2}$. Show that this randomized algorithm satisfies at least $\frac{m}{2}$ clauses in expectation when each clause has at least one literal, and at least $\frac{7m}{8}$ clauses when each clause has exactly 3 literals. (Here $m$ is the number of clauses.) Can you derandomize this algorithm?
+
+5. **Tight examples.** For each of the three algorithms in this chapter, describe a family of instances where the approximation ratio approaches the proven bound. That is: find graphs where the vertex cover algorithm returns a cover of size approaching $2 \cdot \text{OPT}$, set cover instances where the greedy algorithm uses $\Omega(\log n) \cdot \text{OPT}$ sets, and metric TSP instances where the MST tour approaches $2 \cdot \text{OPT}$.

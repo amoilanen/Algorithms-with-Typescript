@@ -676,6 +676,16 @@ Both algorithms visit every vertex and edge exactly once (or twice for undirecte
 - Use **BFS** when you need shortest paths in an unweighted graph or want to explore vertices in order of distance.
 - Use **DFS** when you need to detect cycles, classify edges, compute topological orderings, or explore all paths for backtracking algorithms.
 
+## Summary
+
+A **graph** $G = (V, E)$ models pairwise relationships between objects. The two standard representations — **adjacency list** ($O(V + E)$ space, efficient neighbor iteration) and **adjacency matrix** ($O(V^2)$ space, $O(1)$ edge lookup) — offer different trade-offs suited to sparse and dense graphs respectively.
+
+**Breadth-first search** explores vertices level by level using a queue, computing shortest distances in unweighted graphs in $O(V + E)$ time. **Depth-first search** explores as deep as possible using recursion, assigning discovery and finish timestamps that enable edge classification into tree, back, forward, and cross edges.
+
+Two important applications of DFS are **topological sorting** — producing a linear ordering of a DAG's vertices consistent with edge directions — and **cycle detection** — determining whether a graph contains a cycle by looking for back edges. Both run in $O(V + E)$ time.
+
+These traversal algorithms form the foundation for nearly every graph algorithm in the chapters that follow. In Chapter 13, we will combine BFS ideas with the priority queue from Chapter 11 to solve the single-source shortest-path problem on weighted graphs (Dijkstra's algorithm). In Chapter 14, we will use graph traversal to find minimum spanning trees.
+
 ## Exercises
 
 **Exercise 12.1.** Draw the adjacency list and adjacency matrix for the following directed graph. Which representation uses less space?
@@ -701,13 +711,3 @@ Both algorithms visit every vertex and edge exactly once (or twice for undirecte
 **Exercise 12.4.** A **bipartite graph** is an undirected graph whose vertices can be partitioned into two sets $A$ and $B$ such that every edge connects a vertex in $A$ to a vertex in $B$. Prove that a graph is bipartite if and only if it contains no odd-length cycle. Then describe an $O(V + E)$ algorithm to determine whether a graph is bipartite, using BFS. (Hint: try to 2-color the graph level by level.)
 
 **Exercise 12.5.** A tournament is a directed graph where every pair of vertices is connected by exactly one directed edge. Prove that every tournament has a Hamiltonian path (a path that visits every vertex exactly once). Then describe an $O(V \log V)$ algorithm to find one. (Hint: use divide-and-conquer.)
-
-## Summary
-
-A **graph** $G = (V, E)$ models pairwise relationships between objects. The two standard representations — **adjacency list** ($O(V + E)$ space, efficient neighbor iteration) and **adjacency matrix** ($O(V^2)$ space, $O(1)$ edge lookup) — offer different trade-offs suited to sparse and dense graphs respectively.
-
-**Breadth-first search** explores vertices level by level using a queue, computing shortest distances in unweighted graphs in $O(V + E)$ time. **Depth-first search** explores as deep as possible using recursion, assigning discovery and finish timestamps that enable edge classification into tree, back, forward, and cross edges.
-
-Two important applications of DFS are **topological sorting** — producing a linear ordering of a DAG's vertices consistent with edge directions — and **cycle detection** — determining whether a graph contains a cycle by looking for back edges. Both run in $O(V + E)$ time.
-
-These traversal algorithms form the foundation for nearly every graph algorithm in the chapters that follow. In Chapter 13, we will combine BFS ideas with the priority queue from Chapter 11 to solve the single-source shortest-path problem on weighted graphs (Dijkstra's algorithm). In Chapter 14, we will use graph traversal to find minimum spanning trees.

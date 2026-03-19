@@ -410,6 +410,14 @@ The space for the entire heap is $O(n)$, since it is stored as a contiguous arra
 
 Compared to balanced BSTs, heaps trade away sorted-order iteration and efficient search ($O(n)$ to find an arbitrary element) in exchange for simpler implementation, better constant factors, and cache-friendly array storage. If you only need insert and extract-min, a heap is the right choice.
 
+## Summary
+
+A **binary heap** is a complete binary tree stored in an array that maintains the heap property: every parent has higher priority than its children. This partial ordering — weaker than a sorted order — is cheaper to maintain and provides $O(\log n)$ insertion and extraction of the highest-priority element, with $O(1)$ peek.
+
+The two fundamental operations are **sift-up** (restore order after insertion at the bottom) and **sift-down** (restore order after removal from the root). Floyd's **build-heap** algorithm constructs a heap from an arbitrary array in $O(n)$ time — a result that follows from the observation that most nodes in a complete tree are near the bottom where sift-down is cheap.
+
+The **priority queue** abstraction — enqueue with a priority, dequeue the highest-priority element — is directly implemented by a binary heap and is central to many graph algorithms (Dijkstra, Prim, Huffman). In the next chapters, we will put priority queues to work: Chapter 12 introduces graphs and graph traversal, and Chapter 13 uses priority queues as the backbone of Dijkstra's shortest-path algorithm.
+
 ## Exercises
 
 **Exercise 11.1.** Starting from an empty min-heap, insert the values 15, 10, 20, 8, 25, 12, 5, 18 one at a time. After each insertion, draw the heap as both a tree and an array. Verify the heap property holds at every step.
@@ -421,11 +429,3 @@ Compared to balanced BSTs, heaps trade away sorted-order iteration and efficient
 **Exercise 11.4.** Design a data structure that supports `insert`, `findMin`, and `findMax` in $O(\log n)$ time, and `extractMin` and `extractMax` in $O(\log n)$ time. (Hint: maintain both a min-heap and a max-heap simultaneously, with cross-references between corresponding entries.)
 
 **Exercise 11.5.** Implement a _running median_ data structure that supports `insert(x)` in $O(\log n)$ and `median()` in $O(1)$. Use two heaps: a max-heap for the lower half and a min-heap for the upper half. Write tests that insert a stream of 1000 random numbers and verify the median is correct after each insertion by comparing with a sorted-array baseline.
-
-## Summary
-
-A **binary heap** is a complete binary tree stored in an array that maintains the heap property: every parent has higher priority than its children. This partial ordering — weaker than a sorted order — is cheaper to maintain and provides $O(\log n)$ insertion and extraction of the highest-priority element, with $O(1)$ peek.
-
-The two fundamental operations are **sift-up** (restore order after insertion at the bottom) and **sift-down** (restore order after removal from the root). Floyd's **build-heap** algorithm constructs a heap from an arbitrary array in $O(n)$ time — a result that follows from the observation that most nodes in a complete tree are near the bottom where sift-down is cheap.
-
-The **priority queue** abstraction — enqueue with a priority, dequeue the highest-priority element — is directly implemented by a binary heap and is central to many graph algorithms (Dijkstra, Prim, Huffman). In the next chapters, we will put priority queues to work: Chapter 12 introduces graphs and graph traversal, and Chapter 13 uses priority queues as the backbone of Dijkstra's shortest-path algorithm.

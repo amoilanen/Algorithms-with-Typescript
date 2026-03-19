@@ -430,7 +430,13 @@ Randomization can sometimes break through worst-case barriers:
 - **Random sampling** can quickly find satisfying assignments for SAT instances that are not too constrained.
 - **Randomized rounding** of linear programming relaxations yields good approximations for many NP-hard problems.
 
-## Summary of complexity classes
+## Summary
+
+This chapter introduced the theoretical framework for classifying computational problems by their inherent difficulty.
+
+**P** contains problems solvable in polynomial time — the "efficiently solvable" problems that have been our focus throughout this book. **NP** contains problems whose solutions can be verified in polynomial time, even if finding a solution may be hard. The question of whether P = NP — whether efficient verification implies efficient solution — is the most important open problem in Computer Science.
+
+**NP-complete** problems, identified through polynomial-time reductions, are the hardest problems in NP: solving any one of them efficiently would solve all of them. The Cook-Levin theorem established SAT as the first NP-complete problem, and thousands more have been identified through chains of reductions — from satisfiability to graph problems (vertex cover, clique, Hamiltonian cycle), to numeric problems (subset sum, partition), to optimization problems (TSP, set cover).
 
 | Class | Informal definition | Examples |
 |-------|--------------------|---------|
@@ -444,6 +450,13 @@ Relationships: $\mathbf{P} \subseteq \mathbf{NP} \cap \mathbf{co\text{-}NP} \sub
 
 Whether any of these inclusions are strict is unknown (except that NP-hard $\not\subseteq$ NP, since NP-hard includes undecidable problems).
 
+We implemented brute-force solvers for two NP-complete problems to illustrate their exponential nature:
+
+- **Subset sum** by exhaustive enumeration of all $2^n$ subsets: $O(2^n \cdot n)$ time.
+- **TSP** by exhaustive enumeration of all $(n-1)!$ permutations: $O(n!)$ time.
+
+When facing NP-hard problems in practice, we have several coping strategies: **approximation algorithms** with provable guarantees (Chapter 22), **exact algorithms for special cases** (e.g., fixed-parameter tractability, bounded tree-width), **pseudo-polynomial algorithms** (e.g., DP for knapsack when the target is small), and **heuristics** (local search, simulated annealing, genetic algorithms). The theory of NP-completeness tells us not that these problems are unsolvable, but that we should not expect a polynomial-time algorithm that works optimally on all instances — and guides us toward the right tool for each situation.
+
 ## Exercises
 
 1. **NP membership.** Show that the CLIQUE problem is in NP by describing a certificate and a polynomial-time verifier. What is the running time of your verifier?
@@ -455,18 +468,3 @@ Whether any of these inclusions are strict is unknown (except that NP-hard $\not
 4. **Pseudo-polynomial vs polynomial.** Explain why the $O(nW)$ dynamic programming algorithm for 0/1 knapsack does not prove P = NP, even though knapsack is NP-complete. What is the relationship between $W$ and the input size?
 
 5. **Brute-force analysis.** Suppose you have a computer that can evaluate $10^9$ TSP tours per second. How long would it take to solve a 20-city instance by brute force? A 25-city instance? Express your answers in meaningful time units (seconds, years, etc.).
-
-## Chapter summary
-
-This chapter introduced the theoretical framework for classifying computational problems by their inherent difficulty.
-
-**P** contains problems solvable in polynomial time — the "efficiently solvable" problems that have been our focus throughout this book. **NP** contains problems whose solutions can be verified in polynomial time, even if finding a solution may be hard. The question of whether P = NP — whether efficient verification implies efficient solution — is the most important open problem in Computer Science.
-
-**NP-complete** problems, identified through polynomial-time reductions, are the hardest problems in NP: solving any one of them efficiently would solve all of them. The Cook-Levin theorem established SAT as the first NP-complete problem, and thousands more have been identified through chains of reductions — from satisfiability to graph problems (vertex cover, clique, Hamiltonian cycle), to numeric problems (subset sum, partition), to optimization problems (TSP, set cover).
-
-We implemented brute-force solvers for two NP-complete problems to illustrate their exponential nature:
-
-- **Subset sum** by exhaustive enumeration of all $2^n$ subsets: $O(2^n \cdot n)$ time.
-- **TSP** by exhaustive enumeration of all $(n-1)!$ permutations: $O(n!)$ time.
-
-When facing NP-hard problems in practice, we have several coping strategies: **approximation algorithms** with provable guarantees (Chapter 22), **exact algorithms for special cases** (e.g., fixed-parameter tractability, bounded tree-width), **pseudo-polynomial algorithms** (e.g., DP for knapsack when the target is small), and **heuristics** (local search, simulated annealing, genetic algorithms). The theory of NP-completeness tells us not that these problems are unsolvable, but that we should not expect a polynomial-time algorithm that works optimally on all instances — and guides us toward the right tool for each situation.

@@ -432,6 +432,19 @@ For bipartite matching specifically, **Hopcroft-Karp** achieves $O(E \sqrt{V})$ 
 
 In practice, Edmonds-Karp and Dinic's are the most commonly implemented. Dinic's algorithm is particularly effective on unit-capacity networks (like bipartite matching), where it achieves $O(E \sqrt{V})$ — matching Hopcroft-Karp.
 
+## Summary
+
+In this chapter we studied network flow — a rich framework for maximizing throughput in capacity-constrained networks.
+
+- A **flow network** is a directed graph with edge capacities, a source, and a sink. A **flow** assigns values to edges satisfying capacity and conservation constraints.
+- The **Ford-Fulkerson method** finds maximum flow by iteratively discovering **augmenting paths** in the **residual graph** and pushing flow along them.
+- The **max-flow min-cut theorem** proves that the maximum flow equals the minimum cut capacity — a deep duality result that connects optimization (max flow) with combinatorics (min cut).
+- **Edmonds-Karp** uses BFS to find shortest augmenting paths, guaranteeing $O(VE^2)$ time. This polynomial bound makes it practical for moderately sized networks.
+- **Maximum bipartite matching** reduces elegantly to max flow: add a super-source and super-sink with unit-capacity edges, and the max flow equals the maximum matching size. The integrality theorem ensures integer solutions.
+- The min-cut computed as a by-product of max flow identifies the source-reachable vertices in the final residual graph — useful for applications like image segmentation and network reliability analysis.
+
+Network flow is one of the most versatile tools in algorithm design. Many problems that seem unrelated — assignment, scheduling, connectivity, and partitioning — can be modeled as flow problems and solved efficiently with the algorithms in this chapter.
+
 ## Exercises
 
 **Exercise 15.1.** Consider the following flow network with edges: s → A (capacity 5), s → B (capacity 3), A → t (capacity 4), A → C (capacity 2), B → C (capacity 5), C → t (capacity 6).
@@ -457,16 +470,3 @@ In practice, Edmonds-Karp and Dinic's are the most commonly implemented. Dinic's
 **Exercise 15.4.** Modify the Edmonds-Karp algorithm to handle **lower bounds** on edge flows: each edge $(u, v)$ has both a capacity $c(u, v)$ and a minimum flow requirement $\ell(u, v)$, so $\ell(u, v) \leq f(u, v) \leq c(u, v)$. Describe how to transform this into a standard max-flow problem. (Hint: introduce excess supply and demand at vertices based on the lower bounds.)
 
 **Exercise 15.5.** König's theorem states that in a bipartite graph, the size of the maximum matching equals the size of the minimum vertex cover. Using the max-flow min-cut theorem applied to the bipartite matching reduction, prove König's theorem. (Hint: show how the minimum cut in the flow network corresponds to a minimum vertex cover in the bipartite graph.)
-
-## Summary
-
-In this chapter we studied network flow — a rich framework for maximizing throughput in capacity-constrained networks.
-
-- A **flow network** is a directed graph with edge capacities, a source, and a sink. A **flow** assigns values to edges satisfying capacity and conservation constraints.
-- The **Ford-Fulkerson method** finds maximum flow by iteratively discovering **augmenting paths** in the **residual graph** and pushing flow along them.
-- The **max-flow min-cut theorem** proves that the maximum flow equals the minimum cut capacity — a deep duality result that connects optimization (max flow) with combinatorics (min cut).
-- **Edmonds-Karp** uses BFS to find shortest augmenting paths, guaranteeing $O(VE^2)$ time. This polynomial bound makes it practical for moderately sized networks.
-- **Maximum bipartite matching** reduces elegantly to max flow: add a super-source and super-sink with unit-capacity edges, and the max flow equals the maximum matching size. The integrality theorem ensures integer solutions.
-- The min-cut computed as a by-product of max flow identifies the source-reachable vertices in the final residual graph — useful for applications like image segmentation and network reliability analysis.
-
-Network flow is one of the most versatile tools in algorithm design. Many problems that seem unrelated — assignment, scheduling, connectivity, and partitioning — can be modeled as flow problems and solved efficiently with the algorithms in this chapter.

@@ -647,7 +647,11 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 
 **Example.** For the sequence $[0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15]$, the LIS has length 6. One such subsequence is $[0, 2, 6, 9, 11, 15]$.
 
-## Summary of DP problems
+## Summary
+
+Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping subproblems**. The key insight is simple: do not recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to subproblems and builds toward the final answer.
+
+We saw this principle in action across seven problems: from the elementary Fibonacci sequence (which illustrates the core idea) to sophisticated optimization problems like matrix chain multiplication and the knapsack problem. Each problem followed the same five-step recipe: define subproblems, write the recurrence, identify base cases, determine computation order, and recover the solution.
 
 | Problem | Sub-problem space | Recurrence | Time | Space |
 |---------|------------------|------------|------|-------|
@@ -658,6 +662,8 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 | 0/1 Knapsack | $dp[i][w]$: best value, items $1..i$, cap $w$ | take or skip item $i$ | $O(nW)$ | $O(nW)$ |
 | Matrix chain | $m[i][j]$: min cost for $A_i \cdots A_j$ | split at $k$ | $O(n^3)$ | $O(n^2)$ |
 | LIS | $dp[i]$: LIS ending at $i$ | extend from $j < i$ | $O(n \log n)$ | $O(n)$ |
+
+In the next chapter, we turn to **greedy algorithms** — a complementary design paradigm that, when applicable, yields even simpler and more efficient solutions than DP. The key challenge with greedy algorithms is proving that the locally optimal choice at each step leads to a globally optimal solution — a property that holds for some problems but not others. Understanding when to use DP and when to use greedy is one of the most important skills in algorithm design.
 
 ## Exercises
 
@@ -670,11 +676,3 @@ export function lisBinarySearch(arr: readonly number[]): LISResult {
 4. **Weighted edit distance.** Generalize the edit distance algorithm so that insertions, deletions, and substitutions can have different costs (not all equal to 1). For example, in DNA alignment, a substitution between similar nucleotides might cost less than one between dissimilar nucleotides. Implement this generalization and verify it on a test case.
 
 5. **LIS and LCS connection.** Prove that the LIS problem can be reduced to LCS by computing the LCS of the original sequence and its sorted version. Is this reduction efficient? When would you prefer the $O(n \log n)$ patience-sorting approach over the LCS-based approach?
-
-## Chapter summary
-
-Dynamic programming transforms problems with exponential brute-force solutions into efficient polynomial-time algorithms by exploiting **optimal substructure** and **overlapping subproblems**. The key insight is simple: do not recompute — remember. Whether through top-down memoization or bottom-up tabulation, DP systematically stores solutions to subproblems and builds toward the final answer.
-
-We saw this principle in action across seven problems: from the elementary Fibonacci sequence (which illustrates the core idea) to sophisticated optimization problems like matrix chain multiplication and the knapsack problem. Each problem followed the same five-step recipe: define subproblems, write the recurrence, identify base cases, determine computation order, and recover the solution.
-
-In the next chapter, we turn to **greedy algorithms** — a complementary design paradigm that, when applicable, yields even simpler and more efficient solutions than DP. The key challenge with greedy algorithms is proving that the locally optimal choice at each step leads to a globally optimal solution — a property that holds for some problems but not others. Understanding when to use DP and when to use greedy is one of the most important skills in algorithm design.

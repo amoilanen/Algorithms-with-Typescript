@@ -577,7 +577,7 @@ It also tells us that our elementary $O(n^2)$ algorithms are a factor of $n / \l
 
 However, as it is evident from the proof of the lower bound, the lower bound applies only to comparison-based sorting. Algorithms that exploit additional structure in the input (such as knowing that elements are integers in a bounded range) can sort in $O(n)$ time, as we will see in Chapter 6.
 
-## Looking ahead
+## Summary
 
 In this chapter we studied the sorting problem and three elementary algorithms for solving it:
 

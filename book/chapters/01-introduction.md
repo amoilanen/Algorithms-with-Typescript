@@ -424,7 +424,7 @@ This is our first encounter with a recurring theme in this book: different algor
 
 Throughout the book, we will develop the tools to analyze these differences precisely. In Chapter 2 we formalize the notion of time complexity using asymptotic notation ($O$, $\Omega$, $\Theta$), which gives us a language for comparing algorithms independently of the specific hardware they run on.
 
-## Looking ahead
+## Summary
 
 In this chapter we defined what an algorithm is, introduced TypeScript as our implementation language, and studied two concrete algorithms. We saw that:
 

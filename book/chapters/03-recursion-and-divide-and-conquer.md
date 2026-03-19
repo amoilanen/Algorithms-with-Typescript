@@ -711,9 +711,9 @@ Memoization is valuable whenever a recursive decomposition produces **overlappin
 
 This idea is at the heart of _dynamic programming_, a powerful algorithm design paradigm that we study in detail in Chapter 16. There we will see memoization in action on problems such as Fibonacci numbers, coin change, longest common subsequence, and the knapsack problem, and we will also explore _tabulation_ — a bottom-up alternative that avoids recursion entirely.
 
-## Looking ahead
+## Summary
 
-in this chapter we developed understanding for
+In this chapter we studied recursion and the divide-and-conquer strategy:
 
 - **Recursion** solves a problem by reducing it to smaller instances, terminating at base cases. Its correctness is proven by induction.
 - **Divide-and-conquer** is a specific recursion pattern: divide into subproblems, conquer recursively, combine the results.

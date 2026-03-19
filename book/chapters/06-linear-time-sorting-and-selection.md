@@ -681,7 +681,7 @@ The practical value of median of medians is primarily as a _fallback_: some impl
 | Deterministic | Yes |
 | Practical | Slower than quickselect due to large constants |
 
-## Chapter summary
+## Summary
 
 In this chapter we studied algorithms that break the $\Omega(n \log n)$ comparison-based sorting barrier and solve the selection problem in linear time:
 

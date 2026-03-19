@@ -597,6 +597,14 @@ We do not implement B-trees in this book because their primary benefit is I/O ef
 - **Red-black trees** perform fewer rotations per modification. If your workload involves frequent insertions and deletions, red-black trees offer better amortized restructuring cost. Most language standard libraries choose red-black trees.
 - **B-trees** are the right choice when data lives on disk and minimizing I/O operations is the priority.
 
+## Summary
+
+Balanced search trees solve the fundamental problem of unbalanced BSTs by maintaining height invariants through automatic restructuring. **AVL trees** enforce a strict balance factor constraint (at most 1 difference between subtree heights), achieving a height bound of $1.44 \log_2(n + 2)$ through four rotation cases applied during insertion and deletion. **Red-black trees** use a coloring scheme with five properties to maintain a height bound of $2 \log_2(n + 1)$, trading slightly taller trees for fewer rotations during modifications — at most 2 per insertion and 3 per deletion.
+
+Both trees guarantee $O(\log n)$ worst-case time for search, insert, delete, min, max, successor, and predecessor. AVL trees are preferred for lookup-heavy workloads due to shorter tree heights, while red-black trees are preferred for modification-heavy workloads due to fewer structural changes. **B-trees**, though not implemented here, extend the balancing concept to high-branching-factor trees optimized for disk access.
+
+The rotations and rebalancing strategies studied in this chapter are fundamental techniques that appear throughout advanced data structures. In the next chapter, we turn to **heaps and priority queues** — another tree-based structure that maintains a different invariant (the heap property) for efficient extraction of minimum or maximum elements.
+
 ## Exercises
 
 **Exercise 10.1.** Insert the values 14, 17, 11, 7, 53, 4, 13, 12, 8 into an initially empty AVL tree. After each insertion, draw the tree and show any rotations that occur. Identify which of the four rotation cases (LL, RR, LR, RL) applies in each case.
@@ -608,11 +616,3 @@ We do not implement B-trees in this book because their primary benefit is I/O ef
 **Exercise 10.4.** Consider a red-black tree where you insert the keys 1 through 15 in order. Draw the tree after all insertions. What is the resulting height? How does this compare to the height bound $2 \log_2(n + 1)$?
 
 **Exercise 10.5.** AVL trees and red-black trees both guarantee $O(\log n)$ operations, but they make different trade-offs. Design an experiment to compare their performance: insert $n$ random integers, then perform $n$ searches, measuring the total number of comparisons for each tree type. Run the experiment for $n = 10^3, 10^4, 10^5$ and report the average number of comparisons per search. Which tree type performs fewer comparisons per search? Which performs fewer rotations per insertion? Discuss when each tree would be preferred.
-
-## Summary
-
-Balanced search trees solve the fundamental problem of unbalanced BSTs by maintaining height invariants through automatic restructuring. **AVL trees** enforce a strict balance factor constraint (at most 1 difference between subtree heights), achieving a height bound of $1.44 \log_2(n + 2)$ through four rotation cases applied during insertion and deletion. **Red-black trees** use a coloring scheme with five properties to maintain a height bound of $2 \log_2(n + 1)$, trading slightly taller trees for fewer rotations during modifications — at most 2 per insertion and 3 per deletion.
-
-Both trees guarantee $O(\log n)$ worst-case time for search, insert, delete, min, max, successor, and predecessor. AVL trees are preferred for lookup-heavy workloads due to shorter tree heights, while red-black trees are preferred for modification-heavy workloads due to fewer structural changes. **B-trees**, though not implemented here, extend the balancing concept to high-branching-factor trees optimized for disk access.
-
-The rotations and rebalancing strategies studied in this chapter are fundamental techniques that appear throughout advanced data structures. In the next chapter, we turn to **heaps and priority queues** — another tree-based structure that maintains a different invariant (the heap property) for efficient extraction of minimum or maximum elements.

@@ -589,7 +589,7 @@ Our analysis assumes a simple model where every basic operation takes the same a
 
 Despite these caveats, asymptotic analysis remains the single most useful tool for comparing algorithms. It correctly predicts which algorithm will win for large enough inputs, and "large enough" usually means "the sizes that actually matter in practice."
 
-## Looking ahead
+## Summary
 
 In this chapter we have developed the fundamental tools for analyzing algorithms:
 
