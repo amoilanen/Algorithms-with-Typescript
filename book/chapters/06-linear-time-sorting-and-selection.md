@@ -128,26 +128,26 @@ Radix sort extends counting sort to handle integers with many digits. Instead of
 
 ### The algorithm
 
-1. Find the maximum element to determine the number of digits $d$.
-2. For each digit position from least significant to most significant:
-   - Sort the array by that digit using a stable sort (counting sort restricted to digits 0–9).
+1. Find the maximum element to determine the number of digits $d$. Number the digit positions $1, 2, \ldots, d$ from left to right, so that digit 1 is the most significant (leftmost) digit and digit $d$ is the least significant (rightmost, units) digit.
+2. For $i = d, d - 1, \ldots, 1$ (i.e., from the rightmost digit to the leftmost):
+   - Sort the array by digit $i$ using a stable sort (counting sort restricted to digits 0–9).
 
-The key insight is that we must process digits from _least_ significant to _most_ significant, and each digit sort must be _stable_. After sorting by the units digit, elements with the same units digit are in a consistent order. When we then sort by the tens digit, stability ensures that elements with the same tens digit remain sorted by their units digit — and so on.
+The key insight is that we must process digits from _least_ significant to _most_ significant, and that sorting by each digit must be _stable_. After sorting by the units digit, elements with the same units digit are in a consistent order. When we then sort by the tens digit, stability ensures that elements with the same tens digit remain sorted by their units digit — and so on.
 
 ### Why least significant digit first?
 
-It may seem counterintuitive to start with the least significant digit. Consider sorting $[329, 457, 657, 839, 436, 720, 355]$. If we sorted by the most significant digit first, we would get groups starting with 3, 4, 6, 7. But then sorting by the next digit within each group is exactly the original problem on smaller arrays — we have made no progress toward a linear-time algorithm.
+It may at first seem counterintuitive to start with the least significant digit. To understand why this is needed let us try to sort by the most significant digit first and see where it leads us - let us consider sorting the array $[329, 457, 657, 839, 436, 720, 355]$. If we sorted by the most significant digit first, we would get groups starting with 3, 4, 6, 7. But then sorting by the next digit within each group would be exactly the original problem, only on smaller arrays - which means that we have made no progress toward a linear-time algorithm.
 
-LSD radix sort avoids this by exploiting stability. After sorting by digit $i$, the relative order of elements that agree on digit $i$ is determined by the previous passes on digits $0, 1, \ldots, i-1$. When we sort by digit $i + 1$, stability preserves this order among elements with the same digit at position $i + 1$.
+LSD (Least Significant Digit) radix sort avoids this by exploiting stability. Recall that digit positions are numbered $1, 2, \ldots, d$ from left to right, and we process them in reverse: $d, d - 1, \ldots, 1$. After sorting by digit $i$, the relative order for the elements that agree on digit $i$ is determined by the previous passes on digits $d, d - 1, \ldots, i + 1$ (i.e., the digits to its right). And when next we sort by the digit $i - 1$ (one position to the left), the stability of sorting preserves the sorting by digit $i$ among the elements with the same digit at position $i - 1$.
 
 ### Implementation
 
-The digit-level sorting subroutine is a specialized counting sort that operates on a single digit position:
+The digit-level sorting function is a specialized counting sort that operates on a single digit position:
 
 ```typescript
 export function countingSortByDigit(
   elements: number[],
-  exp: number,
+  position: number,
 ): number[] {
   const n = elements.length;
   if (n <= 1) {
@@ -157,9 +157,9 @@ export function countingSortByDigit(
   const output = new Array<number>(n);
   const counts = new Array<number>(10).fill(0);
 
-  // Count occurrences of each digit at position exp
+  // Count occurrences of each digit at position
   for (const val of elements) {
-    const digit = Math.floor(val / exp) % 10;
+    const digit = Math.floor(val / position) % 10;
     counts[digit]!++;
   }
 
@@ -171,7 +171,7 @@ export function countingSortByDigit(
   // Build output in reverse for stability
   for (let i = n - 1; i >= 0; i--) {
     const val = elements[i]!;
-    const digit = Math.floor(val / exp) % 10;
+    const digit = Math.floor(val / position) % 10;
     counts[digit]!--;
     output[counts[digit]!] = val;
   }
@@ -180,7 +180,7 @@ export function countingSortByDigit(
 }
 ```
 
-The main radix sort function calls this subroutine for each digit position:
+The main radix sort function calls this function for each digit position:
 
 ```typescript
 export function radixSort(elements: number[]): number[] {
@@ -193,8 +193,8 @@ export function radixSort(elements: number[]): number[] {
   let result = elements.slice(0);
 
   // Process each digit position from least significant to most significant
-  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
-    result = countingSortByDigit(result, exp);
+  for (let position = 1; Math.floor(max / position) > 0; position *= 10) {
+    result = countingSortByDigit(result, position);
   }
 
   return result;
@@ -205,7 +205,7 @@ export function radixSort(elements: number[]): number[] {
 
 Sort $A = [170, 45, 75, 90, 802, 24, 2, 66]$.
 
-**Pass 1: Sort by units digit** ($\text{exp} = 1$):
+**Pass 1: Sort by units digit** ($\text{position} = 1$):
 
 | Element | Units digit |
 |---------|------------|
@@ -220,7 +220,7 @@ Sort $A = [170, 45, 75, 90, 802, 24, 2, 66]$.
 
 After stable sort by units digit: $[170, 90, 802, 2, 24, 45, 75, 66]$.
 
-**Pass 2: Sort by tens digit** ($\text{exp} = 10$):
+**Pass 2: Sort by tens digit** ($\text{position} = 10$):
 
 | Element | Tens digit |
 |---------|-----------|
@@ -237,7 +237,7 @@ After stable sort by tens digit: $[802, 2, 24, 45, 66, 170, 75, 90]$.
 
 Notice that 802 and 2 both have tens digit 0, and they remain in the order established by Pass 1 (802 before 2) thanks to stability.
 
-**Pass 3: Sort by hundreds digit** ($\text{exp} = 100$):
+**Pass 3: Sort by hundreds digit** ($\text{position} = 100$):
 
 | Element | Hundreds digit |
 |---------|---------------|
@@ -252,18 +252,20 @@ Notice that 802 and 2 both have tens digit 0, and they remain in the order estab
 
 After stable sort by hundreds digit: $[2, 24, 45, 66, 75, 90, 170, 802]$.
 
-Result: $[2, 24, 45, 66, 75, 90, 170, 802]$. Sorted!
+Result: $[2, 24, 45, 66, 75, 90, 170, 802]$ is a sorted array.
 
 ### Correctness
 
-**Claim.** After $i$ passes of LSD radix sort, the array is sorted with respect to the last $i$ digits.
+**Claim.** After $i$ passes of LSD (Least Significant Digit) radix sort, the array is sorted with respect to the last $i$ digits.
 
-**Proof by induction.** After the first pass, the array is sorted by the units digit (the counting sort is correct). Assume after $i$ passes the array is sorted by the last $i$ digits. Consider two elements $a$ and $b$ after pass $i + 1$:
+_Proof by induction on the number of passes $i$:_
 
-- If $a$ and $b$ differ in digit $i + 1$: the sort on digit $i + 1$ places them correctly.
-- If $a$ and $b$ have the same digit at position $i + 1$: since the sort is _stable_, their relative order is preserved from the previous pass, which (by hypothesis) ordered them correctly by their last $i$ digits.
+- **Base case** ($i = 1$). The first pass sorts by digit $d$ (the units digit). Since counting sort is correct, the array is sorted with respect to the last 1 digit.
+- **Inductive step.** Assume that after $i$ passes the array is sorted by the last $i$ digits (that is, by digits $d, d-1, \ldots, d - i + 1$). Pass $i + 1$ sorts by digit $d - i$ (the next digit to the left). Consider two arbitrary elements $a$ and $b$ after the pass $i + 1$:
+  - If $a$ and $b$ differ in digit $d - i$: the sort on digit $d - i$ places them correctly.
+  - If $a$ and $b$ have the same digit at position $d - i$: since the sort is _stable_, their relative order is preserved from the previous pass, which by the inductive hypothesis ordered them correctly by their last $i$ digits.
 
-In both cases, the elements are correctly ordered by their last $i + 1$ digits. $\square$
+  In both cases, $a$ and $b$ are correctly ordered by their last $i + 1$ digits. $\square$
 
 ### Complexity analysis
 
@@ -271,7 +273,11 @@ In both cases, the elements are correctly ordered by their last $i + 1$ digits. 
 
 $$T(n) = O(d \cdot n) = O(dn).$$
 
-For $d = O(1)$ (bounded number of digits), this is $O(n)$. More generally, if the values are in the range $[0, n^c - 1]$ for some constant $c$, then $d = O(c \log_{10} n) = O(\log n)$, and radix sort runs in $O(n \log n)$ — no better than comparison sort. Radix sort achieves true linear time only when $d$ is bounded by a constant independent of $n$.
+For $d = O(1)$ (bounded number of digits), this is $O(n)$. More generally, if the values are in the range $[0, n^c - 1]$ for some constant $c$, then $d = O(c \log_{10} n) = O(\log n)$, and radix sort runs in $O(n \log n)$ — no better than comparison sort.
+
+Why focus on the range $[0, n^c - 1]$? Because it covers the cases that arise most often in practice. When we sort $n$ items, the values are typically bounded by some polynomial in $n$: sorting $n$ people by age gives values in $[0, 150]$ which is $O(1)$; sorting $n$ exam scores out of $n$ questions gives values in $[0, n]$; sorting the edges of an $n$-vertex graph by integer weights in $[0, n^2]$ (as in Kruskal's minimum spanning tree algorithm) gives values in $O(n^2)$. Fixed-width machine integers (32-bit or 64-bit) are an even tighter case: $d$ is at most 10 or 20 decimal digits regardless of $n$, so radix sort runs in $O(n)$. Ranges beyond $n^c$ — for instance, values up to $2^n$ — would give $d = O(n)$ digits and an $O(n^2)$ running time, but such ranges rarely arise in practice because they require exponentially large numbers that do not fit in standard integer types.
+
+Radix sort achieves true linear time only when $d$ is bounded by a constant independent of $n$.
 
 **Space.** Each counting sort pass uses $O(n + 10) = O(n)$ auxiliary space.
 

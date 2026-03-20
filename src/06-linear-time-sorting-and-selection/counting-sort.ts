@@ -42,12 +42,12 @@ export function countingSort(elements: number[]): number[] {
  * Used as a stable subroutine for radix sort.
  *
  * @param elements - Array of non-negative integers
- * @param exp - The exponent (power of 10) representing the digit position
+ * @param position - The exponent (power of 10) representing the digit position
  * @returns A new array sorted by the specified digit
  */
 export function countingSortByDigit(
   elements: number[],
-  exp: number,
+  position: number,
 ): number[] {
   const n = elements.length;
   if (n <= 1) {
@@ -57,9 +57,9 @@ export function countingSortByDigit(
   const output = new Array<number>(n);
   const counts = new Array<number>(10).fill(0);
 
-  // Count occurrences of each digit at position exp
+  // Count occurrences of each digit at the given position
   for (const val of elements) {
-    const digit = Math.floor(val / exp) % 10;
+    const digit = Math.floor(val / position) % 10;
     counts[digit]!++;
   }
 
@@ -71,7 +71,7 @@ export function countingSortByDigit(
   // Build output in reverse for stability
   for (let i = n - 1; i >= 0; i--) {
     const val = elements[i]!;
-    const digit = Math.floor(val / exp) % 10;
+    const digit = Math.floor(val / position) % 10;
     counts[digit]!--;
     output[counts[digit]!] = val;
   }

@@ -20,8 +20,8 @@ export function radixSort(elements: number[]): number[] {
   let result = elements.slice(0);
 
   // Process each digit position from least significant to most significant
-  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
-    result = countingSortByDigit(result, exp);
+  for (let position = 1; Math.floor(max / position) > 0; position *= 10) {
+    result = countingSortByDigit(result, position);
   }
 
   return result;
