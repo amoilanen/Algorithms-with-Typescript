@@ -421,11 +421,30 @@ Result: $[0.12, 0.17, 0.21, 0.23, 0.26, 0.39, 0.68, 0.72, 0.78, 0.94]$.
 
 ### Complexity analysis
 
-**Expected time under uniform distribution.** Suppose we distribute $n$ elements into $m$ buckets. The cost of sorting all buckets with insertion sort is proportional to:
+**Expected time under uniform distribution.** Suppose we distribute $n$ elements into $m = \Theta(n)$ buckets (the typical choice is $m = n$). If the elements are drawn uniformly from $[\min, \max]$, each bucket receives roughly $n/m = O(1)$ elements on average. Sorting each bucket with insertion sort takes $O(1)$ expected time per bucket, and there are $m$ buckets, so the total expected sorting cost is $O(m) = O(n)$. Combined with the $O(n)$ distribution and concatenation steps, the total expected time is $O(n)$.
 
-$$\sum_{i=0}^{m-1} O\bigl(n_i^2\bigr)$$
+More precisely, the total expected cost of sorting all buckets is proportional to the sum $\sum_{i=0}^{m-1} \mathbb{E}[n_i^2]$, where $n_i$ is the number of elements in bucket $i$. Using probability theory (specifically, the binomial distribution and the variance identity $\mathbb{E}[X^2] = \text{Var}(X) + (\mathbb{E}[X])^2$), one can show that this sum equals:
 
-where $n_i$ is the number of elements in bucket $i$. We want to bound the expected value of this total cost. By linearity of expectation, the expectation of a sum equals the sum of the expectations, so:
+$$\sum_{i=0}^{m-1} \mathbb{E}[n_i^2] = n + \frac{n(n-1)}{m}.$$
+
+The total expected cost is $O(n)$ whenever $n(n-1)/m = O(n)$, which holds if and only if $m = \Omega(n)$ — that is, $m$ is at least proportional to $n$. In particular:
+
+- If $m$ is a fixed constant (say $m = 10$), the dominant term becomes $n(n-1)/10 = O(n^2)$, which is no better than a single insertion sort over the whole array.
+- If $m$ grows with $n$ but slower — say $m = \sqrt{n}$ — we get $n(n-1)/\sqrt{n} = O(n^{3/2})$, which is still worse than comparison-based $O(n \log n)$ sorting.
+- If $m = cn$ for any constant $c > 0$ (i.e., $m = \Theta(n)$), we get $n(n-1)/(cn) = (n-1)/c = O(n)$, and the expected time is linear.
+- Using $m > n$ would still give $O(n)$ time but would waste space on empty buckets with no further benefit.
+
+The choice $m = n$ is therefore the most common in textbooks and implementations: it is the simplest $\Theta(n)$ choice, it achieves the linear expected time, and the space for the bucket array is $O(n)$ — the same order as the input itself.
+
+For example, substituting $m = n$:
+
+$$n + \frac{n(n-1)}{n} = n + (n - 1) = 2n - 1 = O(n).$$
+
+> **A note to the reader.** The derivation of the formula $\sum \mathbb{E}[n_i^2] = n + n(n-1)/m$ requires familiarity with probability theory (expected values, variance, binomial distributions). The proof is provided below for the sake of completeness. If the math feels unfamiliar, feel free to skip ahead to the **Worst case** paragraph — the key takeaway is simply that bucket sort achieves $O(n)$ expected time when $m = \Theta(n)$ and the input is uniformly distributed.
+
+**Proof of the expected cost formula (optional).**
+
+The cost of sorting all buckets with insertion sort is proportional to $\sum_{i=0}^{m-1} O(n_i^2)$ where $n_i$ is the number of elements in bucket $i$. By linearity of expectation:
 
 $$\mathbb{E}\!\left[\sum_{i=0}^{m-1} O\bigl(n_i^2\bigr)\right] = \sum_{i=0}^{m-1} O\bigl(\mathbb{E}[n_i^2]\bigr).$$
 
@@ -455,22 +474,7 @@ $$\mathbb{E}[n_i^2] = \frac{n}{m}\!\left(1 - \frac{1}{m}\right) + \frac{n^2}{m^2
 
 Summing over $m$ buckets:
 
-$$\sum_{i=0}^{m-1} \mathbb{E}[n_i^2] = m \left(\frac{n}{m} + \frac{n(n-1)}{m^2}\right) = n + \frac{n(n-1)}{m}.$$
-
-The total expected cost is $O(n)$ whenever $n(n-1)/m = O(n)$, which holds if and only if $m = \Omega(n)$ — that is, $m$ is at least proportional to $n$. In particular:
-
-- If $m$ is a fixed constant (say $m = 10$), the dominant term becomes $n(n-1)/10 = O(n^2)$, which is no better than a single insertion sort over the whole array.
-- If $m$ grows with $n$ but slower — say $m = \sqrt{n}$ — we get $n(n-1)/\sqrt{n} = O(n^{3/2})$, which is still worse than comparison-based $O(n \log n)$ sorting.
-- If $m = cn$ for any constant $c > 0$ (i.e., $m = \Theta(n)$), we get $n(n-1)/(cn) = (n-1)/c = O(n)$, and the expected time is linear.
-- Using $m > n$ would still give $O(n)$ time but would waste space on empty buckets with no further benefit.
-
-The choice $m = n$ is therefore the most common in textbooks and implementations: it is the simplest $\Theta(n)$ choice, it achieves the linear expected time, and the space for the bucket array is $O(n)$ — the same order as the input itself.
-
-For example, substituting $m = n$:
-
-$$n + \frac{n(n-1)}{n} = n + (n - 1) = 2n - 1 = O(n).$$
-
-Including the $O(n)$ distribution and concatenation steps, the total expected time is $O(n)$.
+$$\sum_{i=0}^{m-1} \mathbb{E}[n_i^2] = m \left(\frac{n}{m} + \frac{n(n-1)}{m^2}\right) = n + \frac{n(n-1)}{m}. \quad \square$$
 
 **Worst case.** If all elements happen to fall into the same bucket, we will have $O(n^2)$ steps for the insertion sort on that bucket. This might happen if the distribution of the elements is very far from uniform. So the more uniform the distribution of the elements over the range $[\min, \max]$ is, the better it is for the running time of the bucket sort.
 
