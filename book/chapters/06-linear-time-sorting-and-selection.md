@@ -296,15 +296,22 @@ Bucket sort works well when the input is drawn from a _uniform distribution_ ove
 
 ### The algorithm
 
-1. Determine the range $[\min, \max]$ of the input.
-2. Create $n$ empty buckets spanning the range.
-3. Place each element in its bucket: element $x$ goes to bucket $\lfloor (x - \min) / (\max - \min) \cdot (n - 1) \rfloor$.
-4. Sort each bucket using insertion sort.
+1. Scan the input to find $\min$ and $\max$ — the smallest and largest values — in $O(n)$ time.
+2. Create $m$ empty buckets spanning the range $[\min, \max]$ (by default $m = n$, i.e., as many buckets as elements).
+3. Place each element in its bucket: element $x$ goes to bucket $\lfloor (x - \min) / (\max - \min) \cdot (m - 1) \rfloor$.
+4. Sort each bucket using insertion sort (we reuse the implementation from Chapter 4).
 5. Concatenate all buckets.
+
+The expression $(x - \min) / (\max - \min)$ normalizes $x$ to a value in $[0, 1]$, where $\min$ maps to 0 and $\max$ maps to 1. Multiplying by $(m - 1)$ scales this to the range $[0, m - 1]$, and taking the floor gives a valid bucket index. We multiply by $m - 1$ rather than $m$ so that the maximum element maps to bucket $m - 1$ (the last bucket) rather than to bucket $m$ (which would be out of bounds): when $x = \max$, the normalized value is exactly 1, and $\lfloor 1 \cdot (m - 1) \rfloor = m - 1$.
 
 ### Implementation
 
+The implementation imports `insertionSort` from Chapter 4 (Elementary Sorting) to sort individual buckets. Since each bucket is expected to contain only a few elements under a uniform distribution, insertion sort's $O(k^2)$ cost per bucket of size $k$ is negligible.
+
 ```typescript
+import { insertionSort } from
+  '../04-elementary-sorting/insertion-sort';
+
 export function bucketSort(
   elements: number[],
   bucketCount?: number,
@@ -331,21 +338,25 @@ export function bucketSort(
     buckets.push([]);
   }
 
-  // Distribute elements into buckets
+  // Distribute elements into buckets.
+  // The formula maps each value to a bucket index
+  // in [0, numBuckets - 1].
+  // Since val is in [min, max], (val - min) / range
+  // is in [0, 1], so
+  // Math.floor(... * (numBuckets - 1)) is always
+  // in [0, numBuckets - 1].
   for (const val of elements) {
-    let index = Math.floor(
+    const index = Math.floor(
       ((val - min) / range) * (numBuckets - 1)
     );
-    if (index >= numBuckets) {
-      index = numBuckets - 1;
-    }
     buckets[index]!.push(val);
   }
 
-  // Sort each bucket using insertion sort and concatenate
+  // Sort each bucket using insertion sort
+  // and concatenate
   const result: number[] = [];
   for (const bucket of buckets) {
-    insertionSortInPlace(bucket);
+    insertionSort(bucket);
     for (const val of bucket) {
       result.push(val);
     }
@@ -355,54 +366,115 @@ export function bucketSort(
 }
 ```
 
-The subroutine `insertionSortInPlace` is efficient for the small bucket sizes expected under uniform distribution:
-
-```typescript
-function insertionSortInPlace(arr: number[]): void {
-  for (let i = 1; i < arr.length; i++) {
-    const key = arr[i]!;
-    let j = i - 1;
-    while (j >= 0 && arr[j]! > key) {
-      arr[j + 1] = arr[j]!;
-      j--;
-    }
-    arr[j + 1] = key;
-  }
-}
-```
-
 ### Tracing through an example
 
 Sort $A = [0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.12, 0.23, 0.68]$ using 10 buckets.
 
-Here the range is $[0.12, 0.94]$, so each bucket covers an interval of width roughly $0.082$.
+**Step 1: Find min and max.** Scan the array: $\min = 0.12$, $\max = 0.94$, so the range is $\max - \min = 0.82$.
+
+**Step 2: Create 10 empty buckets** (indices 0 through 9).
+
+**Step 3: Distribute elements into buckets.** For each element $x$, compute the bucket index $\lfloor (x - 0.12) / 0.82 \cdot 9 \rfloor$:
+
+| Element $x$ | $(x - 0.12) / 0.82$ | $\cdot\, 9$ | $\lfloor \cdot \rfloor$ | Bucket |
+|-------------|---------------------|------------|------------------------|--------|
+| 0.78 | 0.8049 | 7.244 | 7 | 7 |
+| 0.17 | 0.0610 | 0.549 | 0 | 0 |
+| 0.39 | 0.3293 | 2.963 | 2 | 2 |
+| 0.26 | 0.1707 | 1.537 | 1 | 1 |
+| 0.72 | 0.7317 | 6.585 | 6 | 6 |
+| 0.94 | 1.0000 | 9.000 | 9 | 9 |
+| 0.21 | 0.1098 | 0.988 | 0 | 0 |
+| 0.12 | 0.0000 | 0.000 | 0 | 0 |
+| 0.23 | 0.1341 | 1.207 | 1 | 1 |
+| 0.68 | 0.6829 | 6.146 | 6 | 6 |
+
+State of the buckets after distribution:
 
 | Bucket | Elements |
 |--------|----------|
-| 0 | [0.17, 0.12] |
-| 1 | [0.26, 0.21, 0.23] |
-| 3 | [0.39] |
+| 0 | [0.17, 0.21, 0.12] |
+| 1 | [0.26, 0.23] |
+| 2 | [0.39] |
+| 3–5 | [] |
 | 6 | [0.72, 0.68] |
-| 8 | [0.78] |
+| 7 | [0.78] |
+| 8 | [] |
 | 9 | [0.94] |
 
-After sorting each bucket and concatenating: $[0.12, 0.17, 0.21, 0.23, 0.26, 0.39, 0.68, 0.72, 0.78, 0.94]$.
+**Step 4: Sort each bucket using insertion sort.**
+
+- Bucket 0: $[0.17, 0.21, 0.12]$ → sort → $[0.12, 0.17, 0.21]$
+- Bucket 1: $[0.26, 0.23]$ → sort → $[0.23, 0.26]$
+- Bucket 2: $[0.39]$ → already sorted
+- Buckets 3–5: empty, nothing to do
+- Bucket 6: $[0.72, 0.68]$ → sort → $[0.68, 0.72]$
+- Bucket 7: $[0.78]$ → already sorted
+- Bucket 8: empty, nothing to do
+- Bucket 9: $[0.94]$ → already sorted
+
+**Step 5: Concatenate** all buckets in order:
+
+$$[0.12, 0.17, 0.21] \circ [0.23, 0.26] \circ [0.39] \circ [0.68, 0.72] \circ [0.78] \circ [0.94]$$
+
+Result: $[0.12, 0.17, 0.21, 0.23, 0.26, 0.39, 0.68, 0.72, 0.78, 0.94]$.
 
 ### Complexity analysis
 
-**Expected time under uniform distribution.** If $n$ elements are drawn independently and uniformly from $[0, 1)$, then with $n$ buckets each element lands in a random bucket. The expected number of elements per bucket is 1. By a balls-into-bins argument, the expected total cost of sorting all buckets is:
+**Expected time under uniform distribution.** Suppose we distribute $n$ elements into $m$ buckets. The cost of sorting all buckets with insertion sort is proportional to:
 
-$$\sum_{i=0}^{n-1} O\bigl(\mathbb{E}[n_i^2]\bigr)$$
+$$\sum_{i=0}^{m-1} O\bigl(n_i^2\bigr)$$
 
-where $n_i$ is the number of elements in bucket $i$. Since each element independently falls into bucket $i$ with probability $1/n$, we have $\mathbb{E}[n_i] = 1$ and $\mathbb{E}[n_i^2] = 2 - 1/n$. Summing over $n$ buckets:
+where $n_i$ is the number of elements in bucket $i$. We want to bound the expected value of this total cost. By linearity of expectation, the expectation of a sum equals the sum of the expectations, so:
 
-$$\sum_{i=0}^{n-1} O(2 - 1/n) = O(n).$$
+$$\mathbb{E}\!\left[\sum_{i=0}^{m-1} O\bigl(n_i^2\bigr)\right] = \sum_{i=0}^{m-1} O\bigl(\mathbb{E}[n_i^2]\bigr).$$
+
+If the elements are drawn independently and uniformly from $[\min, \max]$, each element lands in bucket $i$ with probability $p = 1/m$. We can think of each element as an independent Bernoulli trial: it either falls into bucket $i$ (success, probability $p = 1/m$) or it does not (failure, probability $1 - 1/m$). The count $n_i$ is the total number of successes in $n$ independent trials, so $n_i$ follows a binomial distribution $\text{Binomial}(n, 1/m)$.
+
+The mean and variance of a binomial random variable $\text{Binomial}(n, p)$ are $np$ and $np(1 - p)$ respectively. To see why, consider a single Bernoulli trial $X_j$ that is 1 with probability $p$ and 0 with probability $1 - p$. Its mean is $\mathbb{E}[X_j] = p$ and its variance is $\text{Var}(X_j) = p(1 - p)$ (since $\mathbb{E}[X_j^2] = p$ and $\text{Var}(X_j) = \mathbb{E}[X_j^2] - (\mathbb{E}[X_j])^2 = p - p^2$). The binomial count is the sum $n_i = X_1 + X_2 + \cdots + X_n$. By linearity of expectation, $\mathbb{E}[n_i] = np$. Because the trials are independent, their variances also add: $\text{Var}(n_i) = n \cdot p(1 - p)$.
+
+Substituting $p = 1/m$:
+
+$$\mathbb{E}[n_i] = \frac{n}{m}, \qquad \text{Var}(n_i) = n \cdot \frac{1}{m}\!\left(1 - \frac{1}{m}\right).$$
+
+Here $\text{Var}(n_i)$ is the _variance_ of $n_i$ — a standard measure from probability theory that quantifies how much a random variable deviates from its mean. It is defined as $\text{Var}(X) = \mathbb{E}\bigl[(X - \mathbb{E}[X])^2\bigr]$. Let us expand the square inside the expectation. Writing $\mu = \mathbb{E}[X]$ for brevity:
+
+$$\text{Var}(X) = \mathbb{E}\bigl[(X - \mu)^2\bigr] = \mathbb{E}\bigl[X^2 - 2\mu X + \mu^2\bigr].$$
+
+By linearity of expectation, and using the fact that $\mu$ is a constant:
+
+$$= \mathbb{E}[X^2] - 2\mu\,\mathbb{E}[X] + \mu^2 = \mathbb{E}[X^2] - 2\mu^2 + \mu^2 = \mathbb{E}[X^2] - \mu^2.$$
+
+Substituting back $\mu = \mathbb{E}[X]$ and rearranging, we obtain a useful identity that relates the second moment $\mathbb{E}[X^2]$ to the variance and the squared mean:
+
+$$\mathbb{E}[X^2] = \text{Var}(X) + \bigl(\mathbb{E}[X]\bigr)^2.$$
+
+Applying this identity to $n_i$, we get:
+
+$$\mathbb{E}[n_i^2] = \frac{n}{m}\!\left(1 - \frac{1}{m}\right) + \frac{n^2}{m^2} = \frac{n}{m} - \frac{n}{m^2} + \frac{n^2}{m^2} = \frac{n}{m} + \frac{n(n-1)}{m^2}.$$
+
+Summing over $m$ buckets:
+
+$$\sum_{i=0}^{m-1} \mathbb{E}[n_i^2] = m \left(\frac{n}{m} + \frac{n(n-1)}{m^2}\right) = n + \frac{n(n-1)}{m}.$$
+
+The total expected cost is $O(n)$ whenever $n(n-1)/m = O(n)$, which holds if and only if $m = \Omega(n)$ — that is, $m$ is at least proportional to $n$. In particular:
+
+- If $m$ is a fixed constant (say $m = 10$), the dominant term becomes $n(n-1)/10 = O(n^2)$, which is no better than a single insertion sort over the whole array.
+- If $m$ grows with $n$ but slower — say $m = \sqrt{n}$ — we get $n(n-1)/\sqrt{n} = O(n^{3/2})$, which is still worse than comparison-based $O(n \log n)$ sorting.
+- If $m = cn$ for any constant $c > 0$ (i.e., $m = \Theta(n)$), we get $n(n-1)/(cn) = (n-1)/c = O(n)$, and the expected time is linear.
+- Using $m > n$ would still give $O(n)$ time but would waste space on empty buckets with no further benefit.
+
+The choice $m = n$ is therefore the most common in textbooks and implementations: it is the simplest $\Theta(n)$ choice, it achieves the linear expected time, and the space for the bucket array is $O(n)$ — the same order as the input itself.
+
+For example, substituting $m = n$:
+
+$$n + \frac{n(n-1)}{n} = n + (n - 1) = 2n - 1 = O(n).$$
 
 Including the $O(n)$ distribution and concatenation steps, the total expected time is $O(n)$.
 
-**Worst case.** If all elements fall into one bucket, we pay $O(n^2)$ for insertion sort on that bucket. This happens when the distribution is far from uniform.
+**Worst case.** If all elements happen to fall into the same bucket, we will have $O(n^2)$ steps for the insertion sort on that bucket. This might happen if the distribution of the elements is very far from uniform. So the more uniform the distribution of the elements over the range $[\min, \max]$ is, the better it is for the running time of the bucket sort.
 
-**Space.** The buckets collectively hold $n$ elements, plus $O(n)$ for the bucket array structure. Total: $O(n)$.
+**Space.** The buckets collectively hold $n$ elements, plus $O(m)$ for the bucket array structure. With $m = n$, the total is $O(n)$.
 
 ### Properties
 
@@ -416,15 +488,15 @@ Including the $O(n)$ distribution and concatenation steps, the total expected ti
 
 ## Comparison of linear-time sorts
 
-| Algorithm | Time | Space | Stable | Assumptions |
-|-----------|------|-------|--------|-------------|
+| Algorithm | Time | Space&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Stable | Assumptions |
+|-----------|------|-------------------------------|--------|-------------|
 | Counting sort | $O(n + k)$ | $O(n + k)$ | Yes | Integer values in $[0, k]$ |
 | Radix sort | $O(dn)$ | $O(n)$ | Yes | Integer values with $d$ digits |
 | Bucket sort | $O(n)$ expected | $O(n)$ | Yes | Uniformly distributed values |
 
 All three algorithms achieve linear time under specific conditions. Counting sort is simplest and best when the value range $k$ is not much larger than $n$. Radix sort extends counting sort to larger ranges by processing one digit at a time. Bucket sort is ideal for floating-point data with a known, roughly uniform distribution.
 
-None of these algorithms contradicts the $\Omega(n \log n)$ comparison lower bound — they bypass it by using non-comparison operations (indexing into an array by value, extracting digits).
+These algorithms do not contradict the $\Omega(n \log n)$ comparison lower bound — they simply bypass it by using non-comparison operations (such as indexing into an array by value or extracting digits).
 
 ## The selection problem
 

@@ -1,3 +1,5 @@
+import { insertionSort } from '../04-elementary-sorting/insertion-sort';
+
 /**
  * Bucket sort for non-negative numbers.
  * Distributes elements into buckets, sorts each bucket with insertion sort,
@@ -33,40 +35,23 @@ export function bucketSort(elements: number[], bucketCount?: number): number[] {
     buckets.push([]);
   }
 
-  // Distribute elements into buckets
+  // Distribute elements into buckets.
+  // The formula maps each value to a bucket index in [0, numBuckets - 1].
+  // Since val is in [min, max], (val - min) / range is in [0, 1], so
+  // Math.floor(... * (numBuckets - 1)) is always in [0, numBuckets - 1].
   for (const val of elements) {
-    // Map value to bucket index [0, numBuckets - 1]
-    let index = Math.floor(((val - min) / range) * (numBuckets - 1));
-    if (index >= numBuckets) {
-      index = numBuckets - 1;
-    }
+    const index = Math.floor(((val - min) / range) * (numBuckets - 1));
     buckets[index]!.push(val);
   }
 
   // Sort each bucket using insertion sort and concatenate
   const result: number[] = [];
   for (const bucket of buckets) {
-    insertionSortInPlace(bucket);
+    insertionSort(bucket);
     for (const val of bucket) {
       result.push(val);
     }
   }
 
   return result;
-}
-
-/**
- * In-place insertion sort used as a subroutine for bucket sort.
- * Efficient for small arrays (the expected bucket size).
- */
-function insertionSortInPlace(arr: number[]): void {
-  for (let i = 1; i < arr.length; i++) {
-    const key = arr[i]!;
-    let j = i - 1;
-    while (j >= 0 && arr[j]! > key) {
-      arr[j + 1] = arr[j]!;
-      j--;
-    }
-    arr[j + 1] = key;
-  }
 }
