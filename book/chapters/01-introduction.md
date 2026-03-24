@@ -164,8 +164,8 @@ To follow along with the code in this book, you will need:
 Once Node.js is installed, clone the book's repository and install the dependencies:
 
 ```bash
-git clone https://github.com/amoilanen/Algorithms-with-TypeScript.git
-cd Algorithms-with-TypeScript
+git clone https://github.com/amoilanen/Algorithms-with-Typescript.git
+cd Algorithms-with-Typescript
 npm install
 ```
 

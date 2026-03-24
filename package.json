@@ -3,17 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Algorithms and data structures implemented in TypeScript, with an accompanying book",
-  "homepage": "https://amoilanen.github.io/Algorithms-with-TypeScript/",
+  "homepage": "https://amoilanen.github.io/Algorithms-with-Typescript/",
   "author": {
     "name": "Anton Moilanen",
     "email": "anton.a.moilanen@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/amoilanen/Algorithms-with-TypeScript.git"
+    "url": "git://github.com/amoilanen/Algorithms-with-Typescript.git"
   },
   "bugs": {
-    "url": "https://github.com/amoilanen/Algorithms-with-TypeScript/issues"
+    "url": "https://github.com/amoilanen/Algorithms-with-Typescript/issues"
   },
   "license": "MIT",
   "scripts": {

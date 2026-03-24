@@ -2,8 +2,8 @@
 
 A comprehensive book on data structures and algorithms, with tested TypeScript implementations. Covers the core curriculum of an undergraduate algorithms course - from sorting and searching through graph algorithms, dynamic programming, and computational complexity.
 
-* Read online at https://amoilanen.github.io/Algorithms-with-TypeScript/
-* PDF https://amoilanen.github.io/Algorithms-with-TypeScript/algorithms-with-typescript.pdf
+* Read online at https://amoilanen.github.io/Algorithms-with-Typescript/
+* PDF https://amoilanen.github.io/Algorithms-with-Typescript/algorithms-with-typescript.pdf
 
 ## Contents
 
@@ -101,7 +101,7 @@ This starts a local server at `http://localhost:3000` (by default) and watches `
 
 ## Deployment
 
-The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-TypeScript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.
+The website is automatically deployed to [GitHub Pages](https://amoilanen.github.io/Algorithms-with-Typescript/) on every push to `master` via the GitHub Actions workflow in `.github/workflows/deploy.yml`.
 
 ## Project structure
 

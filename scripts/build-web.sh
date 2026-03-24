@@ -45,7 +45,7 @@ fi
 # ---------------------------------------------------------------------------
 
 DIST_DIR="$PROJECT_ROOT/dist/web"
-BASE_URL="https://amoilanen.github.io/Algorithms-with-TypeScript"
+BASE_URL="https://amoilanen.github.io/Algorithms-with-Typescript"
 
 echo "Running SEO post-processing..."
 
@@ -98,10 +98,10 @@ done
 # --- 4. Generate robots.txt -----------------------------------------------
 cat > "$DIST_DIR/robots.txt" << EOF
 User-agent: *
-Allow: /Algorithms-with-TypeScript/
+Allow: /Algorithms-with-Typescript/
 
-Disallow: /Algorithms-with-TypeScript/print.html
-Disallow: /Algorithms-with-TypeScript/toc.html
+Disallow: /Algorithms-with-Typescript/print.html
+Disallow: /Algorithms-with-Typescript/toc.html
 
 Sitemap: ${BASE_URL}/sitemap.xml
 EOF

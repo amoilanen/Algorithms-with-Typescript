@@ -34,4 +34,4 @@ A substantial part of this book was created with the assistance of [Zenflow](htt
 
 This book is available under the **MIT License** and is provided **as is**, without any explicit guarantees of fitness for a given purpose or correctness.
 
-Bugs and errors should be reported at <https://github.com/amoilanen/Algorithms-with-TypeScript>.
+Bugs and errors should be reported at <https://github.com/amoilanen/Algorithms-with-Typescript>.
