@@ -31,6 +31,11 @@ echo "Building website..."
 
 mdbook build "$BOOK_DIR"
 
+# Copy static site assets (e.g. Google Search Console verification file)
+if [[ -d "$PROJECT_ROOT/site" ]]; then
+  cp -r "$PROJECT_ROOT/site/"* "$PROJECT_ROOT/dist/web/"
+fi
+
 # ---------------------------------------------------------------------------
 # SEO Post-Processing
 # ---------------------------------------------------------------------------
