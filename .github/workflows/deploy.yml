@@ -35,8 +35,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra texlive-fonts-recommended fonts-dejavu librsvg2-bin
 
-      - name: Build website
-        run: mdbook build book
+      - name: Build website (with SEO post-processing)
+        run: bash scripts/build-web.sh
 
       - name: Build PDF
         run: bash scripts/build-pdf.sh
