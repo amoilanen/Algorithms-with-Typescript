@@ -70,8 +70,8 @@ for html_file in "$DIST_DIR"/*.html; do
     index.html|preface.html)
       canonical_url="${BASE_URL}/"
       ;;
-    404.html|print.html)
-      continue  # these get noindex below
+    404.html|print.html|google*.html)
+      continue  # these get noindex below / are not content pages
       ;;
     *)
       canonical_url="${BASE_URL}/${filename}"
@@ -122,7 +122,7 @@ EOF
 for html_file in "$DIST_DIR"/*.html; do
   filename=$(basename "$html_file")
   case "$filename" in
-    index.html|preface.html|404.html|print.html|toc.html)
+    index.html|preface.html|404.html|print.html|toc.html|google*.html)
       continue
       ;;
   esac
