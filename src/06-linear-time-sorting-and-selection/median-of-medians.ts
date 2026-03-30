@@ -12,15 +12,15 @@
  * 4. Use this "median of medians" as pivot for partitioning
  * 5. Recurse into the appropriate partition
  *
- * Returns the k-th smallest element. The input is not mutated.
+ * Returns the k-th smallest element. The input array may be mutated.
  *
- * @param elements - The input array
+ * @param elements - The input array (will be partially reordered in place)
  * @param k - Zero-based index of the desired order statistic
  * @returns The k-th smallest element
  * @throws {RangeError} If k is out of bounds or array is empty
  *
  * Time complexity: O(n) worst case
- * Space complexity: O(n)
+ * Space complexity: O(log n) recursion stack
  */
 export function medianOfMedians(elements: number[], k: number): number {
   if (elements.length === 0) {
@@ -32,8 +32,7 @@ export function medianOfMedians(elements: number[], k: number): number {
     );
   }
 
-  const copy = elements.slice(0);
-  return selectMoM(copy, 0, copy.length - 1, k);
+  return selectMoM(elements, 0, elements.length - 1, k);
 }
 
 function selectMoM(

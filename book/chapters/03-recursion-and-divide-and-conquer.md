@@ -92,16 +92,12 @@ There is a deep connection between this technique and recursion. Induction prove
 
 This parallel is not a coincidence — it is the foundation for proving recursive algorithms correctness. To prove that a recursive function computes the right answer, we use _strong induction_ (also called _complete induction_): assume the function works correctly for all inputs smaller than $n$, and show it works correctly for input $n$.
 
--
-
 > **Definition 3.1 - Correctness of a recursive algorithm**
 >
 > A recursive algorithm is **correct** if:
 >
 > 1. It produces the correct answer on all base cases.
 > 2. If the algorithm produces the correct answer on every strictly smaller subproblem, then it also produces the correct answer on the current problem.
-
--
 
 When we implement a recursive algorithm as a function in code, these two conditions translate directly: the base case corresponds to the `if` branch that returns a value without recursing, and the recursive case corresponds to the branch that calls the function on a smaller input and combines the result. Condition 2 becomes: if every recursive call on a strictly smaller input returns the correct answer, then the current call also returns the correct answer.
 

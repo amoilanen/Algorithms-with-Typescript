@@ -157,7 +157,7 @@ export function countingSortByDigit(
   const output = new Array<number>(n);
   const counts = new Array<number>(10).fill(0);
 
-  // Count occurrences of each digit at position
+  // Count occurrences of each digit at the given position
   for (const val of elements) {
     const digit = Math.floor(val / position) % 10;
     counts[digit]!++;
@@ -504,14 +504,14 @@ These algorithms do not contradict the $\Omega(n \log n)$ comparison lower bound
 
 ## The selection problem
 
-We now turn to a different problem. Given an unsorted array of $n$ elements and an integer $k$ (with $0 \leq k < n$), find the $k$th smallest element — the element that would be at index $k$ if the array were sorted.
+We now turn to a different problem. Given an unsorted array of $n$ elements and an index $k$ (with $0 \leq k < n$), find the $k$th smallest element — the element that would be at index $k$ if the array were sorted.
 
 Special cases include:
 - $k = 0$: the minimum (trivially solvable in $O(n)$).
-- $k = n - 1$: the maximum.
+- $k = n - 1$: the maximum (trivially solvable in $O(n)$).
 - $k = \lfloor n/2 \rfloor$: the median.
 
-The naive approach is to sort the array ($O(n \log n)$) and return the element at index $k$. Can we do better? Yes — we can solve the selection problem in $O(n)$ time.
+The naive approach is to sort the array ($O(n \log n)$) and return the element at index $k$. But can we do better? It turns out that the answer is yes - we can actually solve the selection problem in $O(n)$ time and get by with much fewer comparisons if we are smart about the process.
 
 ## Quickselect
 
@@ -540,8 +540,7 @@ export function quickselect(
     );
   }
 
-  const copy = elements.slice(0);
-  return select(copy, 0, copy.length - 1, k);
+  return select(elements, 0, elements.length - 1, k);
 }
 
 function select(
@@ -594,11 +593,64 @@ $$\mathbb{E}[T(n)] = n + \mathbb{E}[T(n/2)] \approx n + n/2 + n/4 + \cdots = 2n 
 
 More precisely, the expected number of comparisons is at most $4n$ (by an analysis similar to the randomized quicksort proof, summing indicator random variables over pairs).
 
+> **Why does $n + n/2 + n/4 + \cdots = 2n$?**
+>
+> This identity can look surprising the first time you see it — how can adding up infinitely many positive numbers give a finite result? Here is a concrete example, followed by the general argument.
+>
+> *Concrete example.* Take $n = 100$. The sum is $100 + 50 + 25 + 12.5 + 6.25 + \cdots$. Adding the first few terms: $100 + 50 = 150$, then $175$, $187.5$, $193.75$, and so on — each new term gets us closer to $200$ but never past it. The sum converges to exactly $200 = 2 \times 100$.
+>
+> *What kind of sum is this?* This is a _geometric series_ — a sum where each term is a fixed fraction of the previous one (here each term is half the preceding term). The general formula for an infinite geometric series with first term $a$ and common ratio $r$ (where $|r| < 1$) is:
+>
+> $$a + ar + ar^2 + ar^3 + \cdots = \frac{a}{1 - r}.$$
+>
+> In our case $a = n$ and $r = 1/2$, so the sum is $n / (1 - 1/2) = n / (1/2) = 2n$.
+>
+> *Step-by-step derivation.* Where does the formula $a/(1-r)$ come from? Let $S$ denote the infinite sum:
+>
+> $$S = a + ar + ar^2 + ar^3 + \cdots$$
+>
+> Multiply both sides by $r$:
+>
+> $$rS = ar + ar^2 + ar^3 + ar^4 + \cdots$$
+>
+> Now subtract the second equation from the first. On the right-hand side, almost every term cancels — $ar$ cancels with $ar$, $ar^2$ cancels with $ar^2$, and so on — leaving only the first term:
+>
+> $$S - rS = a.$$
+>
+> Factoring the left-hand side gives $S(1 - r) = a$, so $S = a / (1 - r)$. This works whenever $|r| < 1$, because the terms $ar^k$ shrink toward zero and the infinite sum converges to a finite value. (When $|r| \geq 1$, the terms do not shrink and the sum diverges.)
+>
+> *Why it matters here.* Each recursive call does less and less work — the first call scans $n$ elements, the next scans roughly $n/2$, then $n/4$, and so on. Even though there are infinitely many terms in the idealized sum, the terms shrink so fast that the total never exceeds $2n$. The first call already accounts for half the total work, the second call for a quarter, and so on — the contributions diminish rapidly and their sum converges to a finite value.
+
 **Worst case.** If the pivot always lands at one extreme, we have:
 
 $$T(n) = n + T(n - 1) = O(n^2).$$
 
 This is the same worst case as quicksort, but it is extremely unlikely with random pivots.
+
+> **Why does $n + (n-1) + (n-2) + \cdots + 1 = O(n^2)$?**
+>
+> This identity is the counterpart to the geometric series above, and it explains why the worst case is so much worse than the expected case.
+>
+> *Concrete example.* Take $n = 100$. The sum is $100 + 99 + 98 + \cdots + 2 + 1 = 5{,}050$. Compare this to the geometric series $100 + 50 + 25 + \cdots = 200$. The arithmetic sum is 25 times larger, because the terms shrink much more slowly.
+>
+> *What kind of sum is this?* If the pivot always lands at one extreme, each recursive call reduces the problem size by only 1 instead of halving it. Expanding the recurrence, we get:
+>
+> $$T(n) = n + (n - 1) + (n - 2) + \cdots + 2 + 1 = \frac{n(n + 1)}{2}.$$
+>
+> This is an _arithmetic series_ — a sum where each term decreases by a fixed amount (here, by 1) rather than by a fixed ratio.
+>
+> *Step-by-step derivation.* Where does the formula $n(n+1)/2$ come from? A classic trick attributed to Gauss: write the sum forwards and backwards and add them together:
+>
+> $$S = 1 + 2 + 3 + \cdots + n$$
+> $$S = n + (n-1) + (n-2) + \cdots + 1$$
+>
+> Adding these two rows term by term, every column sums to $n + 1$:
+>
+> $$2S = (n+1) + (n+1) + (n+1) + \cdots + (n+1) = n(n+1).$$
+>
+> Therefore $S = n(n+1)/2$. The total is roughly $n^2 / 2$, which is $O(n^2)$.
+>
+> *Why it matters here.* Contrast this with the expected case: halving the problem size each time gives a geometric series that converges to $2n$, while reducing it by just 1 each time gives an arithmetic series that grows to $n^2/2$. The difference between "half as much work each step" and "one less unit of work each step" is the difference between linear and quadratic time.
 
 ### Properties
 
@@ -606,7 +658,7 @@ This is the same worst case as quicksort, but it is extremely unlikely with rand
 |----------|------------|
 | Expected time | $O(n)$ |
 | Worst-case time | $O(n^2)$ |
-| Space | $O(n)$ for copy + $O(\log n)$ expected stack |
+| Space | $O(\log n)$ expected stack |
 | Deterministic | No (randomized) |
 
 ## Median of medians
@@ -645,8 +697,7 @@ export function medianOfMedians(
     );
   }
 
-  const copy = elements.slice(0);
-  return selectMoM(copy, 0, copy.length - 1, k);
+  return selectMoM(elements, 0, elements.length - 1, k);
 }
 ```
 
@@ -665,14 +716,16 @@ function selectMoM(
     return arr[k]!;
   }
 
-  // Step 1: Divide into groups of 5, find median of each
+  // Step 1: Divide into groups of 5, find median of each group
   const numGroups = Math.ceil((right - left + 1) / 5);
   for (let i = 0; i < numGroups; i++) {
     const groupLeft = left + i * 5;
     const groupRight = Math.min(groupLeft + 4, right);
 
+    // Sort the group to find its median
     insertionSortRange(arr, groupLeft, groupRight);
 
+    // Move the median of this group to the front of the array
     const medianIndex =
       groupLeft + Math.floor((groupRight - groupLeft) / 2);
     swap(arr, medianIndex, left + i);
@@ -683,7 +736,8 @@ function selectMoM(
     left + Math.floor((numGroups - 1) / 2);
   selectMoM(arr, left, left + numGroups - 1, medianOfMediansIndex);
 
-  // Step 3: Partition around the median of medians
+  // The median of medians is now at medianOfMediansIndex
+  // Step 3: Use it as pivot to partition the whole range
   const pivotIndex = partitionAroundPivot(
     arr, left, right, medianOfMediansIndex
   );
@@ -742,7 +796,7 @@ $$T(n) \leq cn/5 + 7cn/10 + an = cn(1/5 + 7/10) + an = 9cn/10 + an = cn$$
 
 provided $c \geq 10a$. Since $1/5 + 7/10 = 9/10 < 1$, the two recursive calls together operate on a shrinking fraction of the input, and the algorithm runs in $O(n)$ time.
 
-**Space.** The recursion has depth $O(\log n)$ (each level reduces the problem by a constant factor), so the stack space is $O(\log n)$. Combined with the $O(n)$ copy, total space is $O(n)$.
+**Space.** The recursion has depth $O(\log n)$ (each level reduces the problem by a constant factor), so the stack space is $O(\log n)$.
 
 ### Practical considerations
 
@@ -759,7 +813,7 @@ The practical value of median of medians is primarily as a _fallback_: some impl
 | Property | Median of medians |
 |----------|------------------|
 | Worst-case time | $O(n)$ |
-| Space | $O(n)$ |
+| Space | $O(\log n)$ |
 | Deterministic | Yes |
 | Practical | Slower than quickselect due to large constants |
 

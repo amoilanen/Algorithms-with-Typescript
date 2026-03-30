@@ -5,7 +5,7 @@ import { numberComparator } from '../types';
  * Partitions arr[start..end] around a randomly chosen pivot.
  * Returns the final index of the pivot.
  */
-function randomizedPartition<T>(
+export function randomizedPartition<T>(
   arr: T[],
   start: number,
   end: number,
