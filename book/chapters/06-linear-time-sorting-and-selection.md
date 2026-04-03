@@ -669,17 +669,13 @@ The idea: instead of choosing a random pivot, choose a pivot that is _guaranteed
 
 ### The algorithm
 
-1. Divide the $n$ elements into groups of 5.
-2. Find the median of each group by sorting (5 elements can be sorted in constant time).
-3. Recursively compute the median of these $\lceil n/5 \rceil$ medians.
-4. Use this "median of medians" as the pivot for partitioning.
-5. Recurse into the appropriate partition (just like quickselect).
+Let's call the overall procedure $\text{select}(A, k)$ — it returns the $k$-th smallest element of array $A$.
 
-### Why groups of 5?
-
-The choice of 5 is not arbitrary. It is the smallest odd group size that makes the recurrence work out to $O(n)$. The median of medians is guaranteed to be larger than at least $3 \cdot \lceil n/10 \rceil - 2$ elements and smaller than at least $3 \cdot \lceil n/10 \rceil - 2$ elements. This means each recursive call operates on at most roughly $7n/10$ elements.
-
-Here is why: the median of medians is larger than the medians of half the groups (roughly $n/10$ groups), and each of those medians is larger than 2 elements in its group. Therefore, the pivot is larger than at least $3n/10$ elements. By symmetry, it is also smaller than at least $3n/10$ elements. The worst-case partition is therefore at most $7n/10$.
+1. **Divide** the $n$ elements into $\lceil n/5 \rceil$ groups of 5 (the last group may have fewer).
+2. **Find the median** of each group by sorting it (sorting 5 elements takes constant time). Collect these $\lceil n/5 \rceil$ medians into a new array $M$.
+3. **Find a good pivot** by calling $\text{select}(M,\, \lfloor |M|/2 \rfloor)$ — that is, use this same selection procedure on the smaller array $M$ to find its median. The result is the "median of medians" pivot.
+4. **Partition** the original array around this pivot, placing all smaller elements to its left and all larger elements to its right. The pivot ends up at some position $p$.
+5. **Select from the correct side.** If $p = k$, return the pivot. Otherwise, call $\text{select}$ on the left partition (if $k < p$) or the right partition (if $k > p$) to continue searching for the $k$-th element.
 
 ### Implementation
 
@@ -778,23 +774,49 @@ The pivot lands at index 7. We want $k = 7$, and the pivot is at index 7. Done! 
 
 ### Complexity analysis
 
-**Time.** Let $T(n)$ be the worst-case time for selecting from $n$ elements.
+**Time.** Let $T(n)$ be the worst-case time to select from $n$ elements. The algorithm does the following work at each level of recursion:
 
-The algorithm does the following work:
-- Sorting $\lceil n/5 \rceil$ groups of 5: $O(n)$ total.
-- Finding the median of medians: $T(\lceil n/5 \rceil)$.
-- Partitioning: $O(n)$.
-- Recursing into the larger partition: at most $T(7n/10)$.
+- $O(n)$: the non-recursive work — sorting each of the $\lceil n/5 \rceil$ groups of 5 takes $O(1)$ per group, so $O(n)$ total; and partitioning the full array around the pivot is a single linear scan, also $O(n)$.
+- $T(\lceil n/5 \rceil)$: the recursive call to find the median of the $\lceil n/5 \rceil$ group medians. After sorting each group and extracting one median per group (that is the $O(n)$ work above), we have an array of $\lceil n/5 \rceil$ medians and need to find _their_ median — that is, select the element at rank $\lceil n/10 \rceil$ from $\lceil n/5 \rceil$ elements. This is a selection problem on a smaller input, so we solve it by calling the _same_ median-of-medians algorithm recursively, which costs $T(\lceil n/5 \rceil)$.
+- $T(7n/10 + 2)$: the recursive call to select within the partition that contains the target index. We need to show that neither side of the partition can exceed $7n/10 + 2$ elements; here is the argument.
 
-This gives the recurrence:
+**Why the pivot guarantees a $7n/10 + 2$ worst-case split.** We have $\lceil n/5 \rceil$ groups, and the pivot $p$ is the median of the $\lceil n/5 \rceil$ group medians. Call that count $m = \lceil n/5 \rceil$. If we lined up all $m$ group medians in sorted order, $p$ would sit in the middle. That means at least $\lceil m/2 \rceil$ of the group medians are $\leq p$ (the ones at or below the middle position), and at least $\lceil m/2 \rceil$ are $\geq p$. Now consider any group whose median is $\leq p$. Within that group of 5, the median is the 3rd-smallest element, so the median and the two elements below it are all $\leq p$ — that is 3 elements per group. So the total number of elements guaranteed to be $\leq p$ is at least:
 
-$$T(n) \leq T(n/5) + T(7n/10) + O(n).$$
+$$3 \cdot \left\lceil \frac{m}{2} \right\rceil \;\approx\; \frac{3n}{10}$$
 
-We claim $T(n) = O(n)$. To verify, assume $T(n) \leq cn$ for some constant $c$. Then:
+However, two of the $\lceil m/2 \rceil$ groups may not actually contribute a full 3 elements each: the group that contains $p$ itself (we can only guarantee $p$ is $\leq p$, not the two elements above it), and the last group (which may have fewer than 5 elements, so its median may sit above fewer than 2 elements). Subtracting one element for each of these two edge cases gives the exact lower bound $3 \lceil m/2 \rceil - 2$, which simplifies to $3\lceil n/10 \rceil - 2$.
 
-$$T(n) \leq cn/5 + 7cn/10 + an = cn(1/5 + 7/10) + an = 9cn/10 + an = cn$$
+By a symmetric argument, $p$ is also $\geq$ at least $3\lceil n/10 \rceil - 2$ elements. Therefore, after partitioning around $p$, neither side can contain more than $n - (3\lceil n/10 \rceil - 2)$ elements. Since $\lceil n/10 \rceil \geq n/10$, this is at most $n - (3n/10 - 2) = 7n/10 + 2$.
 
-provided $c \geq 10a$. Since $1/5 + 7/10 = 9/10 < 1$, the two recursive calls together operate on a shrinking fraction of the input, and the algorithm runs in $O(n)$ time.
+**The recurrence.** Combining the three terms above gives:
+
+$$T(n) = T(\lceil n/5 \rceil) + T(7n/10 + 2) + O(n)$$
+
+Note that the master theorem does not directly apply here, because the recurrence has two recursive terms of _different_ sizes rather than the standard form $T(n) = aT(n/b) + f(n)$. Instead, we prove $T(n) = O(n)$ by substitution (strong induction). The key observation is that $1/5 + 7/10 = 9/10 < 1$: the two recursive subproblem sizes add up to a strict fraction of $n$, which leaves enough "budget" at each level to pay for the $O(n)$ non-recursive work.
+
+> **Why does $T(n) = T(n/5) + T(7n/10) + O(n)$ solve to $O(n)$?**
+>
+> We claim there exists a constant $c > 0$ (independent of $n$) such that $T(n) \leq cn$ for all $n \geq 1$.
+>
+> Let $a$ be the constant hidden in the $O(n)$ term (that is, the non-recursive work at each level is at most $an$).
+>
+> *Inductive step.* Assume $T(k) \leq ck$ for all $k < n$. Then:
+>
+> $$T(n) \leq c \cdot n/5 + c \cdot (7n/10 + 2) + an = cn/5 + 7cn/10 + 2c + an = 9cn/10 + 2c + an$$
+>
+> For this to be $\leq cn$, we need $9cn/10 + 2c + an \leq cn$, which simplifies to $an + 2c \leq cn/10$. Trying $c = 20a$ gives $an + 40a \leq 2an$, i.e., $40a \leq an$, which holds for all $n \geq 40$.
+>
+> *Base case.* The inductive step only works for $n \geq 40$. For each fixed $n < 40$, the algorithm runs in some specific finite time — it processes at most 40 elements through a fixed sequence of steps, so $T(n)$ is a specific constant for each such $n$. Let $M = \max_{1 \leq n < 40} T(n)$. We need $T(n) \leq cn$ for all $n$ in this range, so we need $c \geq T(n)/n$ for each such $n$; the tightest constraint comes from $n = 1$, giving $c \geq M$. We therefore set:
+>
+> $$c = \max(20a,\; M)$$
+>
+> This single constant (independent of $n$) satisfies both the base cases ($n < 40$, since $c \geq M \geq T(n)/n$) and the inductive step ($n \geq 40$, since $c \geq 20a$). The induction goes through for all $n \geq 1$, establishing $T(n) = O(n)$.
+
+**Why groups of 5?** The choice of 5 is not arbitrary — it is the smallest odd group size that makes the recurrence work out to $O(n)$. With groups of 3 we would have $\lceil n/3 \rceil$ groups. The median of medians step would recurse on $\lceil n/3 \rceil$ elements to find the pivot. By the same counting argument, the pivot would be guaranteed to be $\geq$ (and $\leq$) at least $2\lceil n/6 \rceil - 2$ elements (2 elements per group instead of 3, since in a group of 3 the median has only 1 element below it, plus itself). So each partition side would have at most $n - (2n/6 - 2) = 2n/3 + 2$ elements. The recurrence would be:
+
+$$T(n) = T(\lceil n/3 \rceil) + T(2n/3 + 2) + O(n)$$
+
+Since $1/3 + 2/3 = 1$, the two subproblems add up to the full input size (plus a constant), so this solves to $O(n \log n)$, not $O(n)$. We need the fractions to sum to strictly less than 1.
 
 **Space.** The recursion has depth $O(\log n)$ (each level reduces the problem by a constant factor), so the stack space is $O(\log n)$.
 
