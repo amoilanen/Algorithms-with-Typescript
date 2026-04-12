@@ -2,7 +2,8 @@ import type { Comparator } from '../types';
 import { numberComparator } from '../types';
 
 /**
- * Partitions arr[start..end] around the middle element as pivot.
+ * Partitions arr[start..end] around the element at pivotPos (Lomuto scheme).
+ * If pivotPos is not provided, the middle element is used.
  * Returns the final index of the pivot, or undefined if indices are invalid.
  */
 export function partition<T>(
@@ -10,17 +11,18 @@ export function partition<T>(
   start: number,
   end: number,
   comparator: Comparator<T> = numberComparator as Comparator<T>,
+  pivotPos?: number,
 ): number | undefined {
   if (start > end || end >= arr.length || start < 0 || end < 0) {
     return undefined;
   }
 
-  const middleIndex = Math.floor((start + end) / 2);
+  const pivotIndex = pivotPos ?? Math.floor((start + end) / 2);
   let storeIndex = start;
 
   // Move pivot to end
-  const pivotTemp = arr[middleIndex]!;
-  arr[middleIndex] = arr[end]!;
+  const pivotTemp = arr[pivotIndex]!;
+  arr[pivotIndex] = arr[end]!;
   arr[end] = pivotTemp;
 
   for (let i = start; i < end; i++) {

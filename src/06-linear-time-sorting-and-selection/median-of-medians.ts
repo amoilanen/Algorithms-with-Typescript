@@ -1,3 +1,7 @@
+import { insertionSortRange } from '../04-elementary-sorting/insertion-sort';
+import { partition } from '../05-efficient-sorting/quick-sort';
+import { numberComparator } from '../types';
+
 /**
  * Deterministic linear-time selection using the median-of-medians algorithm
  * (also known as BFPRT, after Blum, Floyd, Pratt, Rivest, and Tarjan).
@@ -66,8 +70,8 @@ function selectMoM(
   selectMoM(arr, left, left + numGroups - 1, medianOfMediansIndex);
 
   // The median of medians is now at medianOfMediansIndex
-  // Step 3: Use it as pivot to partition the whole range
-  const pivotIndex = partitionAroundPivot(arr, left, right, medianOfMediansIndex);
+  // Step 3: Use Lomuto partition (from Chapter 5) with the chosen pivot
+  const pivotIndex = partition(arr, left, right, numberComparator, medianOfMediansIndex)!;
 
   if (k === pivotIndex) {
     return arr[pivotIndex]!;
@@ -75,54 +79,6 @@ function selectMoM(
     return selectMoM(arr, left, pivotIndex - 1, k);
   } else {
     return selectMoM(arr, pivotIndex + 1, right, k);
-  }
-}
-
-/**
- * Partitions arr[left..right] around the element at pivotPos.
- * Returns the final position of the pivot element.
- */
-function partitionAroundPivot(
-  arr: number[],
-  left: number,
-  right: number,
-  pivotPos: number,
-): number {
-  const pivotValue = arr[pivotPos]!;
-
-  // Move pivot to end
-  swap(arr, pivotPos, right);
-
-  let storeIndex = left;
-  for (let i = left; i < right; i++) {
-    if (arr[i]! < pivotValue) {
-      swap(arr, i, storeIndex);
-      storeIndex++;
-    }
-  }
-
-  // Move pivot to its final position
-  swap(arr, storeIndex, right);
-
-  // If there are duplicates of the pivot value, we need to find the exact
-  // position that satisfies the selection index
-  return storeIndex;
-}
-
-/** In-place insertion sort on a subarray arr[left..right]. */
-function insertionSortRange(
-  arr: number[],
-  left: number,
-  right: number,
-): void {
-  for (let i = left + 1; i <= right; i++) {
-    const key = arr[i]!;
-    let j = i - 1;
-    while (j >= left && arr[j]! > key) {
-      arr[j + 1] = arr[j]!;
-      j--;
-    }
-    arr[j + 1] = key;
   }
 }
 

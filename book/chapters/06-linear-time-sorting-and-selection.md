@@ -669,7 +669,7 @@ The idea: instead of choosing a random pivot, choose a pivot that is _guaranteed
 
 ### The algorithm
 
-Let's call the overall procedure $\text{select}(A, k)$ — it returns the $k$-th smallest element of array $A$.
+Let's call the overall procedure $\text{select}(A, k)$ — it returns the $k$-th smallest element of array $A$ (zero-indexed). The algorithm works in place: it rearranges $A$ so that position $k$ holds the correct element (with everything to its left $\leq$ it and everything to its right $\geq$ it), then returns that element's value.
 
 1. **Divide** the $n$ elements into $\lceil n/5 \rceil$ groups of 5 (the last group may have fewer).
 2. **Find the median** of each group by sorting it (sorting 5 elements takes constant time). Collect these $\lceil n/5 \rceil$ medians into a new array $M$.
@@ -679,7 +679,14 @@ Let's call the overall procedure $\text{select}(A, k)$ — it returns the $k$-th
 
 ### Implementation
 
+The implementation reuses `insertionSortRange` from Chapter 4 to sort small groups in place, and the Lomuto `partition` from Chapter 5 to partition around the chosen pivot. Each group has at most 5 elements, so insertion sort's $O(n^2)$ cost for $n=5$ is $O(1)$ per group.
+
 ```typescript
+import { insertionSortRange } from
+  '../04-elementary-sorting/insertion-sort';
+import { partition } from
+  '../05-efficient-sorting/quick-sort';
+
 export function medianOfMedians(
   elements: number[],
   k: number,
@@ -733,10 +740,11 @@ function selectMoM(
   selectMoM(arr, left, left + numGroups - 1, medianOfMediansIndex);
 
   // The median of medians is now at medianOfMediansIndex
-  // Step 3: Use it as pivot to partition the whole range
-  const pivotIndex = partitionAroundPivot(
-    arr, left, right, medianOfMediansIndex
-  );
+  // Step 3: Lomuto partition (from Ch. 5) with the chosen pivot
+  const pivotIndex = partition(
+    arr, left, right, numberComparator,
+    medianOfMediansIndex
+  )!;
 
   if (k === pivotIndex) {
     return arr[pivotIndex]!;
@@ -772,19 +780,21 @@ $[\underbrace{3, 5, 7, 4, 1, 2, 6}_{< 8},\ \underline{8},\ \underbrace{12, 19, 2
 
 The pivot lands at index 7. We want $k = 7$, and the pivot is at index 7. Done! Return 8.
 
+> **A note on the partition.** The partition above is shown _conceptually_: it illustrates which elements end up on which side of the pivot, but lists them in their original order for readability. The actual in-place algorithm rearranges the array before partitioning — sorting each group of 5, swapping medians to the front — and the Lomuto partition itself does not preserve relative order. The arrangement of elements _within_ each partition does not matter for correctness or efficiency; all that matters is that the pivot lands at position $p$ with all smaller elements to its left and all larger elements to its right.
+
 ### Complexity analysis
 
 **Time.** Let $T(n)$ be the worst-case time to select from $n$ elements. The algorithm does the following work at each level of recursion:
 
 - $O(n)$: the non-recursive work — sorting each of the $\lceil n/5 \rceil$ groups of 5 takes $O(1)$ per group, so $O(n)$ total; and partitioning the full array around the pivot is a single linear scan, also $O(n)$.
-- $T(\lceil n/5 \rceil)$: the recursive call to find the median of the $\lceil n/5 \rceil$ group medians. After sorting each group and extracting one median per group (that is the $O(n)$ work above), we have an array of $\lceil n/5 \rceil$ medians and need to find _their_ median — that is, select the element at rank $\lceil n/10 \rceil$ from $\lceil n/5 \rceil$ elements. This is a selection problem on a smaller input, so we solve it by calling the _same_ median-of-medians algorithm recursively, which costs $T(\lceil n/5 \rceil)$.
-- $T(7n/10 + 2)$: the recursive call to select within the partition that contains the target index. We need to show that neither side of the partition can exceed $7n/10 + 2$ elements; here is the argument.
+- $T(\lceil n/5 \rceil)$: the recursive call to find the median of the $\lceil n/5 \rceil$ group medians. After sorting each group and extracting one median per group (that is the $O(n)$ work above), we have an array of $\lceil n/5 \rceil$ medians and need to find _their_ median — that is, select the $\lceil n/10 \rceil$-th smallest element out of the $\lceil n/5 \rceil$ medians (since the median of $m$ elements is the element at position $\lceil m/2 \rceil$ in sorted order, and $\lceil \lceil n/5 \rceil / 2 \rceil = \lceil n/10 \rceil$). This is a selection problem on a smaller input, so we solve it by calling the _same_ median-of-medians algorithm recursively, which costs $T(\lceil n/5 \rceil)$.
+- $T(7n/10 + 2)$: the recursive call to select within the partition that contains the target index since neither partition can have more than $7n/10 + 2$ elements; let us provide the proof of this below.
 
 **Why the pivot guarantees a $7n/10 + 2$ worst-case split.** We have $\lceil n/5 \rceil$ groups, and the pivot $p$ is the median of the $\lceil n/5 \rceil$ group medians. Call that count $m = \lceil n/5 \rceil$. If we lined up all $m$ group medians in sorted order, $p$ would sit in the middle. That means at least $\lceil m/2 \rceil$ of the group medians are $\leq p$ (the ones at or below the middle position), and at least $\lceil m/2 \rceil$ are $\geq p$. Now consider any group whose median is $\leq p$. Within that group of 5, the median is the 3rd-smallest element, so the median and the two elements below it are all $\leq p$ — that is 3 elements per group. So the total number of elements guaranteed to be $\leq p$ is at least:
 
 $$3 \cdot \left\lceil \frac{m}{2} \right\rceil \;\approx\; \frac{3n}{10}$$
 
-However, two of the $\lceil m/2 \rceil$ groups may not actually contribute a full 3 elements each: the group that contains $p$ itself (we can only guarantee $p$ is $\leq p$, not the two elements above it), and the last group (which may have fewer than 5 elements, so its median may sit above fewer than 2 elements). Subtracting one element for each of these two edge cases gives the exact lower bound $3 \lceil m/2 \rceil - 2$, which simplifies to $3\lceil n/10 \rceil - 2$.
+However, the last group may have fewer than 5 elements, so its median may sit above fewer than 2 elements — in the worst case (a group of 1 or 2), it contributes only 1 element instead of 3, a shortfall of 2. Every other group, including the group that contains $p$ itself, is a full group of 5 and contributes the full 3 elements ($p$'s group contributes $p$ plus the 2 elements below it). So the total number of elements guaranteed to be $\leq p$ is at least $3 \lceil m/2 \rceil - 2$, which simplifies to $3\lceil n/10 \rceil - 2$.
 
 By a symmetric argument, $p$ is also $\geq$ at least $3\lceil n/10 \rceil - 2$ elements. Therefore, after partitioning around $p$, neither side can contain more than $n - (3\lceil n/10 \rceil - 2)$ elements. Since $\lceil n/10 \rceil \geq n/10$, this is at most $n - (3n/10 - 2) = 7n/10 + 2$.
 
@@ -792,31 +802,63 @@ By a symmetric argument, $p$ is also $\geq$ at least $3\lceil n/10 \rceil - 2$ e
 
 $$T(n) = T(\lceil n/5 \rceil) + T(7n/10 + 2) + O(n)$$
 
-Note that the master theorem does not directly apply here, because the recurrence has two recursive terms of _different_ sizes rather than the standard form $T(n) = aT(n/b) + f(n)$. Instead, we prove $T(n) = O(n)$ by substitution (strong induction). The key observation is that $1/5 + 7/10 = 9/10 < 1$: the two recursive subproblem sizes add up to a strict fraction of $n$, which leaves enough "budget" at each level to pay for the $O(n)$ non-recursive work.
+Note that the master theorem does not directly apply here, because the recurrence has two recursive terms of _different_ sizes rather than the standard form $T(n) = aT(n/b) + f(n)$. The key observation is that $1/5 + 7/10 = 9/10 < 1$: the two recursive subproblem sizes add up to a strict fraction of $n$, and this is what makes the recursion tree converge and make $T(n)$ behave as a $O(n)$.
 
-> **Why does $T(n) = T(n/5) + T(7n/10) + O(n)$ solve to $O(n)$?**
+> **Why does $T(n) = T(n/5) + T(7n/10) + O(n)$ behave as $O(n)$?**
 >
-> We claim there exists a constant $c > 0$ (independent of $n$) such that $T(n) \leq cn$ for all $n \geq 1$.
+> Consider the recursion tree. At each level, sum the non-recursive work done by all active subproblems:
 >
-> Let $a$ be the constant hidden in the $O(n)$ term (that is, the non-recursive work at each level is at most $an$).
+> | Level | Subproblem sizes | Work at this level |
+> |-------|------------------|--------------------|
+> | 0 | $n$ | $n$ |
+> | 1 | $n/5,\; 7n/10$ | $n/5 + 7n/10 = 9n/10$ |
+> | 2 | $n/25,\; 7n/50,\; 7n/50,\; 49n/100$ | $(9/10)^2\, n$ |
+> | $k$ | (all branches at depth $k$) | $(9/10)^k\, n$ |
 >
-> *Inductive step.* Assume $T(k) \leq ck$ for all $k < n$. Then:
+> Because the fractions sum to $1/5 + 7/10 = 9/10 < 1$, the total work at each level shrinks by a factor of $9/10$. Summing over all levels gives a *convergent* geometric series:
 >
-> $$T(n) \leq c \cdot n/5 + c \cdot (7n/10 + 2) + an = cn/5 + 7cn/10 + 2c + an = 9cn/10 + 2c + an$$
+> $$T(n) = n + \frac{9n}{10} + \left(\frac{9}{10}\right)^2 n + \cdots = n \cdot \frac{1}{1 - 9/10} = 10n = O(n).$$
 >
-> For this to be $\leq cn$, we need $9cn/10 + 2c + an \leq cn$, which simplifies to $an + 2c \leq cn/10$. Trying $c = 20a$ gives $an + 40a \leq 2an$, i.e., $40a \leq an$, which holds for all $n \geq 40$.
->
-> *Base case.* The inductive step only works for $n \geq 40$. For each fixed $n < 40$, the algorithm runs in some specific finite time — it processes at most 40 elements through a fixed sequence of steps, so $T(n)$ is a specific constant for each such $n$. Let $M = \max_{1 \leq n < 40} T(n)$. We need $T(n) \leq cn$ for all $n$ in this range, so we need $c \geq T(n)/n$ for each such $n$; the tightest constraint comes from $n = 1$, giving $c \geq M$. We therefore set:
->
-> $$c = \max(20a,\; M)$$
->
-> This single constant (independent of $n$) satisfies both the base cases ($n < 40$, since $c \geq M \geq T(n)/n$) and the inductive step ($n \geq 40$, since $c \geq 20a$). The induction goes through for all $n \geq 1$, establishing $T(n) = O(n)$.
+> The strict inequality $< 1$ is what makes the series converge and collapses all levels into a single $O(n)$ term.
 
-**Why groups of 5?** The choice of 5 is not arbitrary — it is the smallest odd group size that makes the recurrence work out to $O(n)$. With groups of 3 we would have $\lceil n/3 \rceil$ groups. The median of medians step would recurse on $\lceil n/3 \rceil$ elements to find the pivot. By the same counting argument, the pivot would be guaranteed to be $\geq$ (and $\leq$) at least $2\lceil n/6 \rceil - 2$ elements (2 elements per group instead of 3, since in a group of 3 the median has only 1 element below it, plus itself). So each partition side would have at most $n - (2n/6 - 2) = 2n/3 + 2$ elements. The recurrence would be:
+**Why groups of 5?** The choice of 5 is not arbitrary — it is the smallest group size that makes the recurrence work out to $O(n)$. Groups of 3 and 4 both fail, and for related reasons.
+
+**Groups of 3.** We would have $\lceil n/3 \rceil$ groups. The median of medians step would recurse on $\lceil n/3 \rceil$ elements to find the pivot. By the same counting argument, the pivot would be guaranteed to be $\geq$ (and $\leq$) at least $2\lceil n/6 \rceil - 2$ elements (2 elements per group instead of 3, since in a group of 3 the median has only 1 element below it, plus itself). So each partition side would have at most $n - (2n/6 - 2) = 2n/3 + 2$ elements. The recurrence would be:
 
 $$T(n) = T(\lceil n/3 \rceil) + T(2n/3 + 2) + O(n)$$
 
-Since $1/3 + 2/3 = 1$, the two subproblems add up to the full input size (plus a constant), so this solves to $O(n \log n)$, not $O(n)$. We need the fractions to sum to strictly less than 1.
+Since $1/3 + 2/3 = 1$, the two subproblems add up to the full input size (plus a constant), so this solves to $O(n \log n)$, not $O(n)$.
+
+**Groups of 4.** We would have $\lceil n/4 \rceil$ groups. The lower median of a group of 4 is the 2nd element, which has only 1 element below it — so each qualifying group contributes just 2 elements, the same as groups of 3. The pivot is guaranteed to be $\geq$ (and $\leq$) at least $2 \lceil n/8 \rceil \approx n/4$ elements, giving a worst-case partition of size $3n/4$. The recurrence would be:
+
+$$T(n) = T(\lceil n/4 \rceil) + T(3n/4 + 2) + O(n)$$
+
+Since $1/4 + 3/4 = 1$, this again solves to $O(n \log n)$, not $O(n)$.
+
+**Why 5 succeeds where 3 and 4 fail.** The crucial quantity is how many elements each qualifying group contributes to the "guaranteed $\leq p$" set: $\lceil g/2 \rceil$ (the median plus every element below it). For $g = 3$ this is 2; for $g = 4$ it is also 2 (the lower median of 4 elements has only 1 element below it, the same as the median of 3); but for $g = 5$ it jumps to 3. This extra element per group is what pushes the fraction sum below 1: for groups of 5 we get $1/5 + 7/10 = 9/10 < 1$, giving the convergent geometric series that yields $O(n)$.
+
+Note that groups of 6 also give $O(n)$: each group contributes $\lceil 6/2 \rceil = 3$ elements (the same as groups of 5), but there are fewer groups ($n/6$ instead of $n/5$), so fewer qualifying groups ($n/12$ instead of $n/10$), giving only $3 \cdot n/12 = n/4$ guaranteed elements instead of $3n/10$. The worst-case partition is therefore $n - n/4 = 3n/4$, and the fractions sum to $1/6 + 3/4 = 11/12 < 1$. But 5 is preferred over 6 because smaller groups mean less work sorting each group and fewer groups to process. More generally, odd group sizes are more efficient because their median is the true middle element: in a group of $g$ (odd), $\lceil g/2 \rceil = (g+1)/2$ elements sit at or below the median and the same number at or above, so every element "pulls its weight." In an even group, the lower median is biased — one element sits above the median without contributing to the guarantee, wasting a slot. Groups of 4 and 3 end up contributing the same count (2) even though groups of 4 are larger.
+
+In order to have $O(n)$ we need the fractions to sum to strictly less than 1.
+
+> **Why does $T(n) = T(n/3) + T(2n/3) + O(n)$ solve to $O(n \log n)$ and not $O(n)$?**
+>
+> Consider the recursion tree. At each level, sum the non-recursive work done by all active subproblems:
+>
+> | Level | Subproblem sizes | Work at this level |
+> |-------|------------------|--------------------|
+> | 0 | $n$ | $n$ |
+> | 1 | $n/3,\; 2n/3$ | $n/3 + 2n/3 = n$ |
+> | 2 | $n/9,\; 2n/9,\; 2n/9,\; 4n/9$ | $n/9+2n/9+2n/9+4n/9 = n$ |
+> | $k$ | (all branches at depth $k$) | $n$ |
+>
+> Because the fractions sum to exactly 1, the total input covered at every level is exactly $n$, so every level costs $\Theta(n)$. The deepest branch is the $2n/3$ arm, which reaches its base case after $\log_{3/2} n = \Theta(\log n)$ levels. Multiplying gives:
+>
+> $$T(n) = \Theta(n) \times \Theta(\log n) = \Theta(n \log n).$$
+>
+> This is the same reason mergesort — whose recurrence $T(n) = 2T(n/2) + O(n)$ also has fractions summing to $1/2 + 1/2 = 1$ — is $O(n \log n)$.
+>
+> Contrast this with the groups-of-5 recurrence analysed in the box above: there $1/5 + 7/10 = 9/10 < 1$, so the per-level work shrinks geometrically and sums to $O(n)$. The difference between $O(n)$ and $O(n \log n)$ comes down to whether the fractions sum to strictly less than 1 (geometric series converges) or exactly 1 (every level costs $\Theta(n)$ and there are $\Theta(\log n)$ levels).
 
 **Space.** The recursion has depth $O(\log n)$ (each level reduces the problem by a constant factor), so the stack space is $O(\log n)$.
 
@@ -826,7 +868,9 @@ While the median-of-medians algorithm is a beautiful theoretical result — it p
 
 1. It avoids the overhead of computing medians of groups.
 2. Random pivots are usually good enough.
-3. The probability of quadratic behavior is astronomically small.
+3. The probability of quadratic behavior is exponentially small in $n$ — bounded by $O(2^{-n})$ — making it vanishingly unlikely for any practical input size.
+
+To see why, let's call a pivot "good" if it lands in the middle 50% of the subarray (between the 25th and 75th percentiles), and "bad" otherwise — like a coin flip, each pivot is good with probability $1/2$. A good pivot shrinks the subproblem to at most $3/4$ of its current size, so just a handful of good pivots are enough to collapse the subarray through geometric shrinkage: $n \to 3n/4 \to 9n/16 \to \cdots$ For quadratic behavior, almost all pivots throughout the entire recursion would have to be bad — good pivots must appear too rarely to drive this shrinkage. But that is like flipping a fair coin hundreds of times and getting almost no heads. Each flip is independent, so the probability drops exponentially with $n$: out of $\Theta(n)$ pivots we expect about half to be good, but quadratic behavior needs almost all of them to be bad. Each additional pivot that "must be bad" multiplies the probability by $1/2$, so after the $\Theta(n)$ pivots in the "bad" $O(n^2)$ scenario the probability is at most $(1/2)^{\Theta(n)} = O(2^{-n})$. For an input of just $n = 100$, this is already $\approx 10^{-30}$.
 
 The practical value of median of medians is primarily as a _fallback_: some implementations (e.g., the `introselect` algorithm in C++ STL) start with quickselect and switch to median of medians if the recursion depth grows too large, guaranteeing worst-case $O(n)$ while maintaining fast average-case performance.
 
@@ -835,7 +879,7 @@ The practical value of median of medians is primarily as a _fallback_: some impl
 | Property | Median of medians |
 |----------|------------------|
 | Worst-case time | $O(n)$ |
-| Space | $O(\log n)$ |
+| Space | $O(\log n)$ — recursion stack depth (each level reduces the problem by a constant fraction) |
 | Deterministic | Yes |
 | Practical | Slower than quickselect due to large constants |
 
@@ -843,17 +887,17 @@ The practical value of median of medians is primarily as a _fallback_: some impl
 
 In this chapter we studied algorithms that break the $\Omega(n \log n)$ comparison-based sorting barrier and solve the selection problem in linear time:
 
-- **Counting sort** sorts non-negative integers in $O(n + k)$ time by counting occurrences and computing prefix sums. It is stable and serves as a building block for radix sort.
+- **Counting sort** sorts $n$ non-negative integers in the range $[0, k]$ in $O(n + k)$ time by counting occurrences and computing prefix sums. It is stable and serves as a building block for radix sort.
 
-- **Radix sort** extends counting sort to handle integers with multiple digits, sorting digit by digit from least significant to most significant. It runs in $O(dn)$ time where $d$ is the number of digits. The key requirement is a stable subroutine sort.
+- **Radix sort** extends counting sort to handle integers with multiple digits, sorting digit by digit from least significant to most significant. It runs in $O(dn)$ time where $d$ is the number of digits. Correctness depends on the subroutine sort being stable, so that the ordering established by earlier digits is preserved when sorting by later ones.
 
 - **Bucket sort** distributes elements into buckets, sorts each bucket, and concatenates. Under a uniform distribution, the expected time is $O(n)$. Its worst case is $O(n^2)$ when all elements land in one bucket.
 
 - **Quickselect** finds the $k$th smallest element in expected $O(n)$ time by partitioning around a random pivot and recursing into one side. It is the practical algorithm of choice for selection.
 
-- **Median of medians** achieves worst-case $O(n)$ selection through a carefully chosen pivot: the median of group medians. While theoretically optimal, its large constant factor makes it slower than randomized quickselect in practice.
+- **Median of medians** achieves worst-case $O(n)$ selection through a carefully chosen pivot: the median of a group medians. While theoretically optimal, its large constant factor makes it slower than randomized quickselect in practice.
 
-The linear-time sorting algorithms teach an important lesson: algorithmic lower bounds depend on the model of computation. The $\Omega(n \log n)$ bound is real for comparison-based sorting, but by stepping outside the comparison model — using integers as array indices, extracting digits — we can do better. The selection algorithms show that finding a single order statistic is fundamentally easier than fully sorting, requiring only $O(n)$ time regardless of the method.
+The linear-time sorting algorithms teach an important lesson: algorithmic lower bounds depend on the model of computation. The $\Omega(n \log n)$ bound is real for comparison-based sorting, but by stepping outside the comparison model — using integers as array indices (counting sort), extracting digits (radix sort) — we can do better. The selection algorithms show that finding a single order statistic is fundamentally easier than fully sorting, requiring only $O(n)$ time regardless of the method.
 
 ## Exercises
 
@@ -864,5 +908,3 @@ The linear-time sorting algorithms teach an important lesson: algorithmic lower 
 **Exercise 6.3.** Counting sort uses $O(k)$ space for the counts array, where $k$ is the maximum value. If we need to sort $n$ integers in the range $[0, n^2)$, we could use counting sort directly with $k = n^2$, or we could use radix sort with a base-$n$ representation (2 digits). Compare the time and space complexity of both approaches.
 
 **Exercise 6.4.** Consider a modification of quickselect where, instead of choosing a random pivot, we always choose the first element as the pivot. Describe an input of size $n$ for which this modified quickselect takes $\Theta(n^2)$ time to find the median. Then describe an input for which it takes $\Theta(n)$ time.
-
-**Exercise 6.5.** The median-of-medians algorithm divides elements into groups of 5. What happens if we use groups of 3 instead? Set up the recurrence and show that it does _not_ solve to $O(n)$. What about groups of 7? (Hint: compute the fraction of elements guaranteed to be eliminated at each step for each group size.)

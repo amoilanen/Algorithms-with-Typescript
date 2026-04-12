@@ -296,7 +296,7 @@ The partition step rearranges `arr[start..end]` around a pivot element and retur
 - All elements to the right are $\geq$ the pivot.
 - The pivot is in its correct final position.
 
-Our implementation chooses the middle element as the pivot, then uses the Lomuto partition scheme: scan from left, moving elements smaller than the pivot to the front.
+Our implementation uses the Lomuto partition scheme: scan from left, moving elements smaller than the pivot to the front. By default the middle element is chosen as the pivot, but the caller can pass an explicit `pivotPos` to partition around a specific element — a flexibility we will use in Chapter 6 for the median-of-medians algorithm.
 
 ```typescript
 export function partition<T>(
@@ -304,17 +304,18 @@ export function partition<T>(
   start: number,
   end: number,
   comparator: Comparator<T> = numberComparator as Comparator<T>,
+  pivotPos?: number,
 ): number | undefined {
   if (start > end || end >= arr.length || start < 0 || end < 0) {
     return undefined;
   }
 
-  const middleIndex = Math.floor((start + end) / 2);
+  const pivotIndex = pivotPos ?? Math.floor((start + end) / 2);
   let storeIndex = start;
 
   // Move pivot to end
-  const pivotTemp = arr[middleIndex]!;
-  arr[middleIndex] = arr[end]!;
+  const pivotTemp = arr[pivotIndex]!;
+  arr[pivotIndex] = arr[end]!;
   arr[end] = pivotTemp;
 
   for (let i = start; i < end; i++) {
