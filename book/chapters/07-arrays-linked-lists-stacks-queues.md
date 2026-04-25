@@ -21,9 +21,11 @@ fixed[9] = 99;
 
 In languages like C or Java, going beyond the allocated size is either a compile-time error or a runtime crash. JavaScript's built-in arrays hide this complexity, but the cost of resizing is still there; it is just managed for us in the background. Let us see how by prodiving an implementation of dynamic arrays.
 
+A note on faithfulness. The closest analogue to a true fixed-size, contiguous-memory array in TypeScript is a **TypedArray** such as `Int32Array` or `Float64Array`, which is backed by a raw `ArrayBuffer` of bytes. TypedArrays have a fixed length set at construction, cannot grow, and store elements of a single numeric type in a predictable, cache-friendly layout. The downside is that they only support numeric primitives, so they cannot hold a generic `T`. Because we want a reusable `DynamicArray<T>`, the implementation below uses a regular JavaScript array as the backing buffer and treats its slots as fixed by tracking capacity manually. Conceptually, every `this.data[i]` access should be read as "load the $i$-th word from a contiguous memory block of size `capacity`." If you want to see the same idea with a genuinely fixed-size store, swap the backing buffer for a `Float64Array` and drop the `T | undefined` typing; the resize logic stays identical.
+
 ## Dynamic arrays
 
-A **dynamic array** maintains an internal buffer that is larger than the number of elements currently stored. When the buffer fills up, the array allocates a new buffer of double the size and copies all elements over. This doubling strategy gives us amortized $O(1)$ appends while keeping worst-case access at $O(1)$.
+A **dynamic array** maintains an internal buffer that is larger than the number of elements currently stored. When the buffer fills up, the array allocates a new buffer of double the size and copies all elements over. This doubling strategy gives us amortized $O(1)$ appends while keeping worst-case access at $O(1)$. We will justify both bounds in the complexity and space analysis section below, once we have seen how the implementation grows the buffer.
 
 ### The doubling strategy
 
@@ -32,15 +34,7 @@ Suppose our dynamic array has capacity $c$ and currently holds $n$ elements. Whe
 - If $n < c$: store the element in slot $n$. Cost: $O(1)$.
 - If $n = c$: allocate a new buffer of size $2c$, copy all $n$ elements, then store the new element. Cost: $O(n)$.
 
-The key insight is that expensive copies happen rarely. After a copy doubles the capacity to $2c$, we can perform another $c$ cheap appends before the next copy. This is the essence of **amortized analysis**.
-
-### Amortized analysis of append
-
-We use the **aggregate method**. Starting from an empty array with initial capacity 1, suppose we perform $n$ appends. Copies happen when the size reaches 1, 2, 4, 8, ..., up to some power of 2. The total number of element copies across all resizes is:
-
-$$1 + 2 + 4 + 8 + \cdots + 2^{\lfloor \log_2 n \rfloor} \leq 2n$$
-
-So the total cost of $n$ appends is at most $n$ (for the stores) plus $2n$ (for all the copies), giving $3n$ total. The amortized cost per append is therefore $3n / n = O(1)$.
+The key insight is that expensive copies happen rarely. After a copy doubles the capacity to $2c$, we can perform another $c$ cheap appends before the next copy. This is essential for **amortized analysis**, which we will make precise after the implementation.
 
 ### Implementation
 
@@ -75,22 +69,14 @@ export class DynamicArray<T> implements Iterable<T> {
   }
 
   append(value: T): void {
-    if (this.length === this.data.length) {
-      this.resize(this.data.length * 2);
-    }
+    this.growIfFull();
     this.data[this.length] = value;
     this.length++;
   }
 
   insert(index: number, value: T): void {
-    if (index < 0 || index > this.length) {
-      throw new RangeError(
-        `Index ${index} out of bounds for size ${this.length}`
-      );
-    }
-    if (this.length === this.data.length) {
-      this.resize(this.data.length * 2);
-    }
+    this.checkInsertBounds(index);
+    this.growIfFull();
     for (let i = this.length; i > index; i--) {
       this.data[i] = this.data[i - 1];
     }
@@ -106,6 +92,17 @@ export class DynamicArray<T> implements Iterable<T> {
     }
     this.data[this.length - 1] = undefined;
     this.length--;
+    this.shrinkIfSparse();
+    return value;
+  }
+
+  private growIfFull(): void {
+    if (this.length === this.data.length) {
+      this.resize(this.data.length * 2);
+    }
+  }
+
+  private shrinkIfSparse(): void {
     if (
       this.length > 0 &&
       this.length <= this.data.length / 4 &&
@@ -113,7 +110,6 @@ export class DynamicArray<T> implements Iterable<T> {
     ) {
       this.resize(Math.max(4, Math.floor(this.data.length / 2)));
     }
-    return value;
   }
 
   private resize(newCapacity: number): void {
@@ -131,13 +127,67 @@ export class DynamicArray<T> implements Iterable<T> {
       );
     }
   }
+
+  private checkInsertBounds(index: number): void {
+    if (index < 0 || index > this.length) {
+      throw new RangeError(
+        `Index ${index} out of bounds for size ${this.length}`
+      );
+    }
+  }
   // ... iterator, toArray, etc.
 }
 ```
 
 Notice that `remove` also implements **shrinking**: when occupancy falls below 25%, the buffer is halved (but never below 4). This prevents a long sequence of removals from wasting memory, and the halving threshold (1/4 rather than 1/2) avoids **thrashing**, a pathological pattern where alternating appends and removes near the boundary trigger repeated resizes.
 
-### Complexity summary
+### Complexity and space analysis
+
+Now that we have seen the implementation, we can return to the claim made at the start of this section: a dynamic array supports `append` in amortized $O(1)$ time while keeping `get` and `set` at $O(1)$ in the worst case.
+
+#### Indexed read and write stay $O(1)$
+
+The backing store is a single contiguous JavaScript array, so the slot for element $i$ lives at a fixed offset within it. Computing that offset is constant work, independent of $n$. Once we have the offset, both reading the slot (`get(i)`) and writing to it (`set(i, v)`) take constant time.
+
+Note that neither `get` nor `set` ever triggers a resize. They do not change the number of elements stored, so the buffer never needs to grow or shrink as a result of them; only `append`, `insert`, and `remove` change the size and therefore interact with the resize logic. `get` and `set` simply address an existing slot.
+
+Resizing does not break this invariant: the new buffer is also contiguous, so after the copy the slot for element $i$ is again at a fixed offset. Therefore `get(i)` and `set(i, v)` are both $O(1)$ in the worst case, not just on average.
+
+#### Amortized analysis of `append`
+
+A single `append` can cost $O(n)$ when it triggers a resize, but resizes are rare enough that the *average* cost per append, taken over a long sequence of operations, is $O(1)$. This kind of averaging is what **amortized analysis** captures.
+
+We use the **aggregate method**. Starting from an empty array with initial capacity 1, suppose we perform $n$ appends. Resizes happen when the size reaches 1, 2, 4, 8, ..., up to the largest power of 2 not exceeding $n$. The total number of element copies across all resizes is therefore
+
+$$1 + 2 + 4 + 8 + \cdots + 2^{\lfloor \log_2 n \rfloor} \leq 2n.$$
+
+To see why this bound holds, recall the multiply-by-$r$-and-subtract derivation we used in Chapter 6 (in the box explaining $n + n/2 + n/4 + \cdots = 2n$). Applied to a finite sum $S_k = 1 + r + r^2 + \cdots + r^k$ with $r \neq 1$, the same algebra gives $S_k - r S_k = 1 - r^{k+1}$, hence
+
+$$S_k = \frac{r^{k+1} - 1}{r - 1}.$$
+
+Specializing to $r = 2$ and $k = \lfloor \log_2 n \rfloor$, the sum of copies is exactly $2^{k+1} - 1 = 2 \cdot 2^k - 1$. By definition of the floor, $2^k \leq n$, so
+
+$$1 + 2 + 4 + \cdots + 2^k \;=\; 2 \cdot 2^k - 1 \;\leq\; 2n - 1 \;<\; 2n.$$
+
+The intuition that "the last term dominates the sum" is precisely the statement that, reading the series backward and factoring out $2^k$, the remaining factor $1 + \tfrac{1}{2} + \tfrac{1}{4} + \cdots + \tfrac{1}{2^k} = 2 - 2^{-k}$ approaches its limit of $2$ but never reaches it, so the whole sum is always strictly less than $2 \cdot 2^k$.
+
+So the total work for $n$ appends is at most $n$ writes plus $2n$ copies, giving $3n$ in total. The amortized cost per append is $3n / n = O(1)$.
+
+Geometric growth is essential to this argument. If we instead grew the buffer by a constant amount $k$ at every resize, every $k$-th append would trigger an $O(n)$ copy, summing to $\Theta(n^2)$ work for $n$ appends and an amortized cost of $\Theta(n)$ per append. Doubling (or any growth factor strictly greater than 1) keeps the geometric sum bounded and the amortized cost constant.
+
+#### Space overhead
+
+There are two distinct sources of space overhead to account for, both absent from a fixed-size static array.
+
+_Steady-state slack._ Between resizes, some of the allocated buffer is unused: capacity is at most twice the live size, and the shrink rule keeps occupancy above 25% (except for the small initial buffer). So at any moment outside of a resize, the unused capacity is at most a constant fraction of $n$, and the dynamic array's footprint is bounded by a small constant times the footprint of its static-array counterpart.
+
+_Transient resize overhead._ Resizing is not free of memory cost either. When the buffer becomes full at size $n$, the implementation allocates a *new* buffer of capacity $2n$ and copies every live element into it before the old buffer can be freed. During the copy, both buffers coexist, so the peak memory usage of a single resize is $n + 2n = 3n$ slots, three times the live size, and *strictly more than the steady-state bound*. After the copy finishes and the old buffer is released, the footprint drops back to $2n$. A static array, in contrast, is allocated once at its final size and never has this transient spike.
+
+For long-lived programs this transient is rarely a problem: it is local to the resize and reclaimed immediately. But it is worth being aware of in two situations. First, when memory is tight (embedded systems, large in-memory datasets close to physical limits), a doubling-resize on a buffer of size $n$ requires $3n$ slots free at the moment of the resize, even though the data structure "uses" only $n$. Second, the resize allocates a fresh contiguous block, which interacts with allocator fragmentation and (in garbage-collected runtimes like JavaScript) creates collectable garbage proportional to the old buffer's size.
+
+Asymptotically, both sources of overhead are still $O(n)$. The dynamic array uses $O(n)$ space, with a small constant-factor overhead compared to a perfectly sized static array, but the constants differ between the steady-state ($\leq 2n$) and the brief peak during a resize ($\leq 3n$).
+
+#### Summary
 
 | Operation | Time | Notes |
 |-----------|------|-------|

@@ -45,9 +45,7 @@ export class DynamicArray<T> implements Iterable<T> {
 
   /** Append `value` to the end of the array. Amortized O(1). */
   append(value: T): void {
-    if (this.length === this.data.length) {
-      this.resize(this.data.length * 2);
-    }
+    this.growIfFull();
     this.data[this.length] = value;
     this.length++;
   }
@@ -57,12 +55,8 @@ export class DynamicArray<T> implements Iterable<T> {
    * `index` may equal `this.size` to append at the end.
    */
   insert(index: number, value: T): void {
-    if (index < 0 || index > this.length) {
-      throw new RangeError(`Index ${index} out of bounds for size ${this.length}`);
-    }
-    if (this.length === this.data.length) {
-      this.resize(this.data.length * 2);
-    }
+    this.checkInsertBounds(index);
+    this.growIfFull();
     // Shift elements right
     for (let i = this.length; i > index; i--) {
       this.data[i] = this.data[i - 1];
@@ -84,10 +78,7 @@ export class DynamicArray<T> implements Iterable<T> {
     }
     this.data[this.length - 1] = undefined;
     this.length--;
-    // Shrink when 1/4 full (but not below initial capacity of 4)
-    if (this.length > 0 && this.length <= this.data.length / 4 && this.data.length > 4) {
-      this.resize(Math.max(4, Math.floor(this.data.length / 2)));
-    }
+    this.shrinkIfSparse();
     return value;
   }
 
@@ -128,6 +119,20 @@ export class DynamicArray<T> implements Iterable<T> {
     return result;
   }
 
+  /** Double the buffer when it is full. */
+  private growIfFull(): void {
+    if (this.length === this.data.length) {
+      this.resize(this.data.length * 2);
+    }
+  }
+
+  /** Halve the buffer when occupancy falls below 25%, but never below capacity 4. */
+  private shrinkIfSparse(): void {
+    if (this.length > 0 && this.length <= this.data.length / 4 && this.data.length > 4) {
+      this.resize(Math.max(4, Math.floor(this.data.length / 2)));
+    }
+  }
+
   private resize(newCapacity: number): void {
     const newData = new Array<T | undefined>(newCapacity);
     for (let i = 0; i < this.length; i++) {
@@ -138,6 +143,12 @@ export class DynamicArray<T> implements Iterable<T> {
 
   private checkBounds(index: number): void {
     if (index < 0 || index >= this.length) {
+      throw new RangeError(`Index ${index} out of bounds for size ${this.length}`);
+    }
+  }
+
+  private checkInsertBounds(index: number): void {
+    if (index < 0 || index > this.length) {
       throw new RangeError(`Index ${index} out of bounds for size ${this.length}`);
     }
   }
