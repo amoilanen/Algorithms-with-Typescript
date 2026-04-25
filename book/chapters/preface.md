@@ -6,8 +6,6 @@
 
 > **Beta:** This book is currently in beta and is still under active review. It may contain errors or incomplete sections. [Report errors or issues](https://github.com/amoilanen/Algorithms-with-Typescript/issues) — contributions are welcome via the [GitHub repository](https://github.com/amoilanen/Algorithms-with-Typescript).
 
-<small>*Built with [Zenflow](https://zencoder.ai/zenflow) by [Zencoder](https://zencoder.ai/) using [Claude Code](https://claude.com/product/claude-code) and [Claude Opus 4.6](https://www.anthropic.com/claude/opus) by [Anthropic](https://www.anthropic.com/)*</small>
-
 ---
 
 This book grew out of a simple observation: most software engineers use algorithms and data structures every day, yet many feel uncertain about the fundamentals. They may use a hash map or call a sorting function without fully understanding the guarantees those abstractions provide, or they may struggle when a problem requires designing a new algorithm from scratch. At the same time, Computer Science students often encounter algorithms in a highly theoretical setting that can feel disconnected from the code they write in practice.
