@@ -1,16 +1,16 @@
 # Arrays, Linked Lists, Stacks, and Queues
 
-_The algorithms of the preceding chapters operate on arrays — contiguous blocks of memory indexed by integers. Arrays are powerful but they are only one of many ways to organize data. In this chapter we study the fundamental data structures that underpin nearly all of Computer Science: dynamic arrays, linked lists, stacks, queues, and deques. Each offers a different set of trade-offs between time complexity, memory usage, and flexibility. Understanding these structures deeply is essential, because every higher-level data structure — from hash tables to balanced trees to graphs — is built on top of them._
+_The algorithms of the preceding chapters operate on arrays: contiguous blocks of memory indexed by integers. Arrays are powerful but they are only one of many ways to organize data. In this chapter we study the fundamental data structures that underpin nearly all of Computer Science: dynamic arrays, linked lists, stacks, queues, and deques. Each offers a different set of trade-offs between time complexity, memory usage, and flexibility. Understanding these structures deeply is essential, because every higher-level data structure, from hash tables to balanced trees to graphs, is built on top of them._
 
 ## Arrays
 
 An **array** is the simplest data structure: a contiguous block of memory divided into equal-sized slots, each identified by an integer index. Accessing any element by its index takes $O(1)$ time, because the memory address can be computed directly: if the array starts at address $b$ and each element occupies $s$ bytes, then element $i$ lives at address $b + i \cdot s$.
 
-This direct addressing makes arrays extremely efficient for random access. However, arrays have a fundamental limitation: their size is fixed at creation time. If we need to store more elements than the array can hold, we must allocate a new, larger array and copy all existing elements — an $O(n)$ operation.
+This direct addressing makes arrays extremely efficient for random access. However, arrays have a fundamental limitation: their size is fixed at creation time. If we need to store more elements than the array can hold, we must allocate a new, larger array and copy all existing elements, which is an $O(n)$ operation.
 
 ### Static arrays in TypeScript
 
-TypeScript (and JavaScript) arrays are actually dynamic — they resize automatically behind the scenes. But to understand the foundations, imagine a fixed-size array:
+TypeScript (and JavaScript) arrays are actually dynamic; they resize automatically behind the scenes. But to understand the foundations, imagine a fixed-size array:
 
 ```typescript
 const fixed = new Array<number>(10); // 10 slots, all undefined
@@ -19,7 +19,7 @@ fixed[9] = 99;
 // fixed[10] would be out of bounds in a true static array
 ```
 
-In languages like C or Java, going beyond the allocated size is either a compile-time error or a runtime crash. JavaScript's built-in arrays hide this complexity, but the cost of resizing is still there — it is just managed for us. Let us see how.
+In languages like C or Java, going beyond the allocated size is either a compile-time error or a runtime crash. JavaScript's built-in arrays hide this complexity, but the cost of resizing is still there; it is just managed for us in the background. Let us see how by prodiving an implementation of dynamic arrays.
 
 ## Dynamic arrays
 
@@ -135,7 +135,7 @@ export class DynamicArray<T> implements Iterable<T> {
 }
 ```
 
-Notice that `remove` also implements **shrinking**: when occupancy falls below 25%, the buffer is halved (but never below 4). This prevents a long sequence of removals from wasting memory, and the halving threshold (1/4 rather than 1/2) avoids **thrashing** — a pathological pattern where alternating appends and removes near the boundary trigger repeated resizes.
+Notice that `remove` also implements **shrinking**: when occupancy falls below 25%, the buffer is halved (but never below 4). This prevents a long sequence of removals from wasting memory, and the halving threshold (1/4 rather than 1/2) avoids **thrashing**, a pathological pattern where alternating appends and removes near the boundary trigger repeated resizes.
 
 ### Complexity summary
 
@@ -149,7 +149,7 @@ Notice that `remove` also implements **shrinking**: when occupancy falls below 2
 
 ## Linked lists
 
-A **linked list** stores elements in nodes that are scattered throughout memory, with each node containing a value and a pointer (reference) to the next node. Unlike arrays, linked lists do not require contiguous memory, and inserting or removing an element at a known position takes $O(1)$ time — no shifting required.
+A **linked list** stores elements in nodes that are scattered throughout memory, with each node containing a value and a pointer (reference) to the next node. Unlike arrays, linked lists do not require contiguous memory, and inserting or removing an element at a known position takes $O(1)$ time, with no shifting required.
 
 The trade-off is that random access is lost: to reach the $i$th element, we must follow $i$ pointers from the head, taking $O(i)$ time.
 
@@ -386,11 +386,11 @@ The cost of this flexibility is extra memory: each node stores two pointers inst
 - **Singly linked list** when insertions and deletions at the front dominate.
 - **Doubly linked list** when you need efficient removal from both ends or deletion of arbitrary nodes (given a reference).
 
-In practice, arrays and dynamic arrays dominate due to cache locality — modern CPUs are optimized for accessing contiguous memory. Linked lists shine in scenarios where elements are frequently inserted or removed at the endpoints, or when the data is too large to copy during a resize.
+In practice, arrays and dynamic arrays dominate due to cache locality; modern CPUs are optimized for accessing contiguous memory. Linked lists shine in scenarios where elements are frequently inserted or removed at the endpoints, or when the data is too large to copy during a resize.
 
 ## Abstract data types: stacks, queues, and deques
 
-The data structures above — arrays and linked lists — are concrete implementations. Now we turn to **abstract data types** (ADTs): specifications of behavior that can be implemented in multiple ways. A stack, for instance, defines _what_ operations are available (push, pop, peek) and _what_ they do, without prescribing _how_ to store the elements.
+The data structures above (arrays and linked lists) are concrete implementations. Now we turn to **abstract data types** (ADTs): specifications of behavior that can be implemented in multiple ways. A stack, for instance, defines _what_ operations are available (push, pop, peek) and _what_ they do, without prescribing _how_ to store the elements.
 
 ### Stacks
 
