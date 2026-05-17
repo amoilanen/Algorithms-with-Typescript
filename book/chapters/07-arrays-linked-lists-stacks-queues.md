@@ -201,17 +201,13 @@ Asymptotically, both sources of overhead are still $O(n)$. The dynamic array use
 
 A **linked list** stores elements in nodes that are scattered throughout memory, with each node containing a value and a pointer (reference) to the next node. Unlike arrays, linked lists do not require contiguous memory, and inserting or removing an element at a known position takes $O(1)$ time, with no shifting required.
 
-The trade-off is that random access is lost: to reach the $i$th element, we must follow $i$ pointers from the head, taking $O(i)$ time.
+The trade-off is that random access is lost: using zero-based indexing as in the rest of the book, reaching the element at index $i$ (that is, the $(i+1)$-th node from the head) requires following $i$ `next` pointers from the head, taking $O(i)$ time.
 
 ### Singly linked lists
 
 In a **singly linked list**, each node points to the next node. The list maintains a pointer to the **head** (first node) and, for efficiency, a pointer to the **tail** (last node).
 
-```
-head → [10 | •] → [20 | •] → [30 | null]
-                                ↑
-                              tail
-```
+![A singly linked list with three nodes (values 10, 20, 30). The `head` pointer references the first node and the `tail` pointer references the last node. Each node has a `value` cell and a `next` cell; the `next` of the final node is `null`.](figures/singly-linked-list.svg)
 
 #### Implementation
 
