@@ -248,33 +248,39 @@ export class SinglyLinkedList<T> implements Iterable<T> {
     this.length++;
   }
 
-  removeFirst(): T | undefined {
-    if (this.head === null) return undefined;
-    const value = this.head.value;
-    this.head = this.head.next;
-    if (this.head === null) {
-      this.tail = null;
+  // Remove the node after `prev`, or the head when `prev` is null. This is
+  // the single place where the border cases live: removing the head
+  // (prev === null), removing the tail (the tail moves back to `prev`, which
+  // is null when the list becomes empty), and removing from an empty list.
+  private removeAfter(prev: SinglyNode<T> | null): T | undefined {
+    const node = prev === null ? this.head : prev.next;
+    if (node === null) return undefined;
+
+    if (prev === null) {
+      this.head = node.next;
+    } else {
+      prev.next = node.next;
+    }
+    if (node === this.tail) {
+      this.tail = prev;
     }
     this.length--;
-    return value;
+    return node.value;
+  }
+
+  removeFirst(): T | undefined {
+    return this.removeAfter(null);
   }
 
   delete(value: T): boolean {
-    if (this.head === null) return false;
-    if (this.head.value === value) {
-      this.head = this.head.next;
-      if (this.head === null) this.tail = null;
-      this.length--;
-      return true;
-    }
+    let prev: SinglyNode<T> | null = null;
     let current = this.head;
-    while (current.next !== null) {
-      if (current.next.value === value) {
-        if (current.next === this.tail) this.tail = current;
-        current.next = current.next.next;
-        this.length--;
+    while (current !== null) {
+      if (current.value === value) {
+        this.removeAfter(prev);
         return true;
       }
+      prev = current;
       current = current.next;
     }
     return false;
@@ -291,6 +297,8 @@ export class SinglyLinkedList<T> implements Iterable<T> {
   // ... iterator, toArray, etc.
 }
 ```
+
+Removal is where singly linked lists are easy to get subtly wrong: the head has no predecessor, the tail pointer must move back when the last node goes, and an empty list must be handled gracefully. Rather than scatter these checks across `removeFirst` and `delete`, we funnel both through one private helper, `removeAfter(prev)`, which unlinks the node *following* `prev`, treating a `null` predecessor as "remove the head." Every border case lives in that one place: `prev === null` covers head removal, `node === this.tail` moves the tail back (to `null` when the list empties), and `node === null` handles the empty list. `removeFirst` is then just `removeAfter(null)`, and `delete` walks the list carrying the predecessor so it can call the same helper.
 
 #### Tracing through an example
 
@@ -485,7 +493,7 @@ export class Stack<T> implements IStack<T>, Iterable<T> {
 }
 ```
 
-All three operations — `push`, `pop`, `peek` — are $O(1)$.
+All three operations (`push`, `pop`, `peek`) are $O(1)$.
 
 We could equally implement a stack with a dynamic array (push = append, pop = remove last). The array-based version has better cache locality, while the linked-list version avoids occasional resize costs. For most purposes in TypeScript, the built-in array with `push`/`pop` is the pragmatic choice; our implementation here serves pedagogical purposes.
 
@@ -666,7 +674,7 @@ export class Deque<T> implements Iterable<T> {
 }
 ```
 
-All six operations — `pushFront`, `pushBack`, `popFront`, `popBack`, `peekFront`, `peekBack` — are $O(1)$.
+All six operations (`pushFront`, `pushBack`, `popFront`, `popBack`, `peekFront`, `peekBack`) are $O(1)$.
 
 #### Using a deque as a stack or queue
 
@@ -707,7 +715,7 @@ This chapter introduced the foundational data structures upon which nearly every
 - **Queues** (FIFO) power breadth-first search, task scheduling, and buffering.
 - **Deques** generalize stacks and queues, supporting $O(1)$ operations at both ends.
 
-The choice between arrays and linked lists comes down to access patterns. If you need random access or sequential iteration (where cache locality matters), use an array. If insertions and deletions at the endpoints dominate, use a linked list. When in doubt, the dynamic array is usually the right default — it is what most languages provide as their standard collection.
+The choice between arrays and linked lists comes down to access patterns. If you need random access or sequential iteration (where cache locality matters), use an array. If insertions and deletions at the endpoints dominate, use a linked list. When in doubt, the dynamic array is usually the right default; it is what most languages provide as their standard collection.
 
 In the next chapter, we will use these building blocks to construct **hash tables**, which achieve expected $O(1)$ lookup by combining arrays with a hash function.
 
@@ -717,7 +725,7 @@ In the next chapter, we will use these building blocks to construct **hash table
 
 **Exercise 7.2.** Implement a circular buffer–based queue. Use a fixed-size array and two indices (`front` and `back`) that wrap around using modular arithmetic. Compare its performance characteristics with our linked-list–based `Queue`.
 
-**Exercise 7.3.** Implement a `MinStack<T>` that supports `push`, `pop`, `peek`, and an additional `min()` operation that returns the minimum element in the stack — all in $O(1)$ time. _Hint:_ maintain a second stack that tracks minimums.
+**Exercise 7.3.** Implement a `MinStack<T>` that supports `push`, `pop`, `peek`, and an additional `min()` operation that returns the minimum element in the stack, all in $O(1)$ time. _Hint:_ maintain a second stack that tracks minimums.
 
 **Exercise 7.4.** Using only two `Stack`s, implement a `Queue`. Analyze the amortized time complexity of `enqueue` and `dequeue`. _Hint:_ use one stack for enqueuing and another for dequeuing; transfer elements between them lazily.
 

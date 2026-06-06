@@ -62,18 +62,37 @@ export class SinglyLinkedList<T> implements Iterable<T> {
   }
 
   /**
+   * Remove the node that follows `prev`, or the head node when `prev` is null.
+   * Fixes up the head, tail, and length, and returns the removed value (or
+   * undefined when there is no node to remove). O(1).
+   *
+   * This is the single place where the border cases live: removing the head
+   * (`prev === null`), removing the tail (`node === this.tail`, so the tail
+   * moves back to `prev`, which is null when the list becomes empty), and
+   * removing from an empty list (`node === null`).
+   */
+  private removeAfter(prev: SinglyNode<T> | null): T | undefined {
+    const node = prev === null ? this.head : prev.next;
+    if (node === null) return undefined;
+
+    if (prev === null) {
+      this.head = node.next;
+    } else {
+      prev.next = node.next;
+    }
+    if (node === this.tail) {
+      this.tail = prev;
+    }
+    this.length--;
+    return node.value;
+  }
+
+  /**
    * Remove and return the first element. O(1).
    * Returns undefined if the list is empty.
    */
   removeFirst(): T | undefined {
-    if (this.head === null) return undefined;
-    const value = this.head.value;
-    this.head = this.head.next;
-    if (this.head === null) {
-      this.tail = null;
-    }
-    this.length--;
-    return value;
+    return this.removeAfter(null);
   }
 
   /**
@@ -81,28 +100,14 @@ export class SinglyLinkedList<T> implements Iterable<T> {
    * Returns true if the value was found and removed, false otherwise. O(n).
    */
   delete(value: T): boolean {
-    if (this.head === null) return false;
-
-    // Special case: removing the head
-    if (this.head.value === value) {
-      this.head = this.head.next;
-      if (this.head === null) {
-        this.tail = null;
-      }
-      this.length--;
-      return true;
-    }
-
+    let prev: SinglyNode<T> | null = null;
     let current = this.head;
-    while (current.next !== null) {
-      if (current.next.value === value) {
-        if (current.next === this.tail) {
-          this.tail = current;
-        }
-        current.next = current.next.next;
-        this.length--;
+    while (current !== null) {
+      if (current.value === value) {
+        this.removeAfter(prev);
         return true;
       }
+      prev = current;
       current = current.next;
     }
     return false;

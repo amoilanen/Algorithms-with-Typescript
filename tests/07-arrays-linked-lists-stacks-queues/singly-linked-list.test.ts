@@ -135,6 +135,83 @@ describe('SinglyLinkedList', () => {
     expect(list.peekBack()).toBe(2);
   });
 
+  it('should delete the head of a two-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    list.append(1);
+    list.append(2);
+    expect(list.delete(1)).toBe(true);
+    expect(list.toArray()).toEqual([2]);
+    expect(list.size).toBe(1);
+    expect(list.peekFront()).toBe(2);
+    expect(list.peekBack()).toBe(2);
+  });
+
+  it('should delete the tail of a two-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    list.append(1);
+    list.append(2);
+    expect(list.delete(2)).toBe(true);
+    expect(list.toArray()).toEqual([1]);
+    expect(list.size).toBe(1);
+    expect(list.peekFront()).toBe(1);
+    expect(list.peekBack()).toBe(1);
+    // Tail must still be valid: appending continues from the remaining node.
+    list.append(3);
+    expect(list.toArray()).toEqual([1, 3]);
+    expect(list.peekBack()).toBe(3);
+  });
+
+  it('should return false when deleting a non-existent value from a two-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    list.append(1);
+    list.append(2);
+    expect(list.delete(99)).toBe(false);
+    expect(list.toArray()).toEqual([1, 2]);
+    expect(list.size).toBe(2);
+  });
+
+  it('should delete the head of a five-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    [1, 2, 3, 4, 5].forEach((v) => list.append(v));
+    expect(list.delete(1)).toBe(true);
+    expect(list.toArray()).toEqual([2, 3, 4, 5]);
+    expect(list.size).toBe(4);
+    expect(list.peekFront()).toBe(2);
+    expect(list.peekBack()).toBe(5);
+  });
+
+  it('should delete a middle element of a five-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    [1, 2, 3, 4, 5].forEach((v) => list.append(v));
+    expect(list.delete(3)).toBe(true);
+    expect(list.toArray()).toEqual([1, 2, 4, 5]);
+    expect(list.size).toBe(4);
+    expect(list.peekFront()).toBe(1);
+    expect(list.peekBack()).toBe(5);
+  });
+
+  it('should delete the tail of a five-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    [1, 2, 3, 4, 5].forEach((v) => list.append(v));
+    expect(list.delete(5)).toBe(true);
+    expect(list.toArray()).toEqual([1, 2, 3, 4]);
+    expect(list.size).toBe(4);
+    expect(list.peekFront()).toBe(1);
+    expect(list.peekBack()).toBe(4);
+    // Tail must still be valid after removing the last node.
+    list.append(6);
+    expect(list.toArray()).toEqual([1, 2, 3, 4, 6]);
+    expect(list.peekBack()).toBe(6);
+  });
+
+  it('should return false when deleting a non-existent value from a five-element list', () => {
+    const list = new SinglyLinkedList<number>();
+    [1, 2, 3, 4, 5].forEach((v) => list.append(v));
+    expect(list.delete(99)).toBe(false);
+    expect(list.toArray()).toEqual([1, 2, 3, 4, 5]);
+    expect(list.size).toBe(5);
+  });
+
   it('should handle strings', () => {
     const list = new SinglyLinkedList<string>();
     list.append('hello');
