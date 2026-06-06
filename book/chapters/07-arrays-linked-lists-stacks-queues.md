@@ -201,7 +201,7 @@ Asymptotically, both sources of overhead are still $O(n)$. The dynamic array use
 
 A **linked list** stores elements in nodes that are scattered throughout memory, with each node containing a value and a pointer (reference) to the next node. Unlike arrays, linked lists do not require contiguous memory, and inserting or removing an element at a known position takes $O(1)$ time, with no shifting required.
 
-The trade-off is that random access is lost: using zero-based indexing as in the rest of the book, reaching the element at index $i$ (that is, the $(i+1)$-th node from the head) requires following $i$ `next` pointers from the head, taking $O(i)$ time.
+The trade-off is that random access is lost: using zero-based indexing as in the rest of the book, reaching the element at index $i$ (that is, the $(i+1)$-th node from the head) requires following $i$ `next` pointers from the head. The number of hops thus grows in proportion to the index, reaching $n - 1$ for the last element, so accessing an arbitrary element is $O(n)$ in the worst case.
 
 ### Singly linked lists
 
@@ -286,7 +286,7 @@ export class SinglyLinkedList<T> implements Iterable<T> {
     return false;
   }
 
-  find(value: T): boolean {
+  contains(value: T): boolean {
     let current = this.head;
     while (current !== null) {
       if (current.value === value) return true;
@@ -298,7 +298,7 @@ export class SinglyLinkedList<T> implements Iterable<T> {
 }
 ```
 
-Removal is where singly linked lists are easy to get subtly wrong: the head has no predecessor, the tail pointer must move back when the last node goes, and an empty list must be handled gracefully. Rather than scatter these checks across `removeFirst` and `delete`, we funnel both through one private helper, `removeAfter(prev)`, which unlinks the node *following* `prev`, treating a `null` predecessor as "remove the head." Every border case lives in that one place: `prev === null` covers head removal, `node === this.tail` moves the tail back (to `null` when the list empties), and `node === null` handles the empty list. `removeFirst` is then just `removeAfter(null)`, and `delete` walks the list carrying the predecessor so it can call the same helper.
+Removal is where singly linked lists are easy to get subtly wrong: the head has no predecessor, the tail pointer must move back when the last node goes, and an empty list must be handled gracefully. We funnel all the cases through a private method `removeAfter(prev)`, which unlinks the node *following* `prev`, treating a `null` predecessor as "remove the head." Every border case lives in that one place: `prev === null` covers head removal, `node === this.tail` moves the tail back (to `null` when the list empties), and `node === null` handles the empty list. `removeFirst` is then just `removeAfter(null)`, and `delete` walks the list carrying the predecessor so it can call the same `removeAfter`with the correct node.
 
 #### Tracing through an example
 
@@ -315,19 +315,54 @@ Starting with an empty singly linked list, let us perform a sequence of operatio
 
 Notice that `prepend` and `removeFirst` are both $O(1)$ because they only touch the head pointer. Appending is $O(1)$ because we maintain a tail pointer. However, `delete(value)` requires a linear scan.
 
-#### A limitation of singly linked lists
+#### Complexity and space analysis
 
-Removing the _last_ element is $O(n)$ in a singly linked list, because we must traverse the entire list to find the node that precedes the tail. The doubly linked list solves this problem.
+Having seen the implementation, let us account for the cost of each operation and for the memory a singly linked list consumes. The picture is almost the mirror image of the dynamic array: the operations that arrays do cheaply (indexed access) are expensive here, while the operations that arrays do in $O(n)$ time (insertion and removal at a known boundary) are cheap.
+
+##### Indexing and search are $O(n)$
+
+A linked list stores no contiguous block whose offset we can compute, so there is no $O(1)$ address arithmetic of the kind that makes array access constant-time. To reach the element at index $i$ we must start at `head` and follow $i$ `next` pointers, one node at a time, so the number of hops grows in proportion to the index. The worst case is the last element, at index $n - 1$, which costs $n - 1$ hops; reaching an arbitrary element is therefore $O(n)$.
+
+The same reasoning applies to `contains(value)` and to the search phase of `delete(value)`: both walk the list from the head comparing values, so each is $O(n)$ in the worst case, when the value is absent or sits at the tail, and $O(1)$ in the best case, when it is at or near the head. This is the fundamental trade-off of the structure: we gave up the array's constant-time random access, and in return gained constant-time updates at the list's ends. `prepend`, `append`, and `removeFirst` are all $O(1)$ with no element shifting, and once we already *hold* a pointer to a node, inserting after it is $O(1)$. For the front operations this is a genuine win over an array, which needs $O(n)$ shifting to open up or reclaim the slot at index $0$; `append`, by contrast, is $O(1)$ for both structures, though only amortized for the dynamic array.
+
+##### Head- and tail-anchored operations are $O(1)$
+
+The list keeps two pointers, `head` and `tail`, and every operation that touches only those endpoints runs in constant time, independent of $n$:
+
+- **`prepend(value)`** allocates one node and rewires `head` (and `tail` when the list was empty). No traversal. $O(1)$.
+- **`append(value)`** allocates one node and rewires `tail.next` and `tail`. The tail pointer is exactly what lets us skip the traversal that would otherwise be needed to find the end. $O(1)$.
+- **`removeFirst()`** advances `head` to `head.next` and fixes `tail` when the list empties. $O(1)$.
+
+These bounds are worst-case, not amortized: there is no buffer to resize and no block to copy, so the cost of an individual operation never spikes the way an `append` for a full dynamic array does. (we treat allocating a single node as constant work having $O(1)$ amortized cost.)
+
+##### Why removing the *tail* is still $O(n)$
+
+`removeFirst` is $O(1)$, but removing from the tail is not. To remove the last node we must set `tail` to the node *before* it, and a singly linked node carries no `prev` pointer. The only way to find the predecessor of the tail is to walk from the head until we reach the node whose `next` is the tail, a full traversal of $O(n)$ steps. So maintaining a tail pointer buys us a $O(1)$ *append*, while not really helping with the time complexity of the removal at the tail. This asymmetry is the singly linked list's defining limitation, and it is precisely what the doubly linked list of the next section repairs by giving every node a `prev` pointer.
+
+##### Space overhead
+
+A static or dynamic array stores its $n$ values in essentially $n$ contiguous slots. A linked list stores each value in a separately allocated node that *also* holds a `next` reference, so the per-element overhead is one pointer-sized field plus whatever per-object bookkeeping the runtime adds (in a JavaScript engine, an object header several words wide). The footprint is thus $O(n)$, the same asymptotic class as the array, but with a larger constant factor: every element pays for a pointer and an object header that the array does not.
+
+In exchange, the linked list avoids the two array-specific overheads analysed earlier. There are **no reserved empty slots**: the list allocates exactly one node per element and never keeps spare capacity, so it never holds the $\leq 2n$ slots a dynamic array does between resizes. And there is **no transient resize spike**: nodes are added and removed one at a time, so the structure never holds two copies of the data at once and never needs the $3n$ slots free that a doubling resize momentarily requires. Memory is requested and released incrementally, in node-sized units.
+
+There is also a subtler cost that arrays avoid. The nodes are scattered across the heap rather than laid out contiguously, so traversing a linked list has poor **cache locality**: following each `next` pointer may jump to an unrelated region of memory and miss the CPU cache, whereas a linear scan of an array streams through consecutive cache lines. Asymptotically both traversals are $O(n)$, but on real hardware the array is typically several times faster for the same $n$. The linked list trades raw scan speed and memory compactness for $O(1)$ endpoint updates and the absence of resizing.
+
+##### Summary
+
+| Operation | Time | Notes |
+|-----------|------|-------|
+| `prepend(v)` | $O(1)$ | Rewire `head` |
+| `append(v)` | $O(1)$ | Rewire `tail`, thanks to the tail pointer |
+| `removeFirst()` | $O(1)$ | Advance `head` |
+| remove last | $O(n)$ | No `prev`; must scan for the tail's predecessor |
+| `contains(v)` / `delete(v)` | $O(n)$ | Linear scan from the head |
+| access by index | $O(n)$ | Follow up to $n - 1$ `next` pointers; no random access |
 
 ### Doubly linked lists
 
 In a **doubly linked list**, each node has pointers to both the next _and_ previous nodes. This enables $O(1)$ removal from both ends.
 
-```
-null ← [10 | •] ⇄ [20 | •] ⇄ [30 | •] → null
-        ↑                        ↑
-       head                    tail
-```
+![A doubly linked list with three nodes (values 10, 20, 30). The `head` pointer references the first node and the `tail` pointer references the last node. Each node has a `prev` cell, a `value` cell, and a `next` cell; consecutive nodes are linked in both directions, and the `prev` of the first node and the `next` of the last node are `null`.](figures/doubly-linked-list.svg)
 
 #### Implementation
 
@@ -410,7 +445,7 @@ export class DoublyLinkedList<T> implements Iterable<T> {
     }
     this.length--;
   }
-  // ... delete, find, iterators, etc.
+  // ... delete, contains, iterators, etc.
 }
 ```
 
@@ -440,7 +475,42 @@ The cost of this flexibility is extra memory: each node stores two pointers inst
 - **Singly linked list** when insertions and deletions at the front dominate.
 - **Doubly linked list** when you need efficient removal from both ends or deletion of arbitrary nodes (given a reference).
 
-In practice, arrays and dynamic arrays dominate due to cache locality; modern CPUs are optimized for accessing contiguous memory. Linked lists shine in scenarios where elements are frequently inserted or removed at the endpoints, or when the data is too large to copy during a resize.
+These one-line rules follow directly from the table, but they hide an important practical truth: the table is correct about *asymptotics* and yet misleading about *real-world speed*. The next subsections explain why, when a linked list actually earns its place, and how both structures show up inside the data structures you use every day.
+
+#### Why the complexity table does not predict real speed
+
+Two costs that big-$O$ notation deliberately ignores dominate the actual running time on modern hardware.
+
+The first is **cache locality**. An array is a single contiguous block, so iterating it streams through consecutive cache lines and the CPU's prefetcher can predict and load the next elements before they are needed. A linked list is a set of nodes scattered across the heap; each `next` hop is a *dependent load* (the CPU cannot compute the next node's address until the current node has arrived) and is therefore unpredictable and likely to miss the cache. Both traversals are $O(n)$, but on real hardware the array scan is commonly several times faster for the same $n$, as already noted in the singly linked list's space analysis.
+
+The second is that the array's "$O(n)$" insert and remove are **deceptively cheap**. Shifting elements is a `memmove` over a contiguous block: a tight, often vectorized copy that the hardware executes extremely fast. Shifting a few thousand elements can take less time than the pointer-chasing required merely to *locate* the corresponding position in a linked list. This exposes a hidden precondition in the table: the linked list's $O(1)$ insertion and removal assume you **already hold a reference to the node**. If you must first search for the position, the operation is $O(n)$ to find plus $O(1)$ to splice, and the search is exactly the cache-unfriendly traversal that arrays avoid.
+
+The practical conclusion is the one most standard libraries have reached: **the dynamic array is the right default**, and a linked list pays off only when you already hold node references *and* never need random access or repeated scans.
+
+#### When a linked list actually earns its place
+
+Linked lists are rarely used as a general-purpose container. They shine in a handful of specific situations, almost all of which share the property that a reference to the relevant node is already in hand, so no traversal is needed:
+
+- **Splicing with a node reference in $O(1)$.** The canonical example is an **LRU (least-recently-used) cache**: a hash table maps keys to *nodes*, and a doubly linked list keeps the nodes in recency order. Each access moves a node to the front in $O(1)$, and eviction drops the tail in $O(1)$, with no traversal because the hash table hands you the node directly. No array supports move-to-front in constant time.
+- **Intrusive lists with stable identity.** In systems code (for example the Linux kernel's `list_head`), the link pointers live *inside* objects that were allocated anyway, so there is no separate node allocation, and a node's address never changes even as the list is reordered. An array cannot promise stable addresses because it relocates elements on resize and shifts them on insert.
+- **$O(1)$ concatenation and sublist splicing.** Joining two linked lists, or moving a run of nodes from one list to another, is a few pointer assignments; the array equivalent is a copy.
+- **Persistent (immutable) lists.** Functional languages use singly linked "cons" lists because `prepend` is $O(1)$ and the *tail is shared* between the old and new versions, so many versions coexist without copying. Arrays cannot share structure cheaply.
+- **As the engine of stacks and queues**, exactly as the abstract data types later in this chapter are implemented.
+
+The choice between singly and doubly linked then follows the access pattern. A **singly linked list** uses the least memory (one pointer per node) and suffices when you only ever touch the head or walk forward, which is why it backs stacks, hash-table buckets, and immutable lists. A **doubly linked list** spends one extra pointer per node to gain $O(1)$ removal of an *arbitrary node you hold a reference to*, which is what LRU caches, deques, and editor buffers require. The singly linked list's $O(n)$ tail removal, analysed earlier, is precisely why it is unsuitable for those bidirectional uses.
+
+#### Hybrids: arrays and linked lists inside the same structure
+
+In real systems the two are rarely an either/or choice; many widely used structures combine them to get the best of both:
+
+- **Hash tables with separate chaining.** An *array* of buckets gives $O(1)$ indexing to a bucket, while a short *linked list* per bucket handles collisions. This is the most common array-plus-list hybrid, and it is exactly the structure the next chapter builds.
+- **Treeified buckets.** Some implementations (such as Java's `HashMap`) start each bucket as a linked list and **convert it to a balanced search tree once it grows past a threshold**, falling back to a list when it shrinks again. This bounds a pathological bucket's lookup at $O(\log n)$ instead of $O(n)$: a list when small, a tree when large.
+- **Unrolled linked lists.** Each node holds a *small array* of elements rather than a single value. This restores much of the array's cache locality and amortizes the per-element pointer overhead, while keeping list-style $O(1)$ splicing. It is the structure closest to the intuition of "small arrays joined by links."
+- **Chunked deques.** Some standard-library deques (for example C++'s `std::deque`) store a sequence of fixed-size array *chunks* indexed by a small map, giving $O(1)$ push and pop at both ends together with mostly-contiguous, cache-friendly storage.
+
+A related but distinct trick, the **small-buffer optimization** (as in many `small_vector` or short-string implementations), keeps up to a fixed number of elements *inline* in a small array and only spills to a heap-allocated array when that capacity is exceeded. This is array-to-array rather than array-to-list, but it is the other common way structures specialize their layout to the small case.
+
+The lesson is that the array-versus-list decision is less often "which container do I pick" and more often "how do these two primitives combine," because contiguous storage and pointer-linked nodes solve complementary problems. In practice, arrays and dynamic arrays dominate due to cache locality; modern CPUs are optimized for accessing contiguous memory. Linked lists shine where elements are inserted or removed at known nodes without scanning, where stable node identity matters, or where the data is too large to copy during a resize.
 
 ## Abstract data types: stacks, queues, and deques
 

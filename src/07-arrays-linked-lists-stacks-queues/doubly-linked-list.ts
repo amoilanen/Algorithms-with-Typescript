@@ -15,7 +15,7 @@ class DoublyNode<T> {
  * Time complexity:
  *   - prepend / append:     O(1)
  *   - removeFirst / removeLast: O(1)
- *   - find / delete:        O(n)
+ *   - contains / delete:    O(n)
  *
  * Space complexity: O(n)
  */
@@ -114,7 +114,7 @@ export class DoublyLinkedList<T> implements Iterable<T> {
   }
 
   /** Return true if `value` is in the list. O(n). */
-  find(value: T): boolean {
+  contains(value: T): boolean {
     let current = this.head;
     while (current !== null) {
       if (current.value === value) return true;

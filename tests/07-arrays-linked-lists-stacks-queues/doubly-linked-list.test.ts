@@ -112,12 +112,12 @@ describe('DoublyLinkedList', () => {
     expect(list.size).toBe(1);
   });
 
-  it('should find elements', () => {
+  it('should report whether it contains elements', () => {
     const list = new DoublyLinkedList<string>();
     list.append('a');
     list.append('b');
-    expect(list.find('a')).toBe(true);
-    expect(list.find('c')).toBe(false);
+    expect(list.contains('a')).toBe(true);
+    expect(list.contains('c')).toBe(false);
   });
 
   it('should be iterable with for-of', () => {

@@ -14,7 +14,7 @@ class SinglyNode<T> {
  * Time complexity:
  *   - prepend:  O(1)
  *   - append:   O(1) (tail pointer maintained)
- *   - find:     O(n)
+ *   - contains: O(n)
  *   - delete:   O(n)
  *
  * Space complexity: O(n)
@@ -114,7 +114,7 @@ export class SinglyLinkedList<T> implements Iterable<T> {
   }
 
   /** Return true if `value` is in the list. O(n). */
-  find(value: T): boolean {
+  contains(value: T): boolean {
     let current = this.head;
     while (current !== null) {
       if (current.value === value) return true;

@@ -104,13 +104,13 @@ describe('SinglyLinkedList', () => {
     expect(list.delete(1)).toBe(false);
   });
 
-  it('should find elements', () => {
+  it('should report whether it contains elements', () => {
     const list = new SinglyLinkedList<string>();
     list.append('a');
     list.append('b');
     list.append('c');
-    expect(list.find('b')).toBe(true);
-    expect(list.find('z')).toBe(false);
+    expect(list.contains('b')).toBe(true);
+    expect(list.contains('z')).toBe(false);
   });
 
   it('should be iterable with for-of', () => {
@@ -216,7 +216,7 @@ describe('SinglyLinkedList', () => {
     const list = new SinglyLinkedList<string>();
     list.append('hello');
     list.append('world');
-    expect(list.find('hello')).toBe(true);
+    expect(list.contains('hello')).toBe(true);
     expect(list.toArray()).toEqual(['hello', 'world']);
   });
 });
